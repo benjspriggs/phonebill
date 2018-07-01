@@ -1,9 +1,5 @@
 package edu.pdx.cs410J.bspriggs;
 
-import edu.pdx.cs410J.AbstractPhoneBill;
-import javafx.util.Pair;
-
-import java.util.HashMap;
 import java.util.Map;
 
 import static java.util.Map.entry;
@@ -31,7 +27,7 @@ public class Project1 {
     for (Map.Entry<String, String> pair : f.entrySet()) {
       b.append("  ");
       b.append(pair.getKey());
-      b.append("\t\t");
+        b.append("\t\t\t");
       b.append(pair.getValue());
       b.append('\n');
     }
