@@ -60,11 +60,16 @@ public class Project1 {
         }
 
         // parse args
-        if (args.length - ptr < ARGUMENTS.size() + 2) {
-            System.err.println("Missing command line arguments");
+        if (args.length - ptr != ARGUMENTS.size() + 2) {
+            if (args.length - ptr < ARGUMENTS.size() + 2)
+                System.err.println("Missing command line arguments");
+            else
+                System.err.println("Extra command line arguments");
+
             for (String arg : args) {
                 System.out.println(arg);
             }
+
             System.err.println(usage());
             System.exit(1);
         }
