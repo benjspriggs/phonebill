@@ -14,11 +14,11 @@ public class PhoneCall extends AbstractPhoneCall {
     private static final Pattern phoneNumberPattern = Pattern.compile("\\d\\d\\d-\\d\\d\\d-\\d\\d\\d\\d");
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("mm/dd/yyyy hh:mm");
 
-    PhoneCall(String caller, String callee, String s, String s1) throws Exception {
+    PhoneCall(String caller, String callee, String startDateAndTime, String endDateAndTime) throws Exception {
         this.caller = validatePhoneNumber(caller);
         this.callee = validatePhoneNumber(callee);
-        this.startTime = validateDate(s);
-        this.endTime = validateDate(s1);
+        this.startTime = validateDate(startDateAndTime);
+        this.endTime = validateDate(endDateAndTime);
     }
 
     private String validatePhoneNumber(String in) throws ParseException {
