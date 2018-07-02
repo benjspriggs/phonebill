@@ -1,6 +1,8 @@
 package edu.pdx.cs410J.bspriggs;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -9,12 +11,20 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * Unit tests for the {@link PhoneCall} class.
  */
 public class PhoneCallTest {
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
+
   private final String validPhoneNumber = "503-333-3333";
   private final String validTime = "1/15/2031 2:33";
 
   private PhoneCall getPhoneCall() {
-    return new PhoneCall(validPhoneNumber, validPhoneNumber, validTime, validTime);
+    try {
+      return new PhoneCall(validPhoneNumber, validPhoneNumber, validTime, validTime);
+    } catch (Exception e) {
+      return null;
+    }
   }
+
   @Test
   public void getStartTimeStringNeedsToBeImplemented() {
     PhoneCall call = getPhoneCall();
@@ -39,13 +49,15 @@ public class PhoneCallTest {
     assertThat(call.getStartTime(), is(nullValue()));
   }
 
-  @Test(expected = Exception.class)
-  public void passingInvalidPhoneNumberFails() {
-    PhoneCall call = new PhoneCall("cat", "dog", validTime, validTime);
+  @Test
+  public void passingInvalidPhoneNumberFails() throws Exception {
+    thrown.expect(Exception.class);
+    new PhoneCall("cat", "dog", validTime, validTime);
   }
 
-  @Test(expected = Exception.class)
-  public void passingInvalidDateFails() {
-    PhoneCall call = new PhoneCall(validPhoneNumber, validPhoneNumber, "cat", "dog");
+  @Test
+  public void passingInvalidDateFails() throws Exception {
+    thrown.expect(Exception.class);
+    new PhoneCall(validPhoneNumber, validPhoneNumber, "cat", "dog");
   }
 }

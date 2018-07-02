@@ -53,14 +53,18 @@ public class Project1 {
       System.exit(1);
     }
 
-    PhoneBill bill = new PhoneBill(args[0]);
-    PhoneCall call = new PhoneCall(args[1], args[2],
-            String.format("%s %s", args[3], args[4]),
-            String.format("%s %s", args[5], args[6]));
-    bill.addPhoneCall(call);
+    try {
+      PhoneBill bill = new PhoneBill(args[0]);
+      PhoneCall call = new PhoneCall(args[1], args[2],
+              String.format("%s %s", args[3], args[4]),
+              String.format("%s %s", args[5], args[6]));
+      bill.addPhoneCall(call);
 
-    System.out.println(bill.toString());
-    System.out.println(call.toString());
+      System.out.println(bill.toString());
+      System.out.println(call.toString());
+    } catch (Exception e) {
+      System.err.println(e.getMessage());
+    }
   }
 
 }

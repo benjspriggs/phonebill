@@ -34,7 +34,12 @@ public class PhoneBillTest {
     }
 
     private AbstractPhoneCall getPhoneCall() {
-        return new PhoneCall("", "", "", "");
+        try {
+            return new PhoneCall("", "", "", "");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
