@@ -9,10 +9,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * Unit tests for the {@link PhoneCall} class.
  */
 public class PhoneCallTest {
-  private PhoneCall getPhoneCall() {
-    return new PhoneCall("caller", "callee", "start-time", "end-time");
-  }
+  private final String validPhoneNumber = "503-333-3333";
+  private final String validTime = "1/15/2031 2:33";
 
+  private PhoneCall getPhoneCall() {
+    return new PhoneCall(validPhoneNumber, validPhoneNumber, validTime, validTime);
+  }
   @Test
   public void getStartTimeStringNeedsToBeImplemented() {
     PhoneCall call = getPhoneCall();
@@ -35,5 +37,15 @@ public class PhoneCallTest {
   public void forProject1ItIsOkayIfGetStartTimeReturnsNull() {
     PhoneCall call = getPhoneCall();
     assertThat(call.getStartTime(), is(nullValue()));
+  }
+
+  @Test(expected = Exception.class)
+  public void passingInvalidPhoneNumberFails() {
+    PhoneCall call = new PhoneCall("cat", "dog", validTime, validTime);
+  }
+
+  @Test(expected = Exception.class)
+  public void passingInvalidDateFails() {
+    PhoneCall call = new PhoneCall(validPhoneNumber, validPhoneNumber, "cat", "dog");
   }
 }
