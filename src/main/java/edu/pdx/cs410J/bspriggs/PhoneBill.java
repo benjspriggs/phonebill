@@ -6,9 +6,15 @@ import edu.pdx.cs410J.AbstractPhoneCall;
 import java.util.Collection;
 
 public class PhoneBill extends AbstractPhoneBill {
+    private final String customer;
+
+    public PhoneBill(String customerName) {
+        this.customer = customerName;
+    }
+
     @Override
     public String getCustomer() {
-        return null;
+        return this.customer;
     }
 
     @Override
