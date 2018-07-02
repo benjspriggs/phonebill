@@ -8,7 +8,7 @@ import java.util.Collection;
 public class PhoneBill extends AbstractPhoneBill {
     private final String customer;
 
-    public PhoneBill(String customerName) {
+    PhoneBill(String customerName) {
         this.customer = customerName;
     }
 
