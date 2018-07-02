@@ -9,23 +9,31 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * Unit tests for the {@link PhoneCall} class.
  */
 public class PhoneCallTest {
-
-  @Test(expected = UnsupportedOperationException.class)
-  public void getStartTimeStringNeedsToBeImplemented() {
-    PhoneCall call = new PhoneCall();
-    call.getStartTimeString();
+  private PhoneCall getPhoneCall() {
+    return new PhoneCall("caller", "callee", "start-time", "end-time");
   }
 
   @Test
-  public void initiallyAllPhoneCallsHaveTheSameCallee() {
-    PhoneCall call = new PhoneCall();
-    assertThat(call.getCallee(), containsString("not implemented"));
+  public void getStartTimeStringNeedsToBeImplemented() {
+    PhoneCall call = getPhoneCall();
+    assertThat(call.getStartTimeString(), not(nullValue()));
+  }
+
+  @Test
+  public void getCallerNeedsToBeImplemented() {
+    PhoneCall call = getPhoneCall();
+    assertThat(call.getCaller(), not(nullValue()));
+  }
+
+  @Test
+  public void getCalleeNeedsToBeImplemented() {
+    PhoneCall call = getPhoneCall();
+    assertThat(call.getCallee(), not(nullValue()));
   }
 
   @Test
   public void forProject1ItIsOkayIfGetStartTimeReturnsNull() {
-    PhoneCall call = new PhoneCall();
+    PhoneCall call = getPhoneCall();
     assertThat(call.getStartTime(), is(nullValue()));
   }
-  
 }

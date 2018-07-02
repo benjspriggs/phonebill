@@ -11,7 +11,7 @@ import static org.hamcrest.core.IsNull.nullValue;
 
 public class PhoneBillTest {
     /**
-     * Phone Bills have a customer name.
+     * PhoneBills have a customer name.
      */
     @Test
     public void getCustomer() {
@@ -34,7 +34,7 @@ public class PhoneBillTest {
     }
 
     private AbstractPhoneCall getPhoneCall() {
-        return new PhoneCall();
+        return new PhoneCall("", "", "", "");
     }
 
     /**

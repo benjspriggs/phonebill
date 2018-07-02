@@ -44,13 +44,23 @@ public class Project1 {
   }
 
   public static void main(String[] args) {
-    PhoneCall call = new PhoneCall();  // Refer to one of Dave's classes so that we can be sure it is on the classpath
-    System.err.println("Missing command line arguments");
-    for (String arg : args) {
-      System.out.println(arg);
+    if (args.length < ARGUMENTS.size() + 2) {
+      System.err.println("Missing command line arguments");
+      for (String arg : args) {
+        System.out.println(arg);
+      }
+      System.err.println(usage());
+      System.exit(1);
     }
-    System.err.println(usage());
-    System.exit(1);
+
+    PhoneBill bill = new PhoneBill(args[0]);
+    PhoneCall call = new PhoneCall(args[1], args[2],
+            String.format("%s %s", args[3], args[4]),
+            String.format("%s %s", args[5], args[6]));
+    bill.addPhoneCall(call);
+
+    System.out.println(bill.toString());
+    System.out.println(call.toString());
   }
 
 }

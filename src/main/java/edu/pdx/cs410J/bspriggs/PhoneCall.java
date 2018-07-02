@@ -3,23 +3,35 @@ package edu.pdx.cs410J.bspriggs;
 import edu.pdx.cs410J.AbstractPhoneCall;
 
 public class PhoneCall extends AbstractPhoneCall {
+  private final String caller;
+  private final String callee;
+  private final String startTime;
+  private final String endTime;
+
+  PhoneCall(String caller, String callee, String s, String s1) {
+    this.caller = caller;
+    this.callee = callee;
+    this.startTime = s;
+    this.endTime = s1;
+  }
+
   @Override
   public String getCaller() {
-    throw new UnsupportedOperationException("This method is not implemented yet");
+    return this.caller;
   }
 
   @Override
   public String getCallee() {
-    return "This method is not implemented yet";
+    return this.callee;
   }
 
   @Override
   public String getStartTimeString() {
-    throw new UnsupportedOperationException("This method is not implemented yet");
+    return this.startTime;
   }
 
   @Override
   public String getEndTimeString() {
-    throw new UnsupportedOperationException("This method is not implemented yet");
+    return this.endTime;
   }
 }
