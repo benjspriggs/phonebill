@@ -44,6 +44,20 @@ public class Project1 {
   }
 
   public static void main(String[] args) {
+      boolean print = false;
+
+      for (String arg : args) {
+          if (arg.equals("-README")) {
+              System.out.println("Here's some header text\n" +
+                      usage());
+              System.exit(0);
+          }
+
+          if (arg.equals("-print")) {
+              print = true;
+          }
+      }
+
     if (args.length < ARGUMENTS.size() + 2) {
       System.err.println("Missing command line arguments");
       for (String arg : args) {
@@ -60,8 +74,10 @@ public class Project1 {
               String.format("%s %s", args[5], args[6]));
       bill.addPhoneCall(call);
 
-      System.out.println(bill.toString());
-      System.out.println(call.toString());
+        if (print) {
+            System.out.println(bill.toString());
+            System.out.println(call.toString());
+        }
     } catch (Exception e) {
       System.err.println(e.getMessage());
     }
