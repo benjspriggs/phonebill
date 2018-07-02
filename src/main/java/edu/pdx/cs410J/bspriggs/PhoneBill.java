@@ -10,6 +10,11 @@ public class PhoneBill extends AbstractPhoneBill {
     private final String customer;
     private LinkedList<AbstractPhoneCall> calls;
 
+    /**
+     * Initializes a {@link PhoneBill} using a customer's name.
+     *
+     * @param customerName The customer's name.
+     */
     PhoneBill(String customerName) {
         this.customer = customerName;
         this.calls = new LinkedList<>();
