@@ -18,7 +18,7 @@ public class TextDumperTest {
         var out = new ByteArrayOutputStream();
         var outputStream = new DataOutputStream(out);
 
-        dumper.dumpTo(outputStream);
+        dumper.dumpTo(null, outputStream);
         assertEquals("", new String(out.toByteArray()));
     }
 
@@ -27,12 +27,12 @@ public class TextDumperTest {
      */
     @Test
     public void testDumpToSinglePhoneCall() {
-        var bill = new PhoneBill();
-        var dumper = new TextDumper(bill);
+        var bill = new PhoneBill("name");
+        var dumper = new TextDumper();
         var out = new ByteArrayOutputStream();
         var outputStream = new DataOutputStream(out);
 
-        dumper.dumpTo(outputStream);
+        dumper.dumpTo(bill, outputStream);
         assertEquals(bill.toString(), new String(out.toByteArray()));
     }
 }
