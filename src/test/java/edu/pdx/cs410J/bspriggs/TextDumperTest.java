@@ -1,9 +1,11 @@
 package edu.pdx.cs410J.bspriggs;
 
+import edu.pdx.cs410J.AbstractPhoneCall;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -56,8 +58,11 @@ public class TextDumperTest {
         var dumper = new TextDumper();
         var out = new ByteArrayOutputStream();
         var outputStream = new DataOutputStream(out);
+        var calls = bill.getPhoneCalls().parallelStream()
+                .map(call -> TextDumper.serialize((AbstractPhoneCall) call))
+                .collect(Collectors.joining("\n"));
 
         dumper.dumpTo(bill, outputStream);
-        assertEquals(bill.toString(), new String(out.toByteArray()));
+        assertEquals(bill.toString() + "\n" + calls, new String(out.toByteArray()));
     }
 }
