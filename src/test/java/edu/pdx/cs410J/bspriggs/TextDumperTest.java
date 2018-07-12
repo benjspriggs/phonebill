@@ -45,9 +45,9 @@ public class TextDumperTest {
         var bill = new PhoneBill("name");
 
         try {
-            bill.addPhoneCall(new PhoneCall("foo", "bar", "2/2/2 00:00", "2/2/3 0:00"));
-            bill.addPhoneCall(new PhoneCall("foo", "bar", "2/2/2 00:00", "2/2/3 0:00"));
-            bill.addPhoneCall(new PhoneCall("foo", "bar", "2/2/2 00:00", "2/2/3 0:00"));
+            bill.addPhoneCall(new PhoneCall("503-333-3333", "503-333-3333", "2/2/2 00:00", "2/2/3 0:00"));
+            bill.addPhoneCall(new PhoneCall("503-333-3333", "503-333-3333", "2/2/2 00:00", "2/2/3 0:00"));
+            bill.addPhoneCall(new PhoneCall("503-333-3333", "503-333-3333", "2/2/2 00:00", "2/2/3 0:00"));
         } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
