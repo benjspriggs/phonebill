@@ -86,7 +86,7 @@ public class TextDumperTest {
         var dumper = new TextDumper();
         var out = new ByteArrayOutputStream();
         var outputStream = new DataOutputStream(out);
-        var calls = bill.getPhoneCalls().parallelStream()
+        var calls = bill.getPhoneCalls().stream()
                 .map(TextDumper::serialize)
                 .collect(Collectors.joining(newline));
 
