@@ -47,7 +47,7 @@ public class TextDumperTest {
         var outputStream = new DataOutputStream(out);
 
         dumper.dumpTo(bill, outputStream);
-        assertEquals(bill.toString(), new String(out.toByteArray()));
+        assertEquals(bill.getCustomer(), new String(out.toByteArray()));
     }
 
     /**
@@ -74,7 +74,7 @@ public class TextDumperTest {
                 .collect(Collectors.joining("\n"));
 
         dumper.dumpTo(bill, outputStream);
-        assertEquals(bill.toString() + "\n" + calls, new String(out.toByteArray()));
+        assertEquals(bill.getCustomer() + "\n" + calls, new String(out.toByteArray()));
     }
 
     /**
@@ -90,7 +90,7 @@ public class TextDumperTest {
 
             dumper.dump(bill);
 
-            assertEquals(bill.toString(), String.join("\n", Files.readAllLines(emptyFile.toPath(), Charset.defaultCharset())));
+            assertEquals(bill.getCustomer(), String.join("\n", Files.readAllLines(emptyFile.toPath(), Charset.defaultCharset())));
         } catch (IOException e) {
             e.printStackTrace();
         }
