@@ -4,6 +4,7 @@ import edu.pdx.cs410J.AbstractPhoneCall;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertTrue;
+import static junit.framework.TestCase.fail;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -35,9 +36,9 @@ public class PhoneBillTest {
 
     private AbstractPhoneCall getPhoneCall() {
         try {
-            return new PhoneCall("", "", "", "");
+            return new PhoneCall("555-555-5555", "555-555-5555", "1/1/1 0:00", "1/1/1 0:00");
         } catch (Exception e) {
-            e.printStackTrace();
+            fail(e.getMessage());
             return null;
         }
     }
