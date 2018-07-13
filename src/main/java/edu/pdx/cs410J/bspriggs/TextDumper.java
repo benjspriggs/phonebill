@@ -34,6 +34,10 @@ public class TextDumper implements edu.pdx.cs410J.PhoneBillDumper {
     }
 
     public void dumpTo(AbstractPhoneBill phoneBill, OutputStream outputStream) throws IOException {
+        if (phoneBill == null) {
+            return;
+        }
+
         outputStream.write(phoneBill.getCustomer().getBytes());
         outputStream.write(System.getProperty("line.separator").getBytes());
         for (Object b : phoneBill.getPhoneCalls()) {
@@ -43,14 +47,15 @@ public class TextDumper implements edu.pdx.cs410J.PhoneBillDumper {
     }
 
     @Override
-    public void dump(AbstractPhoneBill abstractPhoneBill) {
+    public void dump(AbstractPhoneBill abstractPhoneBill) throws IOException {
         var file = new File(this.fileName);
 
-        try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
-            dumpTo(abstractPhoneBill, fileOutputStream);
-        } catch (IOException e) {
-            throw new RuntimeException();
-            // e.printStackTrace();
+        if (file.length() != 0) {
+            throw new IOException("file not empty: " + file.length());
         }
+
+        FileOutputStream fileOutputStream = new FileOutputStream(file);
+
+        dumpTo(abstractPhoneBill, fileOutputStream);
     }
 }
