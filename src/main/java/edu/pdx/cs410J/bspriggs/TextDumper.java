@@ -13,7 +13,8 @@ public class TextDumper implements edu.pdx.cs410J.PhoneBillDumper {
     /**
      * Delimiter used to separate fields in a {@link PhoneCall}. See {@link TextDumper::serizlize}.
      */
-    private static String DELIMITER = "|";
+    public static final String DELIMITER = "|";
+    public static final String NEWLINE = System.getProperty("line.separator");
 
     public TextDumper(String fileName) {
         this.fileName = fileName;
@@ -39,10 +40,10 @@ public class TextDumper implements edu.pdx.cs410J.PhoneBillDumper {
         }
 
         outputStream.write(phoneBill.getCustomer().getBytes());
-        outputStream.write(System.getProperty("line.separator").getBytes());
+        outputStream.write(NEWLINE.getBytes());
         for (Object b : phoneBill.getPhoneCalls()) {
             outputStream.write(serialize((AbstractPhoneCall) b).getBytes());
-            outputStream.write(System.getProperty("line.separator").getBytes());
+            outputStream.write(NEWLINE.getBytes());
         }
     }
 
