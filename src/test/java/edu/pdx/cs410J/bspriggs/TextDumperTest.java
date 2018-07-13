@@ -40,6 +40,15 @@ public class TextDumperTest {
         return bill;
     }
 
+    @Test
+    public void testDumpToHandlesNull() throws IOException {
+        var dumper = new TextDumper();
+        var out = new ByteArrayOutputStream();
+        var outputStream = new DataOutputStream(out);
+
+        dumper.dumpTo(null, outputStream);
+    }
+
     /**
      * Tests that dumping an empty phone bill returns nothing.
      */
@@ -111,21 +120,17 @@ public class TextDumperTest {
      * Tests that if a file already exists {@link TextDumper} throws an exception.
      */
     @Test
-    public void testDumpExistingFile() {
-        try {
-            File emptyFile = folder.newFile();
+    public void testDumpExistingFile() throws IOException {
+        File emptyFile = folder.newFile();
 
-            var bill = getPopulatedPhoneBill();
+        var bill = getPopulatedPhoneBill();
 
-            var dumper = new TextDumper(emptyFile.getName());
+        var dumper = new TextDumper(emptyFile.getAbsolutePath());
 
-            dumper.dump(bill);
+        dumper.dump(bill);
 
-            thrown.expect(Exception.class);
+        thrown.expect(IOException.class);
 
-            dumper.dump(bill);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        dumper.dump(bill);
     }
 }
