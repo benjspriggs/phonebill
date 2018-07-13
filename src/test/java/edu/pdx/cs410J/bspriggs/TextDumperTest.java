@@ -1,5 +1,6 @@
 package edu.pdx.cs410J.bspriggs;
 
+import edu.pdx.cs410J.AbstractPhoneBill;
 import edu.pdx.cs410J.AbstractPhoneCall;
 import org.junit.Rule;
 import org.junit.Test;
@@ -22,6 +23,21 @@ public class TextDumperTest {
     public TemporaryFolder folder = new TemporaryFolder();
     @Rule
     public ExpectedException thrown = ExpectedException.none();
+
+    public static AbstractPhoneBill getPopulatedPhoneBill() {
+        var bill = new PhoneBill("name");
+
+        try {
+            bill.addPhoneCall(new PhoneCall("503-333-3333", "503-333-3333", "2/2/2 00:00", "2/2/3 0:00"));
+            bill.addPhoneCall(new PhoneCall("503-333-3333", "503-333-3333", "2/2/2 00:00", "2/2/3 0:00"));
+            bill.addPhoneCall(new PhoneCall("503-333-3333", "503-333-3333", "2/2/2 00:00", "2/2/3 0:00"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+        }
+
+        return bill;
+    }
 
     /**
      * Tests that dumping an empty phone bill returns nothing.
@@ -55,16 +71,7 @@ public class TextDumperTest {
      */
     @Test
     public void testDumpToMultiplePhoneCalls() {
-        var bill = new PhoneBill("name");
-
-        try {
-            bill.addPhoneCall(new PhoneCall("503-333-3333", "503-333-3333", "2/2/2 00:00", "2/2/3 0:00"));
-            bill.addPhoneCall(new PhoneCall("503-333-3333", "503-333-3333", "2/2/2 00:00", "2/2/3 0:00"));
-            bill.addPhoneCall(new PhoneCall("503-333-3333", "503-333-3333", "2/2/2 00:00", "2/2/3 0:00"));
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-        }
+        var bill = getPopulatedPhoneBill();
 
         var dumper = new TextDumper();
         var out = new ByteArrayOutputStream();
@@ -104,16 +111,7 @@ public class TextDumperTest {
         try {
             File emptyFile = folder.newFile();
 
-            var bill = new PhoneBill("name");
-
-            try {
-                bill.addPhoneCall(new PhoneCall("503-333-3333", "503-333-3333", "2/2/2 00:00", "2/2/3 0:00"));
-                bill.addPhoneCall(new PhoneCall("503-333-3333", "503-333-3333", "2/2/2 00:00", "2/2/3 0:00"));
-                bill.addPhoneCall(new PhoneCall("503-333-3333", "503-333-3333", "2/2/2 00:00", "2/2/3 0:00"));
-            } catch (Exception e) {
-                e.printStackTrace();
-                fail(e.getMessage());
-            }
+            var bill = getPopulatedPhoneBill();
 
             var dumper = new TextDumper(emptyFile.getName());
 
