@@ -104,7 +104,7 @@ public class TextDumperTest {
             File emptyFile = folder.newFile();
 
             var bill = new PhoneBill("name");
-            var dumper = new TextDumper(emptyFile.getAbsolutePath());
+            var dumper = new TextDumper(emptyFile.toPath());
 
             dumper.dump(bill);
 
@@ -125,7 +125,7 @@ public class TextDumperTest {
 
         var bill = getPopulatedPhoneBill();
 
-        var dumper = new TextDumper(emptyFile.getAbsolutePath());
+        var dumper = new TextDumper(emptyFile.toPath());
 
         dumper.dump(bill);
 

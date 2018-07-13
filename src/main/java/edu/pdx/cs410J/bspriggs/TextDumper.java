@@ -3,25 +3,25 @@ package edu.pdx.cs410J.bspriggs;
 import edu.pdx.cs410J.AbstractPhoneBill;
 import edu.pdx.cs410J.AbstractPhoneCall;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Path;
 
 public class TextDumper implements edu.pdx.cs410J.PhoneBillDumper {
-    private final String fileName;
+    private final Path path;
     /**
      * Delimiter used to separate fields in a {@link PhoneCall}. See {@link TextDumper::serizlize}.
      */
     public static final String DELIMITER = "|";
     public static final String NEWLINE = System.getProperty("line.separator");
 
-    public TextDumper(String fileName) {
-        this.fileName = fileName;
+    public TextDumper(Path path) {
+        this.path = path;
     }
 
     public TextDumper() {
-        this.fileName = "";
+        this.path = null;
     }
 
     /**
@@ -49,7 +49,7 @@ public class TextDumper implements edu.pdx.cs410J.PhoneBillDumper {
 
     @Override
     public void dump(AbstractPhoneBill abstractPhoneBill) throws IOException {
-        var file = new File(this.fileName);
+        var file = this.path.toFile();
 
         if (file.length() != 0) {
             throw new IOException("file not empty: " + file.length());

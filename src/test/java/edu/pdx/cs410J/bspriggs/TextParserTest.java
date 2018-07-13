@@ -34,7 +34,7 @@ public class TextParserTest {
     public void testParseEmpyPhoneBill() throws IOException, ParserException {
         var file = folder.newFile();
         var bill = new PhoneBill("name");
-        var dumper = new TextDumper(file.getPath());
+        var dumper = new TextDumper(file.toPath());
         var parser = new TextParser(file.toPath());
 
         dumper.dump(bill);
@@ -50,7 +50,7 @@ public class TextParserTest {
         var file = folder.newFile();
         var bill = TextDumperTest.getPopulatedPhoneBill();
 
-        var dumper = new TextDumper(file.getPath());
+        var dumper = new TextDumper(file.toPath());
         var parser = new TextParser(file.toPath());
 
         dumper.dump(bill);
@@ -75,7 +75,7 @@ public class TextParserTest {
         var file = folder.newFile();
         var bill = TextDumperTest.getPopulatedPhoneBill();
 
-        var dumper = new TextDumper(file.getPath());
+        var dumper = new TextDumper(file.toPath());
         var parser = new TextParser(file.toPath());
         var dummyString = "dummy string";
 
