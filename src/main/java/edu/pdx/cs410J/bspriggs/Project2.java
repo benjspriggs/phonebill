@@ -92,6 +92,7 @@ public class Project2 {
 
         try {
             // TODO: do the thing
+            System.exit(0);
         } catch (Exception e) {
             System.err.println(e.getMessage());
             System.err.println(usage());
