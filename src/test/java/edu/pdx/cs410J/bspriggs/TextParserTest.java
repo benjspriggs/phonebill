@@ -7,9 +7,10 @@ import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.IOException;
-import java.text.ParseException;
 
-import static junit.framework.TestCase.assertEquals;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class TextParserTest {
     @Rule
@@ -23,7 +24,7 @@ public class TextParserTest {
         var file = folder.newFile();
         var parser = new TextParser(file.toPath());
 
-        thrown.expect(ParseException.class);
+        thrown.expect(ParserException.class);
 
         parser.parse();
     }
@@ -36,8 +37,11 @@ public class TextParserTest {
         var parser = new TextParser(file.toPath());
 
         dumper.dump(bill);
+        var parsedBill = parser.parse();
 
-        assertEquals(bill, parser.parse());
+        assertThat(parsedBill.getCustomer(), is(equalTo(bill.getCustomer())));
+        // hamcrest doesn't have a 'contains all'
+        assertThat(parsedBill.getPhoneCalls().toString(), (equalTo(bill.getPhoneCalls().toString())));
     }
 
     @Test
@@ -49,7 +53,10 @@ public class TextParserTest {
         var parser = new TextParser(file.toPath());
 
         dumper.dump(bill);
+        var parsedBill = parser.parse();
 
-        assertEquals(bill, parser.parse());
+        assertThat(parsedBill.getCustomer(), is(equalTo(bill.getCustomer())));
+        // hamcrest doesn't have a 'contains all'
+        assertThat(parsedBill.getPhoneCalls().toString(), (equalTo(bill.getPhoneCalls().toString())));
     }
 }
