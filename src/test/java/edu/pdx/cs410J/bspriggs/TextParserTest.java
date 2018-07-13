@@ -1,5 +1,6 @@
 package edu.pdx.cs410J.bspriggs;
 
+import edu.pdx.cs410J.ParserException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -9,7 +10,6 @@ import java.io.IOException;
 import java.text.ParseException;
 
 import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.fail;
 
 public class TextParserTest {
     @Rule
@@ -19,49 +19,37 @@ public class TextParserTest {
 
 
     @Test
-    public void testParseEmptyFileRaisesException() {
-        try {
-            var file = folder.newFile();
-            var parser = new TextParser(file.toPath());
+    public void testParseEmptyFileRaisesException() throws IOException, ParserException {
+        var file = folder.newFile();
+        var parser = new TextParser(file.toPath());
 
-            thrown.expect(ParseException.class);
+        thrown.expect(ParseException.class);
 
-            parser.parse();
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
+        parser.parse();
     }
 
     @Test
-    public void testParseEmpyPhoneBill() {
-        try {
-            var file = folder.newFile();
-            var bill = new PhoneBill("name");
-            var dumper = new TextDumper(file.getPath());
-            var parser = new TextParser(file.toPath());
+    public void testParseEmpyPhoneBill() throws IOException, ParserException {
+        var file = folder.newFile();
+        var bill = new PhoneBill("name");
+        var dumper = new TextDumper(file.getPath());
+        var parser = new TextParser(file.toPath());
 
-            dumper.dump(bill);
+        dumper.dump(bill);
 
-            assertEquals(bill, parser.parse());
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
+        assertEquals(bill, parser.parse());
     }
 
     @Test
-    public void testParsePopulatedPhoneBill() {
-        try {
-            var file = folder.newFile();
-            var bill = TextDumperTest.getPopulatedPhoneBill();
+    public void testParsePopulatedPhoneBill() throws IOException, ParserException {
+        var file = folder.newFile();
+        var bill = TextDumperTest.getPopulatedPhoneBill();
 
-            var dumper = new TextDumper(file.getPath());
-            var parser = new TextParser(file.toPath());
+        var dumper = new TextDumper(file.getPath());
+        var parser = new TextParser(file.toPath());
 
-            dumper.dump(bill);
+        dumper.dump(bill);
 
-            assertEquals(bill, parser.parse());
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
+        assertEquals(bill, parser.parse());
     }
 }
