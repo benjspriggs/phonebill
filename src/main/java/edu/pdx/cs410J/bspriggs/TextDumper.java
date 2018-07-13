@@ -3,7 +3,10 @@ package edu.pdx.cs410J.bspriggs;
 import edu.pdx.cs410J.AbstractPhoneBill;
 import edu.pdx.cs410J.AbstractPhoneCall;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 public class TextDumper implements edu.pdx.cs410J.PhoneBillDumper {
     private final String fileName;
@@ -45,9 +48,6 @@ public class TextDumper implements edu.pdx.cs410J.PhoneBillDumper {
 
         try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
             dumpTo(abstractPhoneBill, fileOutputStream);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException();
-            // e.printStackTrace();
         } catch (IOException e) {
             throw new RuntimeException();
             // e.printStackTrace();
