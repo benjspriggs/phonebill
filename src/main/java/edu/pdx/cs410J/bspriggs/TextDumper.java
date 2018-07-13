@@ -3,7 +3,7 @@ package edu.pdx.cs410J.bspriggs;
 import edu.pdx.cs410J.AbstractPhoneBill;
 import edu.pdx.cs410J.AbstractPhoneCall;
 
-import java.io.DataOutputStream;
+import java.io.*;
 
 public class TextDumper implements edu.pdx.cs410J.PhoneBillDumper {
     private final String fileName;
@@ -30,12 +30,27 @@ public class TextDumper implements edu.pdx.cs410J.PhoneBillDumper {
         return String.join(TextDumper.DELIMITER, call.getCaller(), call.getCallee(), call.getStartTimeString(), call.getEndTimeString());
     }
 
-    public void dumpTo(AbstractPhoneBill phoneBill, DataOutputStream dataOutputStream) {
-
+    public void dumpTo(AbstractPhoneBill phoneBill, OutputStream outputStream) throws IOException {
+        outputStream.write(phoneBill.getCustomer().getBytes());
+        outputStream.write(System.getProperty("line.separator").getBytes());
+        for (Object b : phoneBill.getPhoneCalls()) {
+            outputStream.write(serialize((AbstractPhoneCall) b).getBytes());
+            outputStream.write(System.getProperty("line.separator").getBytes());
+        }
     }
 
     @Override
     public void dump(AbstractPhoneBill abstractPhoneBill) {
+        var file = new File(this.fileName);
 
+        try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
+            dumpTo(abstractPhoneBill, fileOutputStream);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException();
+            // e.printStackTrace();
+        } catch (IOException e) {
+            throw new RuntimeException();
+            // e.printStackTrace();
+        }
     }
 }
