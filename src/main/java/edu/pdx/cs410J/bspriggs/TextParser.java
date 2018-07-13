@@ -26,7 +26,7 @@ public class TextParser implements edu.pdx.cs410J.PhoneBillParser {
             var lines = Files.readAllLines(this.path, Charset.defaultCharset());
 
             if (lines.size() == 0) {
-                throw new ParserException("Malformatted PhoneBill, missing customer name");
+                throw new ParserException("Malformed PhoneBill, missing customer name");
             }
 
             var customer = lines.remove(0);
