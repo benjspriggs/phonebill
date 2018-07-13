@@ -61,7 +61,7 @@ public class Project2IT extends InvokeMainTestCase {
     public void testREADME() {
         MainMethodResult result = invokeMain("-README");
         assertThat(result.getExitCode(), equalTo(0));
-        assertThat(result.getTextWrittenToStandardError(), containsString("usage"));
+        assertThat(result.getTextWrittenToStandardOut(), containsString("usage"));
     }
 
     /**
