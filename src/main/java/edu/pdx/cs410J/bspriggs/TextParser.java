@@ -4,8 +4,6 @@ import edu.pdx.cs410J.AbstractPhoneBill;
 import edu.pdx.cs410J.AbstractPhoneCall;
 import edu.pdx.cs410J.ParserException;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -43,10 +41,6 @@ public class TextParser implements edu.pdx.cs410J.PhoneBillParser {
 
                 phoneBill.addPhoneCall(call);
             }
-        } catch (FileNotFoundException e) {
-            throw new ParserException(e.getMessage());
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             throw new ParserException(e.getMessage());
         }
