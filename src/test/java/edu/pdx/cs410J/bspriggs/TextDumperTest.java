@@ -23,8 +23,9 @@ public class TextDumperTest {
     public TemporaryFolder folder = new TemporaryFolder();
     @Rule
     public ExpectedException thrown = ExpectedException.none();
+    private final String newline = System.getProperty("line.separator");
 
-    public static AbstractPhoneBill getPopulatedPhoneBill() {
+    public static AbstractPhoneBill<AbstractPhoneCall> getPopulatedPhoneBill() {
         var bill = new PhoneBill("name");
 
         try {
@@ -43,7 +44,7 @@ public class TextDumperTest {
      * Tests that dumping an empty phone bill returns nothing.
      */
     @Test
-    public void testDumpToEmptyPhoneBill() {
+    public void testDumpToEmptyPhoneBill() throws IOException {
         var dumper = new TextDumper();
         var out = new ByteArrayOutputStream();
         var outputStream = new DataOutputStream(out);
@@ -56,32 +57,33 @@ public class TextDumperTest {
      * Tests that dumping a phone bill with only one call returns that one phone bill.
      */
     @Test
-    public void testDumpToSinglePhoneCall() {
+    public void testDumpToSinglePhoneCall() throws IOException {
         var bill = new PhoneBill("name");
         var dumper = new TextDumper();
         var out = new ByteArrayOutputStream();
         var outputStream = new DataOutputStream(out);
 
         dumper.dumpTo(bill, outputStream);
-        assertEquals(bill.getCustomer(), new String(out.toByteArray()));
+        assertEquals(bill.getCustomer() + newline, new String(out.toByteArray()));
     }
 
     /**
      * Tests that dumping multiple calls is the same as the toString.
      */
     @Test
-    public void testDumpToMultiplePhoneCalls() {
+    public void testDumpToMultiplePhoneCalls() throws IOException {
         var bill = getPopulatedPhoneBill();
 
         var dumper = new TextDumper();
         var out = new ByteArrayOutputStream();
         var outputStream = new DataOutputStream(out);
         var calls = bill.getPhoneCalls().parallelStream()
-                .map(call -> TextDumper.serialize((AbstractPhoneCall) call))
-                .collect(Collectors.joining("\n"));
+                .map(TextDumper::serialize)
+                .collect(Collectors.joining(newline));
 
         dumper.dumpTo(bill, outputStream);
-        assertEquals(bill.getCustomer() + "\n" + calls, new String(out.toByteArray()));
+
+        assertEquals(bill.getCustomer() + newline + calls + newline, new String(out.toByteArray()));
     }
 
     /**
@@ -93,11 +95,13 @@ public class TextDumperTest {
             File emptyFile = folder.newFile();
 
             var bill = new PhoneBill("name");
-            var dumper = new TextDumper(emptyFile.getName());
+            var dumper = new TextDumper(emptyFile.getAbsolutePath());
 
             dumper.dump(bill);
 
-            assertEquals(bill.getCustomer(), String.join("\n", Files.readAllLines(emptyFile.toPath(), Charset.defaultCharset())));
+            var lines = Files.readAllLines(emptyFile.toPath(), Charset.defaultCharset());
+
+            assertEquals(bill.getCustomer(), String.join(newline, lines));
         } catch (IOException e) {
             e.printStackTrace();
         }
