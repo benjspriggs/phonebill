@@ -32,14 +32,6 @@ public class PhoneCall extends AbstractPhoneCall {
         return in;
     }
 
-    private String validateDate(String in) throws ParseException {
-        if (dateFormat.parse(in) == null) {
-            throw new ParseException(in, 0);
-        }
-
-        return in;
-    }
-
     @Override
     public String getCaller() {
         return this.caller;
