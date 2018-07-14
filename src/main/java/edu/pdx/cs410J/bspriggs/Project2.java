@@ -1,5 +1,6 @@
 package edu.pdx.cs410J.bspriggs;
 
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -91,7 +92,30 @@ public class Project2 {
         }
 
         try {
-            // TODO: do the thing
+            PhoneBill bill = new PhoneBill(args[ptr++]);
+
+            // open the file
+            if (filename.length() > 0) {
+                TextParser textParser = new TextParser(Paths.get(filename));
+                bill = (PhoneBill) textParser.parse();
+            }
+
+            PhoneCall call = Project1.parsePhoneCallFromArguments(Arrays.copyOfRange(args, ptr, args.length));
+
+            bill.addPhoneCall(call);
+
+            // print the stuff
+            if (print) {
+                System.out.println(bill.toString());
+                System.out.println(call.toString());
+            }
+
+            // dump the file
+            if (filename.length() > 0) {
+                TextDumper textDumper = new TextDumper(Paths.get(filename));
+                textDumper.dump(bill);
+            }
+
             System.exit(0);
         } catch (Exception e) {
             System.err.println(e.getMessage());
