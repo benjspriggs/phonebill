@@ -55,12 +55,12 @@ public class Project1 {
     }
 
     public static String[] sliceArgumentsForPhoneCallParsing(String[] args, int ptr) {
-        return Arrays.copyOfRange(args, ptr - 1, args.length);
+        return Arrays.copyOfRange(args, ptr, args.length);
     }
 
     public static void validateArguments(List<Map.Entry<String, String>> arguments, String[] args, int ptr) {
-        if (args.length - ptr != ARGUMENTS.size() + 1) {
-            if (args.length - ptr < ARGUMENTS.size() + 1)
+        if (args.length - ptr != arguments.size() + 1) {
+            if (args.length - ptr < arguments.size() + 1)
                 System.err.println("Missing command line arguments");
             else
                 System.err.println("Extra command line arguments");
@@ -96,10 +96,11 @@ public class Project1 {
             }
         }
 
-        validateArguments(ARGUMENTS, args, ptr);
-
         try {
             PhoneBill bill = new PhoneBill(args[ptr++]);
+
+            validateArguments(ARGUMENTS, args, ptr);
+
             PhoneCall call = parsePhoneCallFromArguments(sliceArgumentsForPhoneCallParsing(args, ptr));
 
             bill.addPhoneCall(call);
