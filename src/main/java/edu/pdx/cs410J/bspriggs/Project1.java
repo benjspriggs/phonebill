@@ -1,5 +1,6 @@
 package edu.pdx.cs410J.bspriggs;
 
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,16 @@ public class Project1 {
                 "Date and time should be in the format: mm/dd/yyyy hh:mm";
     }
 
+    public static PhoneCall parsePhoneCallFromArguments(String[] args) throws ParseException {
+        int ptr = 0;
+
+        PhoneCall call = new PhoneCall(args[ptr++], args[ptr++],
+                String.format("%s %s", args[ptr++], args[ptr++]),
+                String.format("%s %s", args[ptr++], args[ptr]));
+
+        return call;
+    }
+
     public static void main(String[] args) {
         if (args == null || args.length == 0) {
             System.err.println("Missing command line arguments");
@@ -82,9 +93,8 @@ public class Project1 {
 
         try {
             PhoneBill bill = new PhoneBill(args[ptr++]);
-            PhoneCall call = new PhoneCall(args[ptr++], args[ptr++],
-                    String.format("%s %s", args[ptr++], args[ptr++]),
-                    String.format("%s %s", args[ptr++], args[ptr]));
+            PhoneCall call = parsePhoneCallFromArguments(Arrays.copyOfRange(args, ptr, args.length));
+
             bill.addPhoneCall(call);
 
             if (print) {
