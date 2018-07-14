@@ -116,7 +116,6 @@ public class Project2 {
                 textDumper.dump(bill);
             }
 
-            System.exit(0);
         } catch (Exception e) {
             System.err.println(e.getMessage());
             System.err.println(usage());
