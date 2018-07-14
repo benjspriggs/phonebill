@@ -54,6 +54,10 @@ public class Project1 {
         return call;
     }
 
+    public static String[] sliceArgumentsForPhoneCallParsing(String[] args, int ptr) {
+        return Arrays.copyOfRange(args, ptr - 1, args.length);
+    }
+
     public static void main(String[] args) {
         if (args == null || args.length == 0) {
             System.err.println("Missing command line arguments");
@@ -93,7 +97,7 @@ public class Project1 {
 
         try {
             PhoneBill bill = new PhoneBill(args[ptr++]);
-            PhoneCall call = parsePhoneCallFromArguments(Arrays.copyOfRange(args, ptr, args.length));
+            PhoneCall call = parsePhoneCallFromArguments(sliceArgumentsForPhoneCallParsing(args, ptr));
 
             bill.addPhoneCall(call);
 
