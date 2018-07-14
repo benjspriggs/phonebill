@@ -11,7 +11,7 @@ import static java.util.Map.entry;
  * The main class for the CS410J Phone Bill Project
  */
 public class Project1 {
-    private static final List<Map.Entry<String, String>> ARGUMENTS = Arrays.asList(
+    public static final List<Map.Entry<String, String>> ARGUMENTS = Arrays.asList(
             entry("customer", "Person whose phone bill we’re modeling"),
             entry("callerNumber", "Phone number of caller"),
             entry("calleeNumber", "Phone number of person who was called"),
@@ -19,7 +19,7 @@ public class Project1 {
             entry("endTime", "Date and time call ended (24-hour time)")
     );
 
-    private static final List<Map.Entry<String, String>> OPTIONS = Arrays.asList(
+    public static final List<Map.Entry<String, String>> OPTIONS = Arrays.asList(
             entry("-print", "Prints a description of the new phone call"),
             entry("-README", "Prints a README for this project and exits")
     );

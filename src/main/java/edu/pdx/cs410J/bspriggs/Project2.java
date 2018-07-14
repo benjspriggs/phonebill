@@ -10,14 +10,6 @@ import java.util.Map;
 import static java.util.Map.entry;
 
 public class Project2 {
-    private static final List<Map.Entry<String, String>> ARGUMENTS = Arrays.asList(
-            entry("customer", "Person whose phone bill we’re modeling"),
-            entry("callerNumber", "Phone number of caller"),
-            entry("calleeNumber", "Phone number of person who was called"),
-            entry("startTime", "Date and time call began (24-hour time)"),
-            entry("endTime", "Date and time call ended (24-hour time)")
-    );
-
     private static final List<Map.Entry<String, String>> OPTIONS = Arrays.asList(
             entry("-print", "Prints a description of the new phone call"),
             entry("-README", "Prints a README for this project and exits"),
@@ -38,7 +30,7 @@ public class Project2 {
     private static String usage() {
         return "usage: java edu.pdx.cs410J.bspriggs.Project2 [options] <args>\n" +
                 "args are (in this order):\n" +
-                build(ARGUMENTS) +
+                build(Project1.ARGUMENTS) +
                 "options are (options may appear in any order):\n" +
                 build(OPTIONS) +
                 "Date and time should be in the format: mm/dd/yyyy hh:mm";
@@ -79,8 +71,8 @@ public class Project2 {
         }
 
         // parse args
-        if (args.length - ptr != ARGUMENTS.size() + 1) {
-            if (args.length - ptr < ARGUMENTS.size() + 1)
+        if (args.length - ptr != Project1.ARGUMENTS.size() + 1) {
+            if (args.length - ptr < Project1.ARGUMENTS.size() + 1)
                 System.err.println("Missing command line arguments");
             else
                 System.err.println("Extra command line arguments");
