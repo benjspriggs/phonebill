@@ -1,5 +1,6 @@
 package edu.pdx.cs410J.bspriggs;
 
+import edu.pdx.cs410J.AbstractPhoneBill;
 import edu.pdx.cs410J.InvokeMainTestCase;
 import org.junit.Rule;
 import org.junit.Test;
@@ -35,11 +36,15 @@ public class Project2IT extends InvokeMainTestCase {
         return "555-555-5555";
     }
 
-    private File generateExistingPhoneBill() throws IOException {
+    private File generateExistingPhoneBill(AbstractPhoneBill with) throws IOException {
         File file = folder.newFile();
         TextDumper dumper = new TextDumper(file.toPath());
 
-        dumper.dump(TextDumperTest.getPopulatedPhoneBill());
+        if (with == null) {
+            with = TextDumperTest.getPopulatedPhoneBill();
+        }
+
+        dumper.dump(with);
 
         return file;
     }
@@ -89,9 +94,30 @@ public class Project2IT extends InvokeMainTestCase {
      */
     @Test
     public void testExistingPhoneBill() throws IOException {
-        File existingPhoneBill = generateExistingPhoneBill();
+        var bill = TextDumperTest.getPopulatedPhoneBill();
+        File existingPhoneBill = generateExistingPhoneBill(bill);
 
-        var customer = "customer";
+        var calleeNumber = generatePhoneNumber();
+        var callerNumber = generatePhoneNumber();
+        var startDate = generateDate();
+        var startTime = generateTime();
+        var endDate = generateDate();
+        var endTime = generateTime();
+
+        MainMethodResult result = invokeMain("-textFile", existingPhoneBill.getAbsolutePath(), bill.getCustomer(), callerNumber, calleeNumber, startDate, startTime, endDate, endTime);
+
+        assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(0));
+    }
+
+    /**
+     * Test that providing a different customer exits.
+     */
+    @Test
+    public void testExistingPhoneBillNameMismatch() throws IOException {
+        var bill = TextDumperTest.getPopulatedPhoneBill();
+        File existingPhoneBill = generateExistingPhoneBill(bill);
+
+        var customer = "new customer";
         var calleeNumber = generatePhoneNumber();
         var callerNumber = generatePhoneNumber();
         var startDate = generateDate();
@@ -100,7 +126,6 @@ public class Project2IT extends InvokeMainTestCase {
         var endTime = generateTime();
 
         MainMethodResult result = invokeMain("-textFile", existingPhoneBill.getAbsolutePath(), customer, callerNumber, calleeNumber, startDate, startTime, endDate, endTime);
-
-        assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(0));
+        assertThat(result.getExitCode(), equalTo(1));
     }
 }
