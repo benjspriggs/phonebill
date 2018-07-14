@@ -77,9 +77,9 @@ public class Project2IT extends InvokeMainTestCase {
         var endDate = generateDate();
         var endTime = generateTime();
 
-        MainMethodResult result = invokeMain(customer, callerNumber, calleeNumber, startDate, startTime, endDate, endTime);
+        MainMethodResult result = invokeMain("-textFile", "", customer, callerNumber, calleeNumber, startDate, startTime, endDate, endTime);
 
-        assertThat(result.getExitCode(), equalTo(0));
+        assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(0));
         assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
         assertThat(result.getTextWrittenToStandardError(), equalTo(""));
     }
@@ -101,6 +101,6 @@ public class Project2IT extends InvokeMainTestCase {
 
         MainMethodResult result = invokeMain("-textFile", existingPhoneBill.getAbsolutePath(), customer, callerNumber, calleeNumber, startDate, startTime, endDate, endTime);
 
-        assertThat(result.getExitCode(), equalTo(0));
+        assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(0));
     }
 }
