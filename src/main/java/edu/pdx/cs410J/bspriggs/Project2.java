@@ -54,7 +54,7 @@ public class Project2 {
                 print = true;
             else if (args[ptr].equals("-README")) {
                 System.out.println("Optionally reads a PhoneBill " +
-                        "from the contents of a text file, " +
+                        "from a text file, " +
                         "creates a new PhoneCall as specified on the command line, " +
                         "adds the PhoneCall to the PhoneBill, " +
                         "and then optionally writes the PhoneBill back to the text file.");
@@ -65,23 +65,24 @@ public class Project2 {
                 ptr++;
                 // get filename
                 filename = args[ptr];
-                // advance past filename
-                ptr++;
             }
         }
-
-        Project1.validateArguments(Project1.ARGUMENTS, args, ptr);
 
         try {
             PhoneBill bill = new PhoneBill(args[ptr++]);
 
+            Project1.validateArguments(Project1.ARGUMENTS, args, ptr);
+
             // open the file
             if (filename != null && filename.length() > 0) {
                 TextParser textParser = new TextParser(Paths.get(filename));
-                bill = (PhoneBill) textParser.parse();
+                var parsedBill = (PhoneBill) textParser.parse();
+                if (!parsedBill.getCustomer().equals(bill.getCustomer()))
+                    throw new Exception(String.format(bill.getCustomer(), parsedBill.getCustomer()));
             }
 
-            PhoneCall call = Project1.parsePhoneCallFromArguments(Project1.sliceArgumentsForPhoneCallParsing(args, ptr));
+            var parseableArgs = Project1.sliceArgumentsForPhoneCallParsing(args, ptr);
+            PhoneCall call = Project1.parsePhoneCallFromArguments(parseableArgs);
 
             bill.addPhoneCall(call);
 
