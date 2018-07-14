@@ -1,5 +1,7 @@
 package edu.pdx.cs410J.bspriggs;
 
+import java.io.File;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
@@ -51,11 +53,11 @@ public class Project2 {
 
         int ptr = 0;
         boolean print = false;
-        String filename = "";
+        String filename = null;
 
         // parse options
         // (this is probably better done with the apache commons-cli)
-        for (; args[ptr].equals("-print") || args[ptr].equals("-README"); ++ptr) {
+        for (; args[ptr].equals("-print") || args[ptr].equals("-README") || args[ptr].equals("-textFile"); ++ptr) {
             if (args[ptr].equals("-print"))
                 print = true;
             else if (args[ptr].equals("-README")) {
@@ -77,8 +79,8 @@ public class Project2 {
         }
 
         // parse args
-        if (args.length - ptr != ARGUMENTS.size() + 2) {
-            if (args.length - ptr < ARGUMENTS.size() + 2)
+        if (args.length - ptr != ARGUMENTS.size() + 1) {
+            if (args.length - ptr < ARGUMENTS.size() + 1)
                 System.err.println("Missing command line arguments");
             else
                 System.err.println("Extra command line arguments");
@@ -95,12 +97,12 @@ public class Project2 {
             PhoneBill bill = new PhoneBill(args[ptr++]);
 
             // open the file
-            if (filename.length() > 0) {
+            if (filename != null && filename.length() > 0) {
                 TextParser textParser = new TextParser(Paths.get(filename));
                 bill = (PhoneBill) textParser.parse();
             }
 
-            PhoneCall call = Project1.parsePhoneCallFromArguments(Arrays.copyOfRange(args, ptr, args.length));
+            PhoneCall call = Project1.parsePhoneCallFromArguments(Project1.sliceArgumentsForPhoneCallParsing(args, ptr));
 
             bill.addPhoneCall(call);
 
@@ -111,8 +113,16 @@ public class Project2 {
             }
 
             // dump the file
-            if (filename.length() > 0) {
-                TextDumper textDumper = new TextDumper(Paths.get(filename));
+            if (filename != null && filename.length() > 0) {
+                Path path = Paths.get(filename);
+
+                File file = path.toFile();
+
+                if (file.exists()) {
+                    file.delete();
+                }
+
+                TextDumper textDumper = new TextDumper(path);
                 textDumper.dump(bill);
             }
 
@@ -121,5 +131,7 @@ public class Project2 {
             System.err.println(usage());
             System.exit(1);
         }
+
+        System.exit(0);
     }
 }
