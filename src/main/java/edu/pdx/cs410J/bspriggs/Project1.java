@@ -58,6 +58,22 @@ public class Project1 {
         return Arrays.copyOfRange(args, ptr - 1, args.length);
     }
 
+    public static void validateArguments(List<Map.Entry<String, String>> arguments, String[] args, int ptr) {
+        if (args.length - ptr != ARGUMENTS.size() + 1) {
+            if (args.length - ptr < ARGUMENTS.size() + 1)
+                System.err.println("Missing command line arguments");
+            else
+                System.err.println("Extra command line arguments");
+
+            for (String arg : args) {
+                System.out.println(arg);
+            }
+
+            System.err.println(usage());
+            System.exit(1);
+        }
+    }
+
     public static void main(String[] args) {
         if (args == null || args.length == 0) {
             System.err.println("Missing command line arguments");
@@ -80,20 +96,7 @@ public class Project1 {
             }
         }
 
-        // parse args
-        if (args.length - ptr != ARGUMENTS.size() + 1) {
-            if (args.length - ptr < ARGUMENTS.size() + 1)
-                System.err.println("Missing command line arguments");
-            else
-                System.err.println("Extra command line arguments");
-
-            for (String arg : args) {
-                System.out.println(arg);
-            }
-
-            System.err.println(usage());
-            System.exit(1);
-        }
+        validateArguments(ARGUMENTS, args, ptr);
 
         try {
             PhoneBill bill = new PhoneBill(args[ptr++]);

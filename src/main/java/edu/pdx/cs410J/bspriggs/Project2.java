@@ -70,20 +70,7 @@ public class Project2 {
             }
         }
 
-        // parse args
-        if (args.length - ptr != Project1.ARGUMENTS.size() + 1) {
-            if (args.length - ptr < Project1.ARGUMENTS.size() + 1)
-                System.err.println("Missing command line arguments");
-            else
-                System.err.println("Extra command line arguments");
-
-            for (String arg : args) {
-                System.out.println(arg);
-            }
-
-            System.err.println(usage());
-            System.exit(1);
-        }
+        Project1.validateArguments(Project1.ARGUMENTS, args, ptr);
 
         try {
             PhoneBill bill = new PhoneBill(args[ptr++]);
