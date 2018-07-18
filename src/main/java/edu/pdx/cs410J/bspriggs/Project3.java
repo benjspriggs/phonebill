@@ -28,8 +28,8 @@ public class Project3 extends Project2 {
     }
 
     public static void validateArguments(List<Map.Entry<String, String>> arguments, String[] args, int ptr) {
-        if (args.length - ptr != arguments.size() + 1) {
-            if (args.length - ptr < arguments.size() + 1)
+        if (args.length - ptr != arguments.size() + 3) {
+            if (args.length - ptr < arguments.size() + 3)
                 System.err.println("Missing command line arguments");
             else
                 System.err.println("Extra command line arguments");
