@@ -22,7 +22,7 @@ public class PhoneCall extends AbstractPhoneCall {
         this.startTime = DATE_FORMAT.parse(startDateAndTime);
         this.endTime = DATE_FORMAT.parse(endDateAndTime);
 
-        if (!endTime.after(startTime)) {
+        if (startTime.after(endTime)) {
             throw new ParseException("End time must be after start time", 0);
         }
     }
