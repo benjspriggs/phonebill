@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -39,6 +40,7 @@ public class Project3IT extends Project2IT {
     @Test
     public void testPrettyPrintsContentsOfFile() throws IOException {
         var printer = new PrettyPrinter();
+        var prettyFile = folder.newFile();
         var bill = TextDumperTest.getPopulatedPhoneBill();
 
         var start = generateDate();
@@ -47,14 +49,15 @@ public class Project3IT extends Project2IT {
         var endFormatted = PhoneCall.DATE_FORMAT.format(end).split(" ");
 
         var result = invokeMain(startFormatted, endFormatted,
+                "-pretty", prettyFile.getAbsolutePath(),
                 "customer", generatePhoneNumber(), generatePhoneNumber());
 
         var expectedBuffer = new ByteArrayOutputStream();
         printer.dumpTo(bill, expectedBuffer);
 
         assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(0));
-        assertThat(result.getTextWrittenToStandardOut(), is(not("")));
-        assertThat(result.getTextWrittenToStandardOut(), containsString(new String(expectedBuffer.toByteArray())));
+        assertThat(result.getTextWrittenToStandardOut(), is(""));
+        assertThat(String.join(TextDumper.NEWLINE, Files.readAllLines(prettyFile.toPath())), containsString(new String(expectedBuffer.toByteArray())));
     }
 
     @Test
