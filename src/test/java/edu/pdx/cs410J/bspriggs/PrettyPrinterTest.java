@@ -20,6 +20,15 @@ public class PrettyPrinterTest extends TextDumperTest {
         var printer = new PrettyPrinter();
         var expectedBuffer = new ByteArrayOutputStream();
 
+        var shuffledCalls = new ArrayList<>(bill.getPhoneCalls());
+        var shuffledBill = new PhoneBill(bill.getCustomer());
+
+        for (var call : shuffledCalls) {
+            shuffledBill.addPhoneCall(call);
+        }
+
+        bill = shuffledBill;
+
         // we need to add what we're expecting
         expectedBuffer.write(PrettyPrinter.formatCustomer(bill.getCustomer()).getBytes());
         expectedBuffer.write(newline.getBytes());
@@ -44,8 +53,9 @@ public class PrettyPrinterTest extends TextDumperTest {
 
         for (AbstractPhoneCall call : bill.getPhoneCalls()) {
             Duration d = Duration.between(call.getStartTime().toInstant(), call.getEndTime().toInstant());
+            var expectedString = PrettyPrinter.formatDuration(d);
 
-            assertThat(PrettyPrinter.format(call), containsString(d.toString()));
+            assertThat(PrettyPrinter.format(call), containsString(expectedString));
         }
     }
 }

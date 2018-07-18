@@ -4,23 +4,55 @@ import edu.pdx.cs410J.AbstractPhoneBill;
 import edu.pdx.cs410J.AbstractPhoneCall;
 import edu.pdx.cs410J.PhoneBillDumper;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Path;
+import java.time.Duration;
 
 public class PrettyPrinter implements PhoneBillDumper {
+    private final Path filePath;
+
+    public PrettyPrinter(Path path) {
+        this.filePath = path;
+    }
+
+    public PrettyPrinter() {
+        this.filePath = null;
+    }
+
     public static String format(AbstractPhoneCall call) {
-        return "";
+        return String.format("%s - %s",
+                call.toString(),
+                formatDuration(Duration.between(call.getStartTime().toInstant(), call.getEndTime().toInstant()))
+        );
     }
 
     public static String formatCustomer(String customer) {
-        return "";
+        return "Customer " + customer;
+    }
+
+    public static String formatDuration(Duration duration) {
+        return duration.toString();
     }
 
     @Override
     public void dump(AbstractPhoneBill bill) {
-
+        try {
+            var file = new FileOutputStream(this.filePath.toFile());
+            dumpTo(bill, file);
+        } catch (Exception e) {
+            // e.printStackTrace();
+        }
     }
 
-    public void dumpTo(AbstractPhoneBill<AbstractPhoneCall> bill, OutputStream expected) {
+    public void dumpTo(AbstractPhoneBill<AbstractPhoneCall> bill, OutputStream expected) throws IOException {
+        expected.write(formatCustomer(bill.getCustomer()).getBytes());
+        expected.write(TextDumper.NEWLINE.getBytes());
 
+        for (var call : bill.getPhoneCalls()) {
+            expected.write(format(call).getBytes());
+            expected.write((TextDumper.NEWLINE.getBytes()));
+        }
     }
 }

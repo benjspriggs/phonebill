@@ -3,6 +3,7 @@ package edu.pdx.cs410J.bspriggs;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
@@ -35,7 +36,7 @@ public class Project3IT extends Project2IT {
     }
 
     @Test
-    public void testPrettyPrintsContentsOfFile() {
+    public void testPrettyPrintsContentsOfFile() throws IOException {
         var printer = new PrettyPrinter();
         var bill = TextDumperTest.getPopulatedPhoneBill();
 
@@ -65,7 +66,7 @@ public class Project3IT extends Project2IT {
         var startDate = "1/11/11";
         var endDate = "1/11/12";
         var startTime = "11:11";
-        var endTime = "!2:11";
+        var endTime = "12:11";
 
         var result = invokeMain("customer", generatePhoneNumber(), generatePhoneNumber(), startDate, startTime, endDate, endTime);
 
