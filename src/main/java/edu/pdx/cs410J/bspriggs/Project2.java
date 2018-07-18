@@ -16,7 +16,7 @@ public class Project2 extends Project1 {
             entry("-textFile file", "Where to read/write the phone bill")
     );
 
-    private static String build(List<Map.Entry<String, String>> f) {
+    protected static String build(List<Map.Entry<String, String>> f) {
         var b = new StringBuilder();
 
         for (Map.Entry<String, String> pair : f) {
@@ -37,11 +37,7 @@ public class Project2 extends Project1 {
     }
 
     public static void main(String[] args) {
-        if (args == null || args.length == 0) {
-            System.err.println("Missing command line arguments");
-            System.err.println(usage());
-            System.exit(1);
-        }
+        validateEmptyArguments(args);
 
         int ptr = 0;
         boolean print = false;

@@ -74,12 +74,16 @@ public class Project1 {
         }
     }
 
-    public static void main(String[] args) {
+    public static void validateEmptyArguments(String[] args) {
         if (args == null || args.length == 0) {
             System.err.println("Missing command line arguments");
             System.err.println(usage());
             System.exit(1);
         }
+    }
+
+    public static void main(String[] args) {
+        validateEmptyArguments(args);
 
         int ptr = 0;
         boolean print = false;
