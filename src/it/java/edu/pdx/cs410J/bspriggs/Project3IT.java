@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
@@ -24,17 +25,17 @@ public class Project3IT extends Project2IT {
         return null;
     }
 
-    private String generateTimeOfDay() {
-        return "am";
-    }
+    private SimpleDateFormat timeFormat = new SimpleDateFormat("H:M a");
+    private SimpleDateFormat timeOfDateFormat = new SimpleDateFormat("a");
 
     @Test
     public void testCommandlineAcceptsNewDateFormat() {
-        var startDate = generateDate();
-        var endDate = generateDateAfter(startDate);
-        var startTime = generateTime();
-        var endTime = generateTimeAfter(startTime);
-        var result = invokeMain("customer", generatePhoneNumber(), generatePhoneNumber(), startDate, startTime, generateTimeOfDay(), endDate, endTime, generateTimeOfDay());
+        var start = generateDate();
+        var end = generateDate();
+
+        var result = invokeMain("customer", generatePhoneNumber(), generatePhoneNumber(),
+                dateFormat.format(start), timeFormat.format(start), timeOfDateFormat.format(start),
+                dateFormat.format(end), timeFormat.format(end), timeOfDateFormat.format(end));
 
         assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(0));
     }
@@ -44,12 +45,13 @@ public class Project3IT extends Project2IT {
         var printer = new PrettyPrinter();
         var bill = TextDumperTest.getPopulatedPhoneBill();
 
-        var startDate = generateDate();
-        var endDate = generateDateAfter(startDate);
-        var startTime = generateTime();
-        var endTime = generateTimeAfter(startTime);
+        var start = generateDate();
+        var end = generateDate();
 
-        var result = invokeMain("customer", generatePhoneNumber(), generatePhoneNumber(), startDate, startTime, generateTimeOfDay(), endDate, endTime, generateTimeOfDay());
+        var result = invokeMain("customer", generatePhoneNumber(), generatePhoneNumber(),
+                dateFormat.format(start), timeFormat.format(start), timeOfDateFormat.format(start),
+                dateFormat.format(end), timeFormat.format(end), timeOfDateFormat.format(end));
+
         var expectedBuffer = new ByteArrayOutputStream();
         printer.dumpTo(bill, expectedBuffer);
 
@@ -73,7 +75,7 @@ public class Project3IT extends Project2IT {
         var startTime = "11:11";
         var endTime = "12:11";
 
-        var result = invokeMain("customer", generatePhoneNumber(), generatePhoneNumber(), startDate, startTime, generateTimeOfDay(), endDate, endTime, generateTimeOfDay());
+        var result = invokeMain("customer", generatePhoneNumber(), generatePhoneNumber(), startDate, startTime, "am", endDate, endTime, "pm");
 
         assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(1));
         assertThat(result.getTextWrittenToStandardError(), containsString("date format"));
@@ -81,11 +83,12 @@ public class Project3IT extends Project2IT {
 
     @Test
     public void testInvalidStartAndEndTimes() {
-        var endDate = generateDate();
-        var startDate = generateDateAfter(endDate);
-        var endTime = generateTime();
-        var startTime = generateTimeAfter(endTime);
-        var result = invokeMain("customer", generatePhoneNumber(), generatePhoneNumber(), startDate, startTime, generateTimeOfDay(), endDate, endTime, generateTimeOfDay());
+        var start = generateDate();
+        var end = generateDate();
+
+        var result = invokeMain("customer", generatePhoneNumber(), generatePhoneNumber(),
+                dateFormat.format(start), timeFormat.format(start), timeOfDateFormat.format(start),
+                dateFormat.format(end), timeFormat.format(end), timeOfDateFormat.format(end));
 
         assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(1));
         assertThat(result.getTextWrittenToStandardError(), containsString("after"));
