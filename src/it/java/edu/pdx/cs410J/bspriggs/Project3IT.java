@@ -24,13 +24,17 @@ public class Project3IT extends Project2IT {
         return null;
     }
 
+    private String generateTimeOfDay() {
+        return "am";
+    }
+
     @Test
     public void testCommandlineAcceptsNewDateFormat() {
         var startDate = generateDate();
         var endDate = generateDateAfter(startDate);
         var startTime = generateTime();
         var endTime = generateTimeAfter(startTime);
-        var result = invokeMain("customer", generatePhoneNumber(), generatePhoneNumber(), startDate, startTime, endDate, endTime);
+        var result = invokeMain("customer", generatePhoneNumber(), generatePhoneNumber(), startDate, startTime, generateTimeOfDay(), endDate, endTime, generateTimeOfDay());
 
         assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(0));
     }
@@ -45,7 +49,7 @@ public class Project3IT extends Project2IT {
         var startTime = generateTime();
         var endTime = generateTimeAfter(startTime);
 
-        var result = invokeMain("customer", generatePhoneNumber(), generatePhoneNumber(), startDate, startTime, endDate, endTime);
+        var result = invokeMain("customer", generatePhoneNumber(), generatePhoneNumber(), startDate, startTime, generateTimeOfDay(), endDate, endTime, generateTimeOfDay());
         var expectedBuffer = new ByteArrayOutputStream();
         printer.dumpTo(bill, expectedBuffer);
 
@@ -59,6 +63,7 @@ public class Project3IT extends Project2IT {
         var result = invokeMain("asf");
 
         assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(1));
+        assertThat(result.getTextWrittenToStandardError(), containsString("usage"));
     }
 
     @Test
@@ -68,9 +73,10 @@ public class Project3IT extends Project2IT {
         var startTime = "11:11";
         var endTime = "12:11";
 
-        var result = invokeMain("customer", generatePhoneNumber(), generatePhoneNumber(), startDate, startTime, endDate, endTime);
+        var result = invokeMain("customer", generatePhoneNumber(), generatePhoneNumber(), startDate, startTime, generateTimeOfDay(), endDate, endTime, generateTimeOfDay());
 
         assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(1));
+        assertThat(result.getTextWrittenToStandardError(), containsString("date format"));
     }
 
     @Test
@@ -79,8 +85,9 @@ public class Project3IT extends Project2IT {
         var startDate = generateDateAfter(endDate);
         var endTime = generateTime();
         var startTime = generateTimeAfter(endTime);
-        var result = invokeMain("customer", generatePhoneNumber(), generatePhoneNumber(), startDate, startTime, endDate, endTime);
+        var result = invokeMain("customer", generatePhoneNumber(), generatePhoneNumber(), startDate, startTime, generateTimeOfDay(), endDate, endTime, generateTimeOfDay());
 
         assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(1));
+        assertThat(result.getTextWrittenToStandardError(), containsString("after"));
     }
 }
