@@ -14,7 +14,8 @@ public class Project3 extends Project2 {
     private static final List<Map.Entry<String, String>> OPTIONS = Arrays.asList(
             entry("-print", "Prints a description of the new phone call"),
             entry("-README", "Prints a README for this project and exits"),
-            entry("-textFile file", "Where to read/write the phone bill")
+            entry("-textFile file", "Where to read/write the phone bill"),
+            entry("-pretty file", "Pretty print the phone bill to a text file or standard out (file -).")
     );
 
     public static PhoneCall parsePhoneCallFromArguments(String[] args) throws ParseException {
@@ -41,6 +42,7 @@ public class Project3 extends Project2 {
         boolean print = false;
         boolean pretty = false;
         String filename = null;
+        String prettyFilename = null;
 
         // parse options
         // (this is probably better done with the apache commons-cli)
@@ -62,6 +64,8 @@ public class Project3 extends Project2 {
                 filename = args[ptr];
             } else if (args[ptr].equals("-pretty")) {
                 pretty = true;
+                ptr++;
+                prettyFilename = args[ptr];
             }
         }
 
@@ -90,8 +94,15 @@ public class Project3 extends Project2 {
             }
 
             if (pretty) {
-                var printer = new PrettyPrinter();
-                printer.dumpTo(bill, System.out);
+                PrettyPrinter printer;
+
+                if (prettyFilename.compareTo("-") == 0) {
+                    printer = new PrettyPrinter(System.out);
+                } else {
+                    printer = new PrettyPrinter(Paths.get(prettyFilename));
+                }
+
+                printer.dump(bill);
             }
 
             // dump the file
