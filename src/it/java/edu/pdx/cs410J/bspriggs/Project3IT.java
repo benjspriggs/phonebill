@@ -4,7 +4,6 @@ import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -20,12 +19,9 @@ public class Project3IT extends Project2IT {
         var list = new ArrayList<>(Arrays.asList(args));
         list.addAll(Arrays.asList(start));
         list.addAll(Arrays.asList(end));
-        var fullArgs = list.toArray(new String[list.size()]);
+        var fullArgs = list.toArray(new String[0]);
         return invokeMain(Project3.class, fullArgs);
     }
-
-    private SimpleDateFormat timeFormat = new SimpleDateFormat("H:M a");
-    private SimpleDateFormat timeOfDateFormat = new SimpleDateFormat("a");
 
     @Test
     public void testCommandlineAcceptsNewDateFormat() {
