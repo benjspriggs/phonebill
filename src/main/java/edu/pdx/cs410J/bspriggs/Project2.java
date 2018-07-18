@@ -9,7 +9,7 @@ import java.util.Map;
 
 import static java.util.Map.entry;
 
-public class Project2 {
+public class Project2 extends Project1 {
     private static final List<Map.Entry<String, String>> OPTIONS = Arrays.asList(
             entry("-print", "Prints a description of the new phone call"),
             entry("-README", "Prints a README for this project and exits"),
