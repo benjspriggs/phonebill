@@ -75,7 +75,7 @@ public class Project3IT extends Project2IT {
         var startTime = "11:11";
         var endTime = "12:11";
 
-        var result = invokeMain("customer", generatePhoneNumber(), generatePhoneNumber(), startDate, startTime, endDate, endTime);
+        var result = invokeMain("customer", generatePhoneNumber(), generatePhoneNumber(), startDate, startTime, "am", endDate, endTime, "pm");
 
         assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(1));
         assertThat(result.getTextWrittenToStandardError(), containsString("date format"));
