@@ -1,7 +1,6 @@
 package edu.pdx.cs410J.bspriggs;
 
 import edu.pdx.cs410J.AbstractPhoneBill;
-import edu.pdx.cs410J.InvokeMainTestCase;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -13,7 +12,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class Project2IT extends InvokeMainTestCase {
+public class Project2IT extends Project1IT {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
@@ -24,19 +23,19 @@ public class Project2IT extends InvokeMainTestCase {
         return invokeMain(Project2.class, args);
     }
 
-    private String generateTime() {
+    protected String generateTime() {
         return "1:11";
     }
 
-    private String generateDate() {
+    protected String generateDate() {
         return "11/11/11";
     }
 
-    private String generatePhoneNumber() {
+    protected String generatePhoneNumber() {
         return "555-555-5555";
     }
 
-    private File generateExistingPhoneBill(AbstractPhoneBill with) throws IOException {
+    protected File generateExistingPhoneBill(AbstractPhoneBill with) throws IOException {
         File file = folder.newFile();
         TextDumper dumper = new TextDumper(file.toPath());
 

@@ -23,7 +23,7 @@ public class TextDumperTest {
     public TemporaryFolder folder = new TemporaryFolder();
     @Rule
     public ExpectedException thrown = ExpectedException.none();
-    private final String newline = System.getProperty("line.separator");
+    protected final String newline = System.getProperty("line.separator");
 
     public static AbstractPhoneBill<AbstractPhoneCall> getPopulatedPhoneBill() {
         var bill = new PhoneBill("name");
