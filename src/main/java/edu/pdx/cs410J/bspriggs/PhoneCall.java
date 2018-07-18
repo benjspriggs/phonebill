@@ -13,13 +13,18 @@ public class PhoneCall extends AbstractPhoneCall {
     private final Date startTime;
     private final Date endTime;
     private static final Pattern phoneNumberPattern = Pattern.compile("\\d{3}-\\d{3}-\\d{4}");
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("mm/dd/yyyy hh:mm");
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("mm/dd/yyyy hh:mm a");
 
     PhoneCall(String caller, String callee, String startDateAndTime, String endDateAndTime) throws ParseException {
         this.caller = validatePhoneNumber(caller);
         this.callee = validatePhoneNumber(callee);
-        this.startTime = dateFormat.parse(startDateAndTime);
-        this.endTime = dateFormat.parse(endDateAndTime);
+
+        this.startTime = DATE_FORMAT.parse(startDateAndTime);
+        this.endTime = DATE_FORMAT.parse(endDateAndTime);
+
+        if (!endTime.after(startTime)) {
+            throw new ParseException("End time must be after start time", 0);
+        }
     }
 
     private String validatePhoneNumber(String in) throws ParseException {
@@ -49,7 +54,7 @@ public class PhoneCall extends AbstractPhoneCall {
 
     @Override
     public String getStartTimeString() {
-        return dateFormat.format(startTime);
+        return DATE_FORMAT.format(startTime);
     }
 
     @Override
@@ -59,6 +64,6 @@ public class PhoneCall extends AbstractPhoneCall {
 
     @Override
     public String getEndTimeString() {
-        return dateFormat.format(endTime);
+        return DATE_FORMAT.format(endTime);
     }
 }
