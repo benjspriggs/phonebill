@@ -27,23 +27,7 @@ public class Project3 extends Project2 {
         return call;
     }
 
-    public static void validateArguments(List<Map.Entry<String, String>> arguments, String[] args, int ptr) {
-        if (args.length - ptr != arguments.size() + 3) {
-            if (args.length - ptr < arguments.size() + 3)
-                System.err.println("Missing command line arguments");
-            else
-                System.err.println("Extra command line arguments");
-
-            for (String arg : args) {
-                System.out.println(arg);
-            }
-
-            System.err.println(usage());
-            System.exit(1);
-        }
-    }
-
-    private static String usage() {
+    protected static String usage() {
         return "usage: java edu.pdx.cs410J.bspriggs.Project3 [options] <args>\n" +
                 "args are (in this order):\n" +
                 build(Project1.ARGUMENTS) +

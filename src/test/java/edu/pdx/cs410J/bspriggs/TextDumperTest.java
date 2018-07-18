@@ -34,7 +34,7 @@ public class TextDumperTest {
     protected static Random r = new Random();
 
     public static Date generateDate() {
-        return new Date(r.nextLong());
+        return new Date(r.nextInt());
     }
 
     public static String generatePhoneNumber() {

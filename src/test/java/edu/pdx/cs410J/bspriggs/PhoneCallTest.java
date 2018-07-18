@@ -6,7 +6,8 @@ import org.junit.rules.ExpectedException;
 
 import java.util.Date;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
@@ -46,12 +47,6 @@ public class PhoneCallTest {
   }
 
   @Test
-  public void forProject1ItIsOkayIfGetStartTimeReturnsNull() {
-    PhoneCall call = getPhoneCall();
-    assertThat(call.getStartTime(), is(nullValue()));
-  }
-
-  @Test
   public void passingInvalidPhoneNumberFails() throws Exception {
     thrown.expect(Exception.class);
     new PhoneCall("cat", "dog", validTime, validTime);
@@ -67,7 +62,7 @@ public class PhoneCallTest {
     public void testStartingAfterEnding() throws Exception {
         thrown.expect(Exception.class);
         var end = new Date(10000L);
-        var start = new Date(end.getTime() + 230);
+        var start = new Date(end.getTime() + 100000);
         new PhoneCall(validPhoneNumber, validPhoneNumber, PhoneCall.DATE_FORMAT.format(start), PhoneCall.DATE_FORMAT.format(end));
     }
 }

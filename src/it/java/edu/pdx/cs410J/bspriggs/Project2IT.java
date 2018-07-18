@@ -7,7 +7,8 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import static edu.pdx.cs410J.bspriggs.TextDumperTest.*;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -17,14 +18,20 @@ import static org.junit.Assert.assertThat;
 public class Project2IT extends Project1IT {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
-    protected SimpleDateFormat dateFormat = new SimpleDateFormat("D/M/Y");
-    protected SimpleDateFormat timeFormat = new SimpleDateFormat("H:M");
+
+    private MainMethodResult invokeMain(String... args) {
+        return invokeMain(new String[]{}, new String[]{}, args);
+    }
 
     /**
      * Invokes the main method of {@link Project2} with the given arguments.
      */
-    private MainMethodResult invokeMain(String... args) {
-        return invokeMain(Project2.class, args);
+    protected MainMethodResult invokeMain(String[] start, String[] end, String... args) {
+        var list = new ArrayList<>(Arrays.asList(args));
+        list.addAll(Arrays.asList(start));
+        list.addAll(Arrays.asList(end));
+        var fullArgs = list.toArray(new String[list.size()]);
+        return invokeMain(Project2.class, fullArgs);
     }
 
     protected File generateExistingPhoneBill(AbstractPhoneBill with) throws IOException {
@@ -69,9 +76,12 @@ public class Project2IT extends Project1IT {
         var calleeNumber = generatePhoneNumber();
         var callerNumber = generatePhoneNumber();
         var start = generateDate();
-        var end = generateDate();
+        var end = generateDateAfter(start);
+        var startFormatted = PhoneCall.DATE_FORMAT.format(start).split(" ");
+        var endFormatted = PhoneCall.DATE_FORMAT.format(end).split(" ");
 
-        MainMethodResult result = invokeMain("-textFile", "", customer, callerNumber, calleeNumber, dateFormat.format(start), timeFormat.format(start), dateFormat.format(end), timeFormat.format(end));
+        MainMethodResult result = invokeMain(startFormatted, endFormatted,
+                "-textFile", "", customer, callerNumber, calleeNumber);
 
         assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(0));
         assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
@@ -89,9 +99,12 @@ public class Project2IT extends Project1IT {
         var calleeNumber = generatePhoneNumber();
         var callerNumber = generatePhoneNumber();
         var start = generateDate();
-        var end = generateDate();
+        var end = generateDateAfter(start);
+        var startFormatted = PhoneCall.DATE_FORMAT.format(start).split(" ");
+        var endFormatted = PhoneCall.DATE_FORMAT.format(end).split(" ");
 
-        MainMethodResult result = invokeMain("-textFile", existingPhoneBill.getAbsolutePath(), bill.getCustomer(), callerNumber, calleeNumber, dateFormat.format(start), timeFormat.format(start), dateFormat.format(end), timeFormat.format(end));
+        MainMethodResult result = invokeMain(startFormatted, endFormatted,
+                "-textFile", existingPhoneBill.getAbsolutePath(), bill.getCustomer(), callerNumber, calleeNumber);
 
         assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(0));
     }
@@ -109,8 +122,11 @@ public class Project2IT extends Project1IT {
         var callerNumber = generatePhoneNumber();
         var start = generateDate();
         var end = generateDate();
+        var startFormatted = PhoneCall.DATE_FORMAT.format(start).split(" ");
+        var endFormatted = PhoneCall.DATE_FORMAT.format(end).split(" ");
 
-        MainMethodResult result = invokeMain("-textFile", existingPhoneBill.getAbsolutePath(), "", callerNumber, calleeNumber, dateFormat.format(start), timeFormat.format(start), dateFormat.format(end), timeFormat.format(end));
+        MainMethodResult result = invokeMain(startFormatted, endFormatted,
+                "-textFile", existingPhoneBill.getAbsolutePath(), "", callerNumber, calleeNumber);
         assertThat(result.getExitCode(), equalTo(1));
     }
 }

@@ -35,7 +35,7 @@ public class Project1 {
         return b.toString();
     }
 
-    private static String usage() {
+    protected static String usage() {
         return "usage: java edu.pdx.cs410J.bspriggs.Project1 [options] <args>\n" +
                 "args are (in this order):\n" +
                 build(ARGUMENTS) +
@@ -48,8 +48,8 @@ public class Project1 {
         int ptr = 0;
 
         PhoneCall call = new PhoneCall(args[ptr++], args[ptr++],
-                String.format("%s %s", args[ptr++], args[ptr++]),
-                String.format("%s %s", args[ptr++], args[ptr]));
+                String.format("%s %s %s", args[ptr++], args[ptr++], args[ptr++]),
+                String.format("%s %s %s", args[ptr++], args[ptr++], args[ptr]));
 
         return call;
     }
@@ -59,8 +59,8 @@ public class Project1 {
     }
 
     public static void validateArguments(List<Map.Entry<String, String>> arguments, String[] args, int ptr) {
-        if (args.length - ptr != arguments.size() + 1) {
-            if (args.length - ptr < arguments.size() + 1)
+        if (args.length - ptr != arguments.size() + 3) {
+            if (args.length - ptr < arguments.size() + 3)
                 System.err.println("Missing command line arguments");
             else
                 System.err.println("Extra command line arguments");

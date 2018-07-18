@@ -5,17 +5,27 @@ import org.junit.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import static edu.pdx.cs410J.bspriggs.TextDumperTest.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
 public class Project3IT extends Project2IT {
+    private MainMethodResult invokeMain(String... args) {
+        return invokeMain(null, null, args);
+    }
+
     /**
      * Invokes the main method of {@link Project3} with the given arguments.
      */
-    private MainMethodResult invokeMain(String... args) {
-        return invokeMain(Project3.class, args);
+    protected MainMethodResult invokeMain(String[] start, String[] end, String... args) {
+        var list = new ArrayList<>(Arrays.asList(start));
+        list.addAll(Arrays.asList(end));
+        list.addAll(Arrays.asList(args));
+        String[] fullArgs = (String[]) list.toArray();
+        return invokeMain(Project3.class, fullArgs);
     }
 
     private SimpleDateFormat timeFormat = new SimpleDateFormat("H:M a");
@@ -25,10 +35,11 @@ public class Project3IT extends Project2IT {
     public void testCommandlineAcceptsNewDateFormat() {
         var start = generateDate();
         var end = generateDateAfter(start);
+        var startFormatted = PhoneCall.DATE_FORMAT.format(start).split(" ");
+        var endFormatted = PhoneCall.DATE_FORMAT.format(end).split(" ");
 
-        var result = invokeMain("customer", generatePhoneNumber(), generatePhoneNumber(),
-                dateFormat.format(start), timeFormat.format(start), timeOfDateFormat.format(start),
-                dateFormat.format(end), timeFormat.format(end), timeOfDateFormat.format(end));
+        var result = invokeMain(startFormatted, endFormatted,
+                "customer", generatePhoneNumber(), generatePhoneNumber());
 
         assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(0));
     }
@@ -40,10 +51,11 @@ public class Project3IT extends Project2IT {
 
         var start = generateDate();
         var end = generateDateAfter(start);
+        var startFormatted = PhoneCall.DATE_FORMAT.format(start).split(" ");
+        var endFormatted = PhoneCall.DATE_FORMAT.format(end).split(" ");
 
-        var result = invokeMain("customer", generatePhoneNumber(), generatePhoneNumber(),
-                dateFormat.format(start), timeFormat.format(start), timeOfDateFormat.format(start),
-                dateFormat.format(end), timeFormat.format(end), timeOfDateFormat.format(end));
+        var result = invokeMain(startFormatted, endFormatted,
+                "customer", generatePhoneNumber(), generatePhoneNumber());
 
         var expectedBuffer = new ByteArrayOutputStream();
         printer.dumpTo(bill, expectedBuffer);
@@ -78,10 +90,11 @@ public class Project3IT extends Project2IT {
     public void testInvalidStartAndEndTimes() {
         var start = generateDate();
         var end = generateDateAfter(start);
+        var startFormatted = PhoneCall.DATE_FORMAT.format(start).split(" ");
+        var endFormatted = PhoneCall.DATE_FORMAT.format(end).split(" ");
 
-        var result = invokeMain("customer", generatePhoneNumber(), generatePhoneNumber(),
-                dateFormat.format(start), timeFormat.format(start), timeOfDateFormat.format(start),
-                dateFormat.format(end), timeFormat.format(end), timeOfDateFormat.format(end));
+        var result = invokeMain(startFormatted, endFormatted,
+                "customer", generatePhoneNumber(), generatePhoneNumber());
 
         assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(1));
         assertThat(result.getTextWrittenToStandardError(), containsString("after"));

@@ -27,7 +27,7 @@ public class Project2 extends Project1 {
         return b.toString();
     }
 
-    private static String usage() {
+    protected static String usage() {
         return "usage: java edu.pdx.cs410J.bspriggs.Project2 [options] <args>\n" +
                 "args are (in this order):\n" +
                 build(Project1.ARGUMENTS) +
