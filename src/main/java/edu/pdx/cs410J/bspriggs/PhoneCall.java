@@ -44,7 +44,7 @@ public class PhoneCall extends AbstractPhoneCall {
 
     @Override
     public Date getStartTime() {
-        return super.getStartTime();
+        return this.startTime;
     }
 
     @Override
@@ -54,7 +54,7 @@ public class PhoneCall extends AbstractPhoneCall {
 
     @Override
     public Date getEndTime() {
-        return super.getEndTime();
+        return this.endTime;
     }
 
     @Override
