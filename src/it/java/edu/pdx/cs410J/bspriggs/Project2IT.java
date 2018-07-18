@@ -19,7 +19,7 @@ public class Project2IT extends Project1IT {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
-    private MainMethodResult invokeMain(String... args) {
+    protected MainMethodResult invokeMain(String... args) {
         return invokeMain(new String[]{}, new String[]{}, args);
     }
 

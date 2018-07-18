@@ -13,18 +13,14 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
 public class Project3IT extends Project2IT {
-    private MainMethodResult invokeMain(String... args) {
-        return invokeMain(null, null, args);
-    }
-
     /**
      * Invokes the main method of {@link Project3} with the given arguments.
      */
     protected MainMethodResult invokeMain(String[] start, String[] end, String... args) {
-        var list = new ArrayList<>(Arrays.asList(start));
+        var list = new ArrayList<>(Arrays.asList(args));
+        list.addAll(Arrays.asList(start));
         list.addAll(Arrays.asList(end));
-        list.addAll(Arrays.asList(args));
-        String[] fullArgs = (String[]) list.toArray();
+        var fullArgs = list.toArray(new String[list.size()]);
         return invokeMain(Project3.class, fullArgs);
     }
 
