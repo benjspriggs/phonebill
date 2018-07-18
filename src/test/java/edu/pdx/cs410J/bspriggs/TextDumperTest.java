@@ -13,6 +13,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
@@ -23,15 +27,42 @@ public class TextDumperTest {
     public TemporaryFolder folder = new TemporaryFolder();
     @Rule
     public ExpectedException thrown = ExpectedException.none();
+
     protected final String newline = System.getProperty("line.separator");
+    private SimpleDateFormat timeFormat = new SimpleDateFormat("H:M a");
+
+    protected static Random r = new Random();
+
+    public static Date generateDate() {
+        return new Date(r.nextLong());
+    }
+
+    public static String generatePhoneNumber() {
+        return String.format("%03d-%03d-%04d",
+                1 + r.nextInt(998),
+                1 + r.nextInt(998),
+                1 + r.nextInt(9998)
+        );
+    }
+
+    public static AbstractPhoneCall generatePhoneCall() throws ParseException {
+        var start = generateDate();
+        var end = generateDateAfter(start);
+        return new PhoneCall(generatePhoneNumber(), generatePhoneNumber(), PhoneCall.DATE_FORMAT.format(start), PhoneCall.DATE_FORMAT.format(end));
+    }
+
+    public static Date generateDateAfter(Date date) {
+        return new Date(date.getTime() + r.nextInt(10));
+    }
+
 
     public static AbstractPhoneBill<AbstractPhoneCall> getPopulatedPhoneBill() {
         var bill = new PhoneBill("name");
 
         try {
-            bill.addPhoneCall(new PhoneCall("503-333-3333", "503-333-3333", "2/2/2 00:00", "2/2/3 0:00"));
-            bill.addPhoneCall(new PhoneCall("504-333-3333", "503-333-3333", "2/2/2 00:00", "2/2/3 0:00"));
-            bill.addPhoneCall(new PhoneCall("503-332-3333", "503-333-3333", "2/2/2 00:00", "2/2/3 0:00"));
+            bill.addPhoneCall(generatePhoneCall());
+            bill.addPhoneCall(generatePhoneCall());
+            bill.addPhoneCall(generatePhoneCall());
         } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());

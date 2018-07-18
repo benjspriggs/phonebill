@@ -5,8 +5,8 @@ import org.junit.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
+import static edu.pdx.cs410J.bspriggs.TextDumperTest.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
@@ -16,10 +16,6 @@ public class Project3IT extends Project2IT {
      */
     private MainMethodResult invokeMain(String... args) {
         return invokeMain(Project3.class, args);
-    }
-
-    private Date generateDateAfter(Date date) {
-        return new Date(date.getTime() + r.nextLong());
     }
 
     private SimpleDateFormat timeFormat = new SimpleDateFormat("H:M a");

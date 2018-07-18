@@ -8,8 +8,6 @@ import org.junit.rules.TemporaryFolder;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Random;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -18,7 +16,6 @@ import static org.junit.Assert.assertThat;
 public class Project2IT extends Project1IT {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
-    protected Random r = new Random();
     protected SimpleDateFormat dateFormat = new SimpleDateFormat("D/M/Y");
     protected SimpleDateFormat timeFormat = new SimpleDateFormat("H:M");
 
@@ -27,18 +24,6 @@ public class Project2IT extends Project1IT {
      */
     private MainMethodResult invokeMain(String... args) {
         return invokeMain(Project2.class, args);
-    }
-
-    protected Date generateDate() {
-        return new Date(r.nextLong());
-    }
-
-    protected String generatePhoneNumber() {
-        return String.format("%03d-%03d-%04d",
-                1 + r.nextInt(998),
-                1 + r.nextInt(998),
-                1 + r.nextInt(9998)
-        );
     }
 
     protected File generateExistingPhoneBill(AbstractPhoneBill with) throws IOException {
@@ -80,10 +65,10 @@ public class Project2IT extends Project1IT {
     @Test
     public void testEmptyPhoneBill() {
         var customer = "customer";
-        var calleeNumber = generatePhoneNumber();
-        var callerNumber = generatePhoneNumber();
-        var start = generateDate();
-        var end = generateDate();
+        var calleeNumber = TextDumperTest.generatePhoneNumber();
+        var callerNumber = TextDumperTest.generatePhoneNumber();
+        var start = TextDumperTest.generateDate();
+        var end = TextDumperTest.generateDate();
 
         MainMethodResult result = invokeMain("-textFile", "", customer, callerNumber, calleeNumber, dateFormat.format(start), timeFormat.format(start), dateFormat.format(end), timeFormat.format(end));
 
@@ -100,10 +85,10 @@ public class Project2IT extends Project1IT {
         var bill = TextDumperTest.getPopulatedPhoneBill();
         File existingPhoneBill = generateExistingPhoneBill(bill);
 
-        var calleeNumber = generatePhoneNumber();
-        var callerNumber = generatePhoneNumber();
-        var start = generateDate();
-        var end = generateDate();
+        var calleeNumber = TextDumperTest.generatePhoneNumber();
+        var callerNumber = TextDumperTest.generatePhoneNumber();
+        var start = TextDumperTest.generateDate();
+        var end = TextDumperTest.generateDate();
 
         MainMethodResult result = invokeMain("-textFile", existingPhoneBill.getAbsolutePath(), bill.getCustomer(), callerNumber, calleeNumber, dateFormat.format(start), timeFormat.format(start), dateFormat.format(end), timeFormat.format(end));
 
@@ -119,10 +104,10 @@ public class Project2IT extends Project1IT {
         File existingPhoneBill = generateExistingPhoneBill(bill);
 
         var customer = "new customer";
-        var calleeNumber = generatePhoneNumber();
-        var callerNumber = generatePhoneNumber();
-        var start = generateDate();
-        var end = generateDate();
+        var calleeNumber = TextDumperTest.generatePhoneNumber();
+        var callerNumber = TextDumperTest.generatePhoneNumber();
+        var start = TextDumperTest.generateDate();
+        var end = TextDumperTest.generateDate();
 
         MainMethodResult result = invokeMain("-textFile", existingPhoneBill.getAbsolutePath(), "", callerNumber, calleeNumber, dateFormat.format(start), timeFormat.format(start), dateFormat.format(end), timeFormat.format(end));
         assertThat(result.getExitCode(), equalTo(1));
