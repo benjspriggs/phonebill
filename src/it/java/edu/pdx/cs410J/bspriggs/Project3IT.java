@@ -5,6 +5,7 @@ import org.junit.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
@@ -17,12 +18,8 @@ public class Project3IT extends Project2IT {
         return invokeMain(Project3.class, args);
     }
 
-    private String generateDateAfter(String date) {
-        return null;
-    }
-
-    private String generateTimeAfter(String startTime) {
-        return null;
+    private Date generateDateAfter(Date date) {
+        return new Date(date.getTime() + r.nextLong());
     }
 
     private SimpleDateFormat timeFormat = new SimpleDateFormat("H:M a");
@@ -31,7 +28,7 @@ public class Project3IT extends Project2IT {
     @Test
     public void testCommandlineAcceptsNewDateFormat() {
         var start = generateDate();
-        var end = generateDate();
+        var end = generateDateAfter(start);
 
         var result = invokeMain("customer", generatePhoneNumber(), generatePhoneNumber(),
                 dateFormat.format(start), timeFormat.format(start), timeOfDateFormat.format(start),
@@ -46,7 +43,7 @@ public class Project3IT extends Project2IT {
         var bill = TextDumperTest.getPopulatedPhoneBill();
 
         var start = generateDate();
-        var end = generateDate();
+        var end = generateDateAfter(start);
 
         var result = invokeMain("customer", generatePhoneNumber(), generatePhoneNumber(),
                 dateFormat.format(start), timeFormat.format(start), timeOfDateFormat.format(start),
@@ -84,7 +81,7 @@ public class Project3IT extends Project2IT {
     @Test
     public void testInvalidStartAndEndTimes() {
         var start = generateDate();
-        var end = generateDate();
+        var end = generateDateAfter(start);
 
         var result = invokeMain("customer", generatePhoneNumber(), generatePhoneNumber(),
                 dateFormat.format(start), timeFormat.format(start), timeOfDateFormat.format(start),
