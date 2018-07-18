@@ -47,11 +47,9 @@ public class Project1 {
     public static PhoneCall parsePhoneCallFromArguments(String[] args) throws ParseException {
         int ptr = 0;
 
-        PhoneCall call = new PhoneCall(args[ptr++], args[ptr++],
+        return new PhoneCall(args[ptr++], args[ptr++],
                 String.format("%s %s %s", args[ptr++], args[ptr++], args[ptr++]),
                 String.format("%s %s %s", args[ptr++], args[ptr++], args[ptr]));
-
-        return call;
     }
 
     public static String[] sliceArgumentsForPhoneCallParsing(String[] args, int ptr) {

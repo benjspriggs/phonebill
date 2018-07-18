@@ -20,11 +20,9 @@ public class Project3 extends Project2 {
     public static PhoneCall parsePhoneCallFromArguments(String[] args) throws ParseException {
         int ptr = 0;
 
-        PhoneCall call = new PhoneCall(args[ptr++], args[ptr++],
+        return new PhoneCall(args[ptr++], args[ptr++],
                 String.format("%s %s %s", args[ptr++], args[ptr++], args[ptr++]),
                 String.format("%s %s %s", args[ptr++], args[ptr++], args[ptr]));
-
-        return call;
     }
 
     protected static String usage() {
