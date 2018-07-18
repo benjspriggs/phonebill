@@ -18,7 +18,7 @@ public class PrettyPrinterTest extends TextDumperTest {
     public void testCallsAreSortedChronologicallyByStartTime() throws IOException {
         var bill = TextDumperTest.getPopulatedPhoneBill();
         var printer = new PrettyPrinter();
-        var expectedBuffer = new ByteArrayOutputStream();
+        var expectedBuffer = new StringBuffer();
 
         var shuffledCalls = new ArrayList<>(bill.getPhoneCalls());
         var shuffledBill = new PhoneBill(bill.getCustomer());
@@ -30,15 +30,15 @@ public class PrettyPrinterTest extends TextDumperTest {
         bill = shuffledBill;
 
         // we need to add what we're expecting
-        expectedBuffer.write(PrettyPrinter.formatCustomer(bill.getCustomer()).getBytes());
-        expectedBuffer.write(newline.getBytes());
+        expectedBuffer.append(PrettyPrinter.formatCustomer(bill.getCustomer()));
+        expectedBuffer.append(newline);
 
         List<AbstractPhoneCall> toSort = new ArrayList<>(bill.getPhoneCalls());
 
         toSort.sort(Comparator.comparing(AbstractPhoneCall::getStartTime));
         for (AbstractPhoneCall call : toSort) {
-            expectedBuffer.write(PrettyPrinter.format(call).getBytes());
-            expectedBuffer.write(newline.getBytes());
+            expectedBuffer.append(PrettyPrinter.format(call));
+            expectedBuffer.append(newline);
         }
 
         var actualBuffer = new ByteArrayOutputStream();
