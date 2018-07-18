@@ -7,18 +7,27 @@ import edu.pdx.cs410J.PhoneBillDumper;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.nio.file.Path;
 import java.time.Duration;
 
 public class PrettyPrinter implements PhoneBillDumper {
     private final Path filePath;
+    private final boolean toStdOut;
 
     public PrettyPrinter(Path path) {
         this.filePath = path;
+        this.toStdOut = false;
     }
 
     public PrettyPrinter() {
         this.filePath = null;
+        this.toStdOut = false;
+    }
+
+    public PrettyPrinter(PrintStream out) {
+        this.filePath = null;
+        this.toStdOut = true;
     }
 
     public static String format(AbstractPhoneCall call) {
@@ -39,7 +48,12 @@ public class PrettyPrinter implements PhoneBillDumper {
     @Override
     public void dump(AbstractPhoneBill bill) {
         try {
-            var file = new FileOutputStream(this.filePath.toFile());
+            OutputStream file;
+            if (toStdOut)
+                file = System.out;
+            else
+                file = new FileOutputStream(this.filePath.toFile());
+
             dumpTo(bill, file);
         } catch (Exception e) {
             // e.printStackTrace();
