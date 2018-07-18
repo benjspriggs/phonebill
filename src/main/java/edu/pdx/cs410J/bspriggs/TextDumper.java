@@ -45,6 +45,8 @@ public class TextDumper implements edu.pdx.cs410J.PhoneBillDumper {
             outputStream.write(serialize((AbstractPhoneCall) b).getBytes());
             outputStream.write(NEWLINE.getBytes());
         }
+
+        outputStream.close();
     }
 
     @Override
