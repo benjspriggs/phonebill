@@ -7,6 +7,9 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Random;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -15,6 +18,9 @@ import static org.junit.Assert.assertThat;
 public class Project2IT extends Project1IT {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
+    protected Random r = new Random();
+    protected SimpleDateFormat dateFormat = new SimpleDateFormat("D/M/Y");
+    protected SimpleDateFormat timeFormat = new SimpleDateFormat("H:M");
 
     /**
      * Invokes the main method of {@link Project2} with the given arguments.
@@ -23,16 +29,16 @@ public class Project2IT extends Project1IT {
         return invokeMain(Project2.class, args);
     }
 
-    protected String generateTime() {
-        return "1:11";
-    }
-
-    protected String generateDate() {
-        return "11/11/11";
+    protected Date generateDate() {
+        return new Date(r.nextLong());
     }
 
     protected String generatePhoneNumber() {
-        return "555-555-5555";
+        return String.format("%03d-%03d-%04d",
+                1 + r.nextInt(998),
+                1 + r.nextInt(998),
+                1 + r.nextInt(9998)
+        );
     }
 
     protected File generateExistingPhoneBill(AbstractPhoneBill with) throws IOException {
@@ -76,12 +82,10 @@ public class Project2IT extends Project1IT {
         var customer = "customer";
         var calleeNumber = generatePhoneNumber();
         var callerNumber = generatePhoneNumber();
-        var startDate = generateDate();
-        var startTime = generateTime();
-        var endDate = generateDate();
-        var endTime = generateTime();
+        var start = generateDate();
+        var end = generateDate();
 
-        MainMethodResult result = invokeMain("-textFile", "", customer, callerNumber, calleeNumber, startDate, startTime, endDate, endTime);
+        MainMethodResult result = invokeMain("-textFile", "", customer, callerNumber, calleeNumber, dateFormat.format(start), timeFormat.format(start), dateFormat.format(end), timeFormat.format(end));
 
         assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(0));
         assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
@@ -98,12 +102,10 @@ public class Project2IT extends Project1IT {
 
         var calleeNumber = generatePhoneNumber();
         var callerNumber = generatePhoneNumber();
-        var startDate = generateDate();
-        var startTime = generateTime();
-        var endDate = generateDate();
-        var endTime = generateTime();
+        var start = generateDate();
+        var end = generateDate();
 
-        MainMethodResult result = invokeMain("-textFile", existingPhoneBill.getAbsolutePath(), bill.getCustomer(), callerNumber, calleeNumber, startDate, startTime, endDate, endTime);
+        MainMethodResult result = invokeMain("-textFile", existingPhoneBill.getAbsolutePath(), bill.getCustomer(), callerNumber, calleeNumber, dateFormat.format(start), timeFormat.format(start), dateFormat.format(end), timeFormat.format(end));
 
         assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(0));
     }
@@ -119,12 +121,10 @@ public class Project2IT extends Project1IT {
         var customer = "new customer";
         var calleeNumber = generatePhoneNumber();
         var callerNumber = generatePhoneNumber();
-        var startDate = generateDate();
-        var startTime = generateTime();
-        var endDate = generateDate();
-        var endTime = generateTime();
+        var start = generateDate();
+        var end = generateDate();
 
-        MainMethodResult result = invokeMain("-textFile", existingPhoneBill.getAbsolutePath(), customer, callerNumber, calleeNumber, startDate, startTime, endDate, endTime);
+        MainMethodResult result = invokeMain("-textFile", existingPhoneBill.getAbsolutePath(), "", callerNumber, calleeNumber, dateFormat.format(start), timeFormat.format(start), dateFormat.format(end), timeFormat.format(end));
         assertThat(result.getExitCode(), equalTo(1));
     }
 }
