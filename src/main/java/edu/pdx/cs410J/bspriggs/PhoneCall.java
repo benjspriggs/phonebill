@@ -13,7 +13,7 @@ public class PhoneCall extends AbstractPhoneCall {
     private final Date startTime;
     private final Date endTime;
     private static final Pattern phoneNumberPattern = Pattern.compile("\\d{3}-\\d{3}-\\d{4}");
-    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("mm/dd/yyyy hh:mm a");
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("m/d/y H:M a");
 
     PhoneCall(String caller, String callee, String startDateAndTime, String endDateAndTime) throws ParseException {
         this.caller = validatePhoneNumber(caller);
