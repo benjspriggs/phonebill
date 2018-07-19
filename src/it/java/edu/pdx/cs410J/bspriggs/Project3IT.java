@@ -1,5 +1,6 @@
 package edu.pdx.cs410J.bspriggs;
 
+import edu.pdx.cs410J.ParserException;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -38,26 +39,33 @@ public class Project3IT extends Project2IT {
     }
 
     @Test
-    public void testPrettyPrintsContentsOfFile() throws IOException {
-        var printer = new PrettyPrinter();
+    public void testPrettyPrintsContentsOfFile() throws IOException, ParserException {
         var prettyFile = folder.newFile();
-        var bill = TextDumperTest.getPopulatedPhoneBill();
 
+        var printer = new PrettyPrinter(prettyFile.toPath());
+        var bill = TextDumperTest.getPopulatedPhoneBill();
         var start = generateDate();
         var end = generateDateAfter(start);
         var startFormatted = PhoneCall.formatDate(start).split(" ");
         var endFormatted = PhoneCall.formatDate(end).split(" ");
 
+        var newPhoneCall = new PhoneCall(generatePhoneNumber(), generatePhoneNumber(),
+                PhoneCall.formatDate(start), PhoneCall.formatDate(end));
+
         var result = invokeMain(startFormatted, endFormatted,
                 "-pretty", prettyFile.getAbsolutePath(),
-                "customer", generatePhoneNumber(), generatePhoneNumber());
+                bill.getCustomer(), generatePhoneNumber(), generatePhoneNumber());
+
+        bill.addPhoneCall(newPhoneCall);
 
         var expectedBuffer = new ByteArrayOutputStream();
         printer.dumpTo(bill, expectedBuffer);
 
         assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(0));
         assertThat(result.getTextWrittenToStandardOut(), is(""));
-        assertThat(String.join(TextDumper.NEWLINE, Files.readAllLines(prettyFile.toPath())), containsString(new String(expectedBuffer.toByteArray())));
+
+        var fileContent = String.join(TextDumper.NEWLINE, Files.readAllLines(prettyFile.toPath()));
+        assertThat(fileContent, is(new String(expectedBuffer.toByteArray(), "utf-8")));
     }
 
     @Test
