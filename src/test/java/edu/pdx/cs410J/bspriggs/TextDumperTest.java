@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -29,7 +28,6 @@ public class TextDumperTest {
     public ExpectedException thrown = ExpectedException.none();
 
     protected final String newline = System.getProperty("line.separator");
-    private SimpleDateFormat timeFormat = new SimpleDateFormat("H:M a");
 
     protected static Random r = new Random();
 
