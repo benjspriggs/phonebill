@@ -2,6 +2,8 @@ package edu.pdx.cs410J.bspriggs;
 
 import edu.pdx.cs410J.AbstractPhoneBill;
 import edu.pdx.cs410J.InvokeMainTestCase;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -17,6 +19,25 @@ import static org.junit.Assert.assertThat;
 public class Project2IT extends InvokeMainTestCase {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
+
+    @Before
+    public void setUp() throws IOException {
+        var bspriggsDir = Paths.get("./bspriggs");
+
+        if (!bspriggsDir.toFile().exists())
+            Files.createDirectory(Paths.get("./bspriggs"));
+    }
+
+    @After
+    public void tearDown() {
+        var bspriggsDir = Paths.get("./bspriggs").toFile();
+        String[] entries = bspriggsDir.list();
+        for (String s : entries) {
+            File currentFile = new File(bspriggsDir.getPath(), s);
+            currentFile.delete();
+        }
+        bspriggsDir.delete();
+    }
 
     /**
      * Invokes the main method of {@link Project2} with the given arguments.
