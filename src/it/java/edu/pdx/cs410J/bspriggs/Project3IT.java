@@ -72,8 +72,8 @@ public class Project3IT extends Project2IT {
     public void testIncorrectDateTimeFormat() {
         var startDate = "1/11/11";
         var endDate = "1/11/12";
-        var startTime = "11:11";
-        var endTime = "12:11";
+        var startTime = "21:11";
+        var endTime = "22:11";
 
         var result = invokeMain("customer", generatePhoneNumber(), generatePhoneNumber(), startDate, startTime, "am", endDate, endTime, "pm");
 
