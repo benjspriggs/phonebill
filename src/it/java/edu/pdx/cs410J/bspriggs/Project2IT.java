@@ -1,7 +1,6 @@
 package edu.pdx.cs410J.bspriggs;
 
 import edu.pdx.cs410J.AbstractPhoneBill;
-import edu.pdx.cs410J.InvokeMainTestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -16,7 +15,7 @@ import java.nio.file.Paths;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
-public class Project2IT extends InvokeMainTestCase {
+public class Project2IT extends Project1IT {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
@@ -42,7 +41,7 @@ public class Project2IT extends InvokeMainTestCase {
     /**
      * Invokes the main method of {@link Project2} with the given arguments.
      */
-    private MainMethodResult invokeMain(String... args) {
+    protected MainMethodResult invokeMain(String... args) {
         return invokeMain(Project2.class, args);
     }
 
@@ -72,7 +71,7 @@ public class Project2IT extends InvokeMainTestCase {
     }
 
     /**
-     * Tests that invoking the main method with no arguments issues an error
+     * Tests that invoking the main method with no arguments issues an error.
      */
     @Test
     public void testNoCommandLineArguments() {
@@ -82,7 +81,7 @@ public class Project2IT extends InvokeMainTestCase {
     }
 
     /**
-     * Tests that invoking the main method with README issues readme
+     * Tests that invoking the main method with README issues readme text.
      */
     @Test
     public void testREADME() {
@@ -151,6 +150,11 @@ public class Project2IT extends InvokeMainTestCase {
         assertThat(result.getExitCode(), equalTo(1));
     }
 
+    /**
+     * Tests that when given a non-numberic phone number, the commmand line rejects with a relevant message.
+     *
+     * @throws IOException
+     */
     @Test
     public void testNonNumbericPhoneNumber() throws IOException {
         var bill = TextDumperTest.getPopulatedPhoneBill();
@@ -167,6 +171,10 @@ public class Project2IT extends InvokeMainTestCase {
         assertThat(result.getTextWrittenToStandardError(), containsString("Invalid phone number"));
     }
 
+    /**
+     * Tests that when given an incorrect start time, the commmand line rejects with a relevant message.
+     * @throws IOException
+     */
     @Test
     public void testMaformedStartTime() {
         MainMethodResult result = invokeMain("-textFile bspriggs/bspriggs-x.txt Test4 123-456-7890 234-567-8901 03/03/2018 12:XX 03/03/2018 16:00".split(" "));
@@ -176,6 +184,10 @@ public class Project2IT extends InvokeMainTestCase {
         assertThat(result.getTextWrittenToStandardError(), containsString("date"));
     }
 
+    /**
+     * Tests that when given an incorrect end time, the commmand line rejects with a relevant message.
+     * @throws IOException
+     */
     @Test
     public void testMalformedEndTime() {
         MainMethodResult result = invokeMain("-textFile bspriggs/bspriggs-x.txt Test5 123-456-7890 234-567-8901 03/03/2018 12:00 01/04/20/1 16:00".split(" "));
@@ -185,6 +197,10 @@ public class Project2IT extends InvokeMainTestCase {
         assertThat(result.getTextWrittenToStandardError(), containsString("date"));
     }
 
+    /**
+     * Tests that when starting a new phone bill file with a relative path, the phone bill is created.
+     * @throws IOException
+     */
     @Test
     public void testStartNewFile() throws IOException {
         var bspriggsDir = Paths.get("./bspriggs");
@@ -202,6 +218,10 @@ public class Project2IT extends InvokeMainTestCase {
         assertThat(result.getTextWrittenToStandardOut(), containsString("Project2"));
     }
 
+    /**
+     * Tests that when opening an existing phone bill file with a relative path, the phone bill is updated.
+     * @throws IOException
+     */
     @Test
     public void testExistingFile() throws IOException {
         var bill = TextDumperTest.getPopulatedPhoneBill();
