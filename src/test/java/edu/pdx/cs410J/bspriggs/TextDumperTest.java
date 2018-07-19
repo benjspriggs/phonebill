@@ -46,7 +46,9 @@ public class TextDumperTest {
     public static AbstractPhoneCall generatePhoneCall() throws ParserException {
         var start = generateDate();
         var end = generateDateAfter(start);
-        return new PhoneCall(generatePhoneNumber(), generatePhoneNumber(), PhoneCall.DATE_FORMAT.format(start), PhoneCall.DATE_FORMAT.format(end));
+        return new PhoneCall(generatePhoneNumber(), generatePhoneNumber(),
+                PhoneCall.formatDate(start),
+                PhoneCall.formatDate(end));
     }
 
     public static Date generateDateAfter(Date date) {

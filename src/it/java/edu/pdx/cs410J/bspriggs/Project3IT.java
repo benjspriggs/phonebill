@@ -28,8 +28,8 @@ public class Project3IT extends Project2IT {
     public void testCommandlineAcceptsNewDateFormat() {
         var start = generateDate();
         var end = generateDateAfter(start);
-        var startFormatted = PhoneCall.DATE_FORMAT.format(start).split(" ");
-        var endFormatted = PhoneCall.DATE_FORMAT.format(end).split(" ");
+        var startFormatted = PhoneCall.formatDate(start).split(" ");
+        var endFormatted = PhoneCall.formatDate(end).split(" ");
 
         var result = invokeMain(startFormatted, endFormatted,
                 "customer", generatePhoneNumber(), generatePhoneNumber());
@@ -45,8 +45,8 @@ public class Project3IT extends Project2IT {
 
         var start = generateDate();
         var end = generateDateAfter(start);
-        var startFormatted = PhoneCall.DATE_FORMAT.format(start).split(" ");
-        var endFormatted = PhoneCall.DATE_FORMAT.format(end).split(" ");
+        var startFormatted = PhoneCall.formatDate(start).split(" ");
+        var endFormatted = PhoneCall.formatDate(end).split(" ");
 
         var result = invokeMain(startFormatted, endFormatted,
                 "-pretty", prettyFile.getAbsolutePath(),
@@ -85,8 +85,8 @@ public class Project3IT extends Project2IT {
     public void testInvalidStartAndEndTimes() {
         var start = generateDate();
         var end = generateDateAfter(start);
-        var startFormatted = PhoneCall.DATE_FORMAT.format(start).split(" ");
-        var endFormatted = PhoneCall.DATE_FORMAT.format(end).split(" ");
+        var startFormatted = PhoneCall.formatDate(start).split(" ");
+        var endFormatted = PhoneCall.formatDate(end).split(" ");
 
         var result = invokeMain(startFormatted, endFormatted,
                 "customer", generatePhoneNumber(), generatePhoneNumber());

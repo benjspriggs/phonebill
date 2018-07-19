@@ -3,18 +3,26 @@ package edu.pdx.cs410J.bspriggs;
 import edu.pdx.cs410J.AbstractPhoneCall;
 import edu.pdx.cs410J.ParserException;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.regex.Pattern;
+
+import static java.time.LocalDateTime.ofInstant;
+import static java.time.format.DateTimeFormatter.ofPattern;
 
 public class PhoneCall extends AbstractPhoneCall {
     private final String caller;
     private final String callee;
-    private final Date startTime;
-    private final Date endTime;
+    private final LocalDateTime startTime;
+    private final LocalDateTime endTime;
     public static final Pattern PHONE_NUMBER_PATTERN = Pattern.compile("\\d{3}-\\d{3}-\\d{4}");
-    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MM/DD/yyyy hh:mm a");
+    public static DateTimeFormatter DATE_FORMAT = ofPattern("MM/DD/yyyy hh:mm a");
+
+    public static String formatDate(Date d) {
+        return DATE_FORMAT.format(ofInstant(d.toInstant(), ZoneOffset.UTC));
+    }
 
     /**
      * Initializes a phone call between two numbers.
@@ -29,14 +37,10 @@ public class PhoneCall extends AbstractPhoneCall {
         this.caller = validatePhoneNumber(caller);
         this.callee = validatePhoneNumber(callee);
 
-        try {
-            this.startTime = DATE_FORMAT.parse(startDateAndTime);
-            this.endTime = DATE_FORMAT.parse(endDateAndTime);
-        } catch (final ParseException e) {
-            throw new ParserException(e.toString());
-        }
+        this.startTime = LocalDateTime.parse(startDateAndTime, DATE_FORMAT);
+        this.endTime = LocalDateTime.parse(endDateAndTime, DATE_FORMAT);
 
-        if (startTime.after(endTime)) {
+        if (startTime.toInstant(ZoneOffset.UTC).isAfter(endTime.toInstant(ZoneOffset.UTC))) {
             throw new ParserException("End time must be after start time");
         }
     }
@@ -63,7 +67,7 @@ public class PhoneCall extends AbstractPhoneCall {
 
     @Override
     public Date getStartTime() {
-        return this.startTime;
+        return new Date(this.startTime.toInstant(ZoneOffset.UTC).toEpochMilli());
     }
 
     @Override
@@ -73,7 +77,7 @@ public class PhoneCall extends AbstractPhoneCall {
 
     @Override
     public Date getEndTime() {
-        return this.endTime;
+        return new Date(this.endTime.toInstant(ZoneOffset.UTC).toEpochMilli());
     }
 
     @Override

@@ -63,6 +63,6 @@ public class PhoneCallTest {
         thrown.expect(Exception.class);
         var end = new Date(10000L);
         var start = new Date(end.getTime() + 100000);
-        new PhoneCall(validPhoneNumber, validPhoneNumber, PhoneCall.DATE_FORMAT.format(start), PhoneCall.DATE_FORMAT.format(end));
+      new PhoneCall(validPhoneNumber, validPhoneNumber, PhoneCall.formatDate(start), PhoneCall.formatDate(end));
     }
 }

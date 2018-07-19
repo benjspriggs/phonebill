@@ -99,8 +99,8 @@ public class Project2IT extends Project1IT {
         var callerNumber = generatePhoneNumber();
         var start = generateDate();
         var end = generateDateAfter(start);
-        var startFormatted = PhoneCall.DATE_FORMAT.format(start).split(" ");
-        var endFormatted = PhoneCall.DATE_FORMAT.format(end).split(" ");
+        var startFormatted = PhoneCall.formatDate(start).split(" ");
+        var endFormatted = PhoneCall.formatDate(end).split(" ");
 
         MainMethodResult result = invokeMain(startFormatted, endFormatted,
                 "-textFile", "", customer, callerNumber, calleeNumber);
@@ -122,8 +122,8 @@ public class Project2IT extends Project1IT {
         var callerNumber = generatePhoneNumber();
         var start = generateDate();
         var end = generateDateAfter(start);
-        var startFormatted = PhoneCall.DATE_FORMAT.format(start).split(" ");
-        var endFormatted = PhoneCall.DATE_FORMAT.format(end).split(" ");
+        var startFormatted = PhoneCall.formatDate(start).split(" ");
+        var endFormatted = PhoneCall.formatDate(end).split(" ");
 
         MainMethodResult result = invokeMain(startFormatted, endFormatted,
                 "-textFile", existingPhoneBill.getAbsolutePath(), bill.getCustomer(), callerNumber, calleeNumber);
@@ -144,8 +144,8 @@ public class Project2IT extends Project1IT {
         var callerNumber = generatePhoneNumber();
         var start = generateDate();
         var end = generateDate();
-        var startFormatted = PhoneCall.DATE_FORMAT.format(start).split(" ");
-        var endFormatted = PhoneCall.DATE_FORMAT.format(end).split(" ");
+        var startFormatted = PhoneCall.formatDate(start).split(" ");
+        var endFormatted = PhoneCall.formatDate(end).split(" ");
 
         MainMethodResult result = invokeMain(startFormatted, endFormatted,
                 "-textFile", existingPhoneBill.getAbsolutePath(), "", callerNumber, calleeNumber);
