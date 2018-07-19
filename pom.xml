@@ -72,7 +72,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>edu.pdx.cs410J.bspriggs.Project3</mainClass>
+              <mainClass>edu.pdx.cs410J.bspriggs.Project1</mainClass>
             </manifest>
           </archive>
         </configuration>
