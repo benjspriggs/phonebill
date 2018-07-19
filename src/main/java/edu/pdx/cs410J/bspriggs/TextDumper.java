@@ -34,6 +34,13 @@ public class TextDumper implements edu.pdx.cs410J.PhoneBillDumper {
         return String.join(TextDumper.DELIMITER, call.getCaller(), call.getCallee(), call.getStartTimeString(), call.getEndTimeString());
     }
 
+    /**
+     * Dumps a phone bill to an {@link OutputStream}. Does not close the stream after it's done.
+     *
+     * @param phoneBill    The phone blll to dump.
+     * @param outputStream The stream to dump to.
+     * @throws IOException Thrown if there's any issue dumping to the stream.
+     */
     public void dumpTo(AbstractPhoneBill phoneBill, OutputStream outputStream) throws IOException {
         if (phoneBill == null) {
             return;
@@ -47,6 +54,12 @@ public class TextDumper implements edu.pdx.cs410J.PhoneBillDumper {
         }
     }
 
+    /**
+     * Dumps a {@link AbstractPhoneBill} to the given path (initialized in {@link TextDumper#TextDumper(Path)}.
+     * Overwrites any existing content in the file, if there's any.
+     * @param abstractPhoneBill The phone bill to dump.
+     * @throws IOException Thrown if there's issues opening or updating the file.
+     */
     @Override
     public void dump(AbstractPhoneBill abstractPhoneBill) throws IOException {
         var file = this.path.toFile();
