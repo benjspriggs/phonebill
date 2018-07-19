@@ -1,6 +1,7 @@
 package edu.pdx.cs410J.bspriggs;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -50,21 +51,23 @@ public class Project2 {
         // parse options
         // (this is probably better done with the apache commons-cli)
         for (; args[ptr].equals("-print") || args[ptr].equals("-README") || args[ptr].equals("-textFile"); ++ptr) {
-            if (args[ptr].equals("-print"))
-                print = true;
-            else if (args[ptr].equals("-README")) {
-                System.out.println("Optionally reads a PhoneBill " +
-                        "from a text file, " +
-                        "creates a new PhoneCall as specified on the command line, " +
-                        "adds the PhoneCall to the PhoneBill, " +
-                        "and then optionally writes the PhoneBill back to the text file.");
-                System.out.println(usage());
-                System.exit(0);
-            } else if (args[ptr].equals("-textFile")) {
-                // advance to filename
-                ptr++;
-                // get filename
-                filename = args[ptr];
+            switch (args[ptr]) {
+                case "-print":
+                    print = true;
+                    break;
+                case "-README":
+                    System.out.println("Optionally reads a PhoneBill " +
+                            "from a text file, " +
+                            "creates a new PhoneCall as specified on the command line, " +
+                            "adds the PhoneCall to the PhoneBill, " +
+                            "and then optionally writes the PhoneBill back to the text file.");
+                    System.out.println(usage());
+                    System.exit(0);
+                case "-textFile":
+                    // advance to filename
+                    ptr++;
+                    // get filename
+                    filename = args[ptr];
             }
         }
 
@@ -73,6 +76,9 @@ public class Project2 {
 
             Project1.validateArguments(Project1.ARGUMENTS, args, ptr);
 
+            var parseableArgs = Project1.sliceArgumentsForPhoneCallParsing(args, ptr);
+            PhoneCall call = Project1.parsePhoneCallFromArguments(parseableArgs);
+
             // open the file
             if (filename != null && filename.length() > 0) {
                 TextParser textParser = new TextParser(Paths.get(filename));
@@ -80,9 +86,6 @@ public class Project2 {
                 if (!parsedBill.getCustomer().equals(bill.getCustomer()))
                     throw new Exception(String.format(bill.getCustomer(), parsedBill.getCustomer()));
             }
-
-            var parseableArgs = Project1.sliceArgumentsForPhoneCallParsing(args, ptr);
-            PhoneCall call = Project1.parsePhoneCallFromArguments(parseableArgs);
 
             bill.addPhoneCall(call);
 
@@ -99,7 +102,9 @@ public class Project2 {
                 File file = path.toFile();
 
                 if (file.exists()) {
-                    file.delete();
+                    if (!file.delete()) {
+                        throw new IOException("Unable to remove existing file " + filename);
+                    }
                 }
 
                 TextDumper textDumper = new TextDumper(path);
@@ -107,7 +112,7 @@ public class Project2 {
             }
 
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            System.err.println(e);
             System.err.println(usage());
             System.exit(1);
         }

@@ -26,7 +26,7 @@ public class PhoneCall extends AbstractPhoneCall {
         var matcher = phoneNumberPattern.matcher(in);
 
         if (!matcher.matches()) {
-            throw new ParseException(in, 0);
+            throw new ParseException("Invalid phone number: " + in, 0);
         }
 
         return in;

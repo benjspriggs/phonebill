@@ -18,7 +18,7 @@ public class TextParser implements edu.pdx.cs410J.PhoneBillParser {
 
     @Override
     public AbstractPhoneBill<AbstractPhoneCall> parse() throws ParserException {
-        PhoneBill phoneBill = null;
+        PhoneBill phoneBill;
 
         try {
             var lines = Files.readAllLines(this.path, Charset.defaultCharset());
@@ -42,7 +42,7 @@ public class TextParser implements edu.pdx.cs410J.PhoneBillParser {
                 phoneBill.addPhoneCall(call);
             }
         } catch (Exception e) {
-            throw new ParserException(e.getMessage());
+            throw new ParserException(e.toString());
         }
 
         return phoneBill;

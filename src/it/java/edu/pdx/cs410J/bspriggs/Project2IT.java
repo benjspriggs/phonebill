@@ -9,8 +9,7 @@ import org.junit.rules.TemporaryFolder;
 import java.io.File;
 import java.io.IOException;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
 public class Project2IT extends InvokeMainTestCase {
@@ -127,5 +126,21 @@ public class Project2IT extends InvokeMainTestCase {
 
         MainMethodResult result = invokeMain("-textFile", existingPhoneBill.getAbsolutePath(), customer, callerNumber, calleeNumber, startDate, startTime, endDate, endTime);
         assertThat(result.getExitCode(), equalTo(1));
+    }
+
+    @Test
+    public void testNonNumbericPhoneNumber() throws IOException {
+        var bill = TextDumperTest.getPopulatedPhoneBill();
+        var bspriggs = new File("bspriggs/bspriggs-x.txt");
+
+        bspriggs.deleteOnExit();
+
+        new TextDumper(bspriggs.toPath()).dump(bill);
+
+        MainMethodResult result = invokeMain("-textFile bspriggs/bspriggs-x.txt Test3 ABC-123-4567 123-456-7890 03/03/2018 12:00 03/03/2018 16:00".split(" "));
+
+        assertThat(result.getExitCode(), equalTo(1));
+        assertThat(result.getTextWrittenToStandardError(), is(not("")));
+        assertThat(result.getTextWrittenToStandardError(), containsString("Invalid phone number"));
     }
 }
