@@ -14,7 +14,7 @@ public class PhoneCall extends AbstractPhoneCall {
     private final Date startTime;
     private final Date endTime;
     public static final Pattern PHONE_NUMBER_PATTERN = Pattern.compile("\\d{3}-\\d{3}-\\d{4}");
-    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("m/d/y H:M a");
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("M/D/y h:mm a");
 
     /**
      * Initializes a phone call between two numbers.
