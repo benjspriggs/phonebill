@@ -2,6 +2,7 @@ package edu.pdx.cs410J.bspriggs;
 
 import edu.pdx.cs410J.AbstractPhoneBill;
 import edu.pdx.cs410J.AbstractPhoneCall;
+import edu.pdx.cs410J.ParserException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -13,7 +14,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
@@ -45,7 +45,7 @@ public class TextDumperTest {
         );
     }
 
-    public static AbstractPhoneCall generatePhoneCall() throws ParseException {
+    public static AbstractPhoneCall generatePhoneCall() throws ParserException {
         var start = generateDate();
         var end = generateDateAfter(start);
         return new PhoneCall(generatePhoneNumber(), generatePhoneNumber(), PhoneCall.DATE_FORMAT.format(start), PhoneCall.DATE_FORMAT.format(end));
@@ -148,7 +148,7 @@ public class TextDumperTest {
     }
 
     /**
-     * Tests that if a file already exists {@link TextDumper} throws an exception.
+     * Tests that if a file already exists {@link TextDumper} doesn't throw an exception.
      */
     @Test
     public void testDumpExistingFile() throws IOException {
@@ -159,8 +159,6 @@ public class TextDumperTest {
         var dumper = new TextDumper(emptyFile.toPath());
 
         dumper.dump(bill);
-
-        thrown.expect(IOException.class);
 
         dumper.dump(bill);
     }

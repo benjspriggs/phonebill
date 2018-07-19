@@ -16,9 +16,19 @@ public class TextParser implements edu.pdx.cs410J.PhoneBillParser {
         this.path = path;
     }
 
+    /**
+     * Parses an {@link AbstractPhoneBill} from a path (initialized in {@link TextParser#TextParser(Path)}.
+     *
+     * @return The parsed phone bill. May be null.
+     * @throws ParserException Thrown if there's any issues parsing the file.
+     */
     @Override
     public AbstractPhoneBill<AbstractPhoneCall> parse() throws ParserException {
-        PhoneBill phoneBill = null;
+        PhoneBill phoneBill;
+
+        if (!path.toFile().exists()) {
+            return null;
+        }
 
         try {
             var lines = Files.readAllLines(this.path, Charset.defaultCharset());
@@ -42,7 +52,7 @@ public class TextParser implements edu.pdx.cs410J.PhoneBillParser {
                 phoneBill.addPhoneCall(call);
             }
         } catch (Exception e) {
-            throw new ParserException(e.getMessage());
+            throw new ParserException(e.toString());
         }
 
         return phoneBill;

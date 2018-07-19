@@ -1,6 +1,7 @@
 package edu.pdx.cs410J.bspriggs;
 
 import edu.pdx.cs410J.AbstractPhoneCall;
+import edu.pdx.cs410J.ParserException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,26 +13,39 @@ public class PhoneCall extends AbstractPhoneCall {
     private final String callee;
     private final Date startTime;
     private final Date endTime;
-    private static final Pattern phoneNumberPattern = Pattern.compile("\\d{3}-\\d{3}-\\d{4}");
+    public static final Pattern PHONE_NUMBER_PATTERN = Pattern.compile("\\d{3}-\\d{3}-\\d{4}");
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("m/d/y H:M a");
 
-    PhoneCall(String caller, String callee, String startDateAndTime, String endDateAndTime) throws ParseException {
+    /**
+     * Initializes a phone call between two numbers.
+     *
+     * @param caller           Caller's phone number. Must match {@link PhoneCall#PHONE_NUMBER_PATTERN}.
+     * @param callee           Callee's phone number. Must match {@link PhoneCall#PHONE_NUMBER_PATTERN}.
+     * @param startDateAndTime Start date and time for the call. Must match {@link PhoneCall#DATE_FORMAT}.
+     * @param endDateAndTime   Start date and time for the call. Must match {@link PhoneCall#DATE_FORMAT}.
+     * @throws ParserException Thrown if any of the fields do not match the provided patterns.
+     */
+    PhoneCall(String caller, String callee, String startDateAndTime, String endDateAndTime) throws ParserException {
         this.caller = validatePhoneNumber(caller);
         this.callee = validatePhoneNumber(callee);
 
-        this.startTime = DATE_FORMAT.parse(startDateAndTime);
-        this.endTime = DATE_FORMAT.parse(endDateAndTime);
+        try {
+            this.startTime = DATE_FORMAT.parse(startDateAndTime);
+            this.endTime = DATE_FORMAT.parse(endDateAndTime);
+        } catch (final ParseException e) {
+            throw new ParserException(e.toString());
+        }
 
         if (startTime.after(endTime)) {
-            throw new ParseException("End time must be after start time", 0);
+            throw new ParserException("End time must be after start time");
         }
     }
 
-    private String validatePhoneNumber(String in) throws ParseException {
-        var matcher = phoneNumberPattern.matcher(in);
+    private String validatePhoneNumber(String in) throws ParserException {
+        var matcher = PHONE_NUMBER_PATTERN.matcher(in);
 
         if (!matcher.matches()) {
-            throw new ParseException(in, 0);
+            throw new ParserException("Invalid phone number: " + in);
         }
 
         return in;

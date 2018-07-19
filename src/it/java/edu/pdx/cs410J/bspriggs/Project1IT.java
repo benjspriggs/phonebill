@@ -15,7 +15,7 @@ public class Project1IT extends InvokeMainTestCase {
     /**
      * Invokes the main method of {@link Project1} with the given arguments.
      */
-    private MainMethodResult invokeMain(String... args) {
+    protected MainMethodResult invokeMain(String... args) {
         return invokeMain( Project1.class, args );
     }
 

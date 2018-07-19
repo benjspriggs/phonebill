@@ -1,18 +1,21 @@
 package edu.pdx.cs410J.bspriggs;
 
 import edu.pdx.cs410J.AbstractPhoneBill;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import static edu.pdx.cs410J.bspriggs.TextDumperTest.*;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
 public class Project2IT extends Project1IT {
@@ -21,6 +24,25 @@ public class Project2IT extends Project1IT {
 
     protected MainMethodResult invokeMain(String... args) {
         return invokeMain(new String[]{}, new String[]{}, args);
+    }
+
+    @Before
+    public void setUp() throws IOException {
+        var bspriggsDir = Paths.get("./bspriggs");
+
+        if (!bspriggsDir.toFile().exists())
+            Files.createDirectory(Paths.get("./bspriggs"));
+    }
+
+    @After
+    public void tearDown() {
+        var bspriggsDir = Paths.get("./bspriggs").toFile();
+        String[] entries = bspriggsDir.list();
+        for (String s : entries) {
+            File currentFile = new File(bspriggsDir.getPath(), s);
+            currentFile.delete();
+        }
+        bspriggsDir.delete();
     }
 
     /**
@@ -48,7 +70,7 @@ public class Project2IT extends Project1IT {
     }
 
     /**
-     * Tests that invoking the main method with no arguments issues an error
+     * Tests that invoking the main method with no arguments issues an error.
      */
     @Test
     public void testNoCommandLineArguments() {
@@ -58,7 +80,7 @@ public class Project2IT extends Project1IT {
     }
 
     /**
-     * Tests that invoking the main method with README issues readme
+     * Tests that invoking the main method with README issues readme text.
      */
     @Test
     public void testREADME() {
@@ -128,5 +150,96 @@ public class Project2IT extends Project1IT {
         MainMethodResult result = invokeMain(startFormatted, endFormatted,
                 "-textFile", existingPhoneBill.getAbsolutePath(), "", callerNumber, calleeNumber);
         assertThat(result.getExitCode(), equalTo(1));
+    }
+
+    /**
+     * Tests that when given a non-numberic phone number, the commmand line rejects with a relevant message.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testNonNumbericPhoneNumber() throws IOException {
+        var bill = getPopulatedPhoneBill();
+        var bspriggs = new File("bspriggs/bspriggs-x.txt");
+
+        bspriggs.deleteOnExit();
+
+        new TextDumper(bspriggs.toPath()).dump(bill);
+
+        MainMethodResult result = invokeMain("-textFile bspriggs/bspriggs-x.txt Test3 ABC-123-4567 123-456-7890 03/03/2018 12:00 03/03/2018 16:00".split(" "));
+
+        assertThat(result.getExitCode(), equalTo(1));
+        assertThat(result.getTextWrittenToStandardError(), is(not("")));
+        assertThat(result.getTextWrittenToStandardError(), containsString("Invalid phone number"));
+    }
+
+    /**
+     * Tests that when given an incorrect start time, the commmand line rejects with a relevant message.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testMaformedStartTime() {
+        MainMethodResult result = invokeMain("-textFile bspriggs/bspriggs-x.txt Test4 123-456-7890 234-567-8901 03/03/2018 12:XX 03/03/2018 16:00".split(" "));
+
+        assertThat(result.getExitCode(), equalTo(1));
+        assertThat(result.getTextWrittenToStandardError(), is(not("")));
+        assertThat(result.getTextWrittenToStandardError(), containsString("date"));
+    }
+
+    /**
+     * Tests that when given an incorrect end time, the commmand line rejects with a relevant message.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testMalformedEndTime() {
+        MainMethodResult result = invokeMain("-textFile bspriggs/bspriggs-x.txt Test5 123-456-7890 234-567-8901 03/03/2018 12:00 01/04/20/1 16:00".split(" "));
+
+        assertThat(result.getExitCode(), equalTo(1));
+        assertThat(result.getTextWrittenToStandardError(), is(not("")));
+        assertThat(result.getTextWrittenToStandardError(), containsString("date"));
+    }
+
+    /**
+     * Tests that when starting a new phone bill file with a relative path, the phone bill is created.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testStartNewFile() throws IOException {
+        var bspriggsDir = Paths.get("./bspriggs");
+
+        if (!bspriggsDir.toFile().exists())
+            Files.createDirectory(Paths.get("./bspriggs"));
+
+        var bspriggs = new File("bspriggs/bspriggs.txt");
+        bspriggs.deleteOnExit();
+
+        MainMethodResult result = invokeMain("-textFile bspriggs/bspriggs.txt -print Project2 123-456-7890 234-567-9081 01/07/2018 07:00 01/17/2018 17:00".split(" "));
+
+        assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(0));
+        assertThat(result.getTextWrittenToStandardError(), is(""));
+        assertThat(result.getTextWrittenToStandardOut(), containsString("Project2"));
+    }
+
+    /**
+     * Tests that when opening an existing phone bill file with a relative path, the phone bill is updated.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testExistingFile() throws IOException {
+        var bill = getPopulatedPhoneBill();
+        var bspriggs = new File("bspriggs/bspriggs-x.txt");
+
+        bspriggs.deleteOnExit();
+
+        new TextDumper(bspriggs.toPath()).dump(bill);
+        MainMethodResult result = invokeMain("-textFile bspriggs/bspriggs.txt -print Project2 123-456-7890 456-789-0123 01/08/2018 08:00 01/08/2018 18:00".split(" "));
+
+        assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(0));
+        assertThat(result.getTextWrittenToStandardError(), is(""));
+        assertThat(result.getTextWrittenToStandardOut(), containsString("Project2"));
     }
 }

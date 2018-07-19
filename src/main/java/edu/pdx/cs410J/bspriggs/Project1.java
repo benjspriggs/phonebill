@@ -1,6 +1,7 @@
 package edu.pdx.cs410J.bspriggs;
 
-import java.text.ParseException;
+import edu.pdx.cs410J.ParserException;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +25,7 @@ public class Project1 {
             entry("-README", "Prints a README for this project and exits")
     );
 
-    private static String build(List<Map.Entry<String, String>> f) {
+    protected static String build(List<Map.Entry<String, String>> f) {
         var b = new StringBuilder();
 
         for (Map.Entry<String, String> pair : f) {
@@ -41,10 +42,10 @@ public class Project1 {
                 build(ARGUMENTS) +
                 "options are (options may appear in any order):\n" +
                 build(OPTIONS) +
-                "Date and time should be in the format: mm/dd/yyyy hh:mm";
+                "Date and time should be in the format: " + PhoneCall.DATE_FORMAT.toString();
     }
 
-    public static PhoneCall parsePhoneCallFromArguments(String[] args) throws ParseException {
+    public static PhoneCall parsePhoneCallFromArguments(String[] args) throws ParserException {
         int ptr = 0;
 
         return new PhoneCall(args[ptr++], args[ptr++],
