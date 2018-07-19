@@ -98,4 +98,13 @@ public class Project3IT extends Project2IT {
         assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(1));
         assertThat(result.getTextWrittenToStandardError(), containsString("after"));
     }
+
+    @Test
+    public void testUsageHasProject3Text() {
+        MainMethodResult result = invokeMain("-README");
+
+        assertThat(result.getTextWrittenToStandardOut(), containsString("Project3"));
+        assertThat(result.getTextWrittenToStandardOut(), not(containsString("Project2")));
+        assertThat(result.getTextWrittenToStandardOut(), not(containsString("Project1")));
+    }
 }

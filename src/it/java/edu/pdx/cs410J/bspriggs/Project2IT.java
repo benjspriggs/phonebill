@@ -242,4 +242,12 @@ public class Project2IT extends Project1IT {
         assertThat(result.getTextWrittenToStandardError(), is(""));
         assertThat(result.getTextWrittenToStandardOut(), containsString("Project2"));
     }
+
+    @Test
+    public void testUsageHasProject2Text() {
+        MainMethodResult result = invokeMain("-README");
+
+        assertThat(result.getTextWrittenToStandardOut(), containsString("Project2"));
+        assertThat(result.getTextWrittenToStandardOut(), not(containsString("Project1")));
+    }
 }
