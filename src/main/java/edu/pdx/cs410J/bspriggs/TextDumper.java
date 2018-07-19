@@ -11,7 +11,7 @@ import java.nio.file.Path;
 public class TextDumper implements edu.pdx.cs410J.PhoneBillDumper {
     private final Path path;
     /**
-     * Delimiter used to separate fields in a {@link PhoneCall}. See {@link TextDumper::serizlize}.
+     * Delimiter used to separate fields in a {@link PhoneCall}. See {@link TextDumper#serialize(AbstractPhoneCall)}.
      */
     public static final String DELIMITER = "|";
     public static final String NEWLINE = System.getProperty("line.separator");
@@ -27,7 +27,7 @@ public class TextDumper implements edu.pdx.cs410J.PhoneBillDumper {
     /**
      * Serializes a single {@link PhoneCall}.
      *
-     * @param call
+     * @param call The call to serialize.
      * @return A serialized {@link PhoneCall}
      */
     public static String serialize(AbstractPhoneCall call) {
