@@ -10,6 +10,9 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.nio.file.Path;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 public class PrettyPrinter implements PhoneBillDumper {
     private final Path filePath;
@@ -61,10 +64,17 @@ public class PrettyPrinter implements PhoneBillDumper {
     }
 
     public void dumpTo(AbstractPhoneBill<AbstractPhoneCall> bill, OutputStream expected) throws IOException {
+        if (bill == null || expected == null) {
+            return;
+        }
+
         expected.write(formatCustomer(bill.getCustomer()).getBytes());
         expected.write(TextDumper.NEWLINE.getBytes());
 
-        for (var call : bill.getPhoneCalls()) {
+        List<AbstractPhoneCall> toSort = new ArrayList<>(bill.getPhoneCalls());
+
+        toSort.sort(Comparator.comparing(AbstractPhoneCall::getStartTime));
+        for (AbstractPhoneCall call : toSort) {
             expected.write(format(call).getBytes());
             expected.write((TextDumper.NEWLINE.getBytes()));
         }

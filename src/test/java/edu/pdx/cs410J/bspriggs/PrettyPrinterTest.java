@@ -11,6 +11,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 public class PrettyPrinterTest extends TextDumperTest {
@@ -44,7 +45,7 @@ public class PrettyPrinterTest extends TextDumperTest {
         var actualBuffer = new ByteArrayOutputStream();
         printer.dumpTo(bill, actualBuffer);
 
-        assertThat(actualBuffer.toString(), containsString(expectedBuffer.toString()));
+        assertThat(actualBuffer.toString(), is(expectedBuffer.toString()));
     }
 
     @Test
