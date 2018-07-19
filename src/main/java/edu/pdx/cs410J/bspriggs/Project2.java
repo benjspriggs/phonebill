@@ -10,28 +10,17 @@ import java.util.Map;
 
 import static java.util.Map.entry;
 
-public class Project2 {
+public class Project2 extends Project1 {
     private static final List<Map.Entry<String, String>> OPTIONS = Arrays.asList(
             entry("-print", "Prints a description of the new phone call"),
             entry("-README", "Prints a README for this project and exits"),
             entry("-textFile file", "Where to read/write the phone bill")
     );
 
-    private static String build(List<Map.Entry<String, String>> f) {
-        var b = new StringBuilder();
-
-        for (Map.Entry<String, String> pair : f) {
-            b.append(String.format("  %-10s\t%s", pair.getKey(), pair.getValue()));
-            b.append(System.lineSeparator());
-        }
-
-        return b.toString();
-    }
-
-    private static String usage() {
+    protected static String usage() {
         return "usage: java edu.pdx.cs410J.bspriggs.Project2 [options] <args>\n" +
                 "args are (in this order):\n" +
-                build(Project1.ARGUMENTS) +
+                build(ARGUMENTS) +
                 "options are (options may appear in any order):\n" +
                 build(OPTIONS) +
                 "Date and time should be in the format: mm/dd/yyyy hh:mm";
@@ -74,10 +63,10 @@ public class Project2 {
         try {
             PhoneBill bill = new PhoneBill(args[ptr++]);
 
-            Project1.validateArguments(Project1.ARGUMENTS, args, ptr);
+            validateArguments(ARGUMENTS, args, ptr);
 
-            var parseableArgs = Project1.sliceArgumentsForPhoneCallParsing(args, ptr);
-            PhoneCall call = Project1.parsePhoneCallFromArguments(parseableArgs);
+            var parseableArgs = sliceArgumentsForPhoneCallParsing(args, ptr);
+            PhoneCall call = parsePhoneCallFromArguments(parseableArgs);
 
             // open the file
             if (filename != null && filename.length() > 0) {

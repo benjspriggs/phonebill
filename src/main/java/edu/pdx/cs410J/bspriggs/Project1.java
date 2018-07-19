@@ -25,7 +25,7 @@ public class Project1 {
             entry("-README", "Prints a README for this project and exits")
     );
 
-    private static String build(List<Map.Entry<String, String>> f) {
+    protected static String build(List<Map.Entry<String, String>> f) {
         var b = new StringBuilder();
 
         for (Map.Entry<String, String> pair : f) {
@@ -36,7 +36,7 @@ public class Project1 {
         return b.toString();
     }
 
-    private static String usage() {
+    protected static String usage() {
         return "usage: java edu.pdx.cs410J.bspriggs.Project1 [options] <args>\n" +
                 "args are (in this order):\n" +
                 build(ARGUMENTS) +
