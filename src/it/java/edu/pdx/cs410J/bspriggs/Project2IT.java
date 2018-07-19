@@ -8,6 +8,8 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
@@ -160,5 +162,22 @@ public class Project2IT extends InvokeMainTestCase {
         assertThat(result.getExitCode(), equalTo(1));
         assertThat(result.getTextWrittenToStandardError(), is(not("")));
         assertThat(result.getTextWrittenToStandardError(), containsString("date"));
+    }
+
+    @Test
+    public void testStartNewFile() throws IOException {
+        var bspriggsDir = Paths.get("./bspriggs");
+
+        if (!bspriggsDir.toFile().exists())
+            Files.createDirectory(Paths.get("./bspriggs"));
+
+        var bspriggs = new File("bspriggs/bspriggs.txt");
+        bspriggs.deleteOnExit();
+
+        MainMethodResult result = invokeMain("-textFile bspriggs/bspriggs.txt -print Project2 123-456-7890 234-567-9081 01/07/2018 07:00 01/17/2018 17:00".split(" "));
+
+        assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(0));
+        assertThat(result.getTextWrittenToStandardError(), is(" "));
+        assertThat(result.getTextWrittenToStandardError(), containsString("Project2"));
     }
 }
