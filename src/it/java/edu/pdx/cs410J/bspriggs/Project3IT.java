@@ -89,7 +89,7 @@ public class Project3IT extends Project2IT {
         var result = invokeMain("customer", generatePhoneNumber(), generatePhoneNumber(), startDate, startTime, "am", endDate, endTime, "pm");
 
         assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(1));
-        assertThat(result.getTextWrittenToStandardError(), containsString("date format"));
+        assertThat(result.getTextWrittenToStandardError(), containsString("parse"));
     }
 
     @Test
