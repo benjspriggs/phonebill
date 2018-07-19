@@ -57,7 +57,7 @@ public class TextDumperTest {
 
 
     public static AbstractPhoneBill<AbstractPhoneCall> getPopulatedPhoneBill() {
-        var bill = new PhoneBill("name");
+        var bill = new PhoneBill(String.valueOf(r.nextInt()));
 
         try {
             bill.addPhoneCall(generatePhoneCall());
