@@ -20,6 +20,10 @@ public class TextParser implements edu.pdx.cs410J.PhoneBillParser {
     public AbstractPhoneBill<AbstractPhoneCall> parse() throws ParserException {
         PhoneBill phoneBill;
 
+        if (!path.toFile().exists()) {
+            return null;
+        }
+
         try {
             var lines = Files.readAllLines(this.path, Charset.defaultCharset());
 

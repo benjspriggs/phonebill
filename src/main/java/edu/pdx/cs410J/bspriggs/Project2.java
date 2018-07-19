@@ -83,8 +83,10 @@ public class Project2 {
             if (filename != null && filename.length() > 0) {
                 TextParser textParser = new TextParser(Paths.get(filename));
                 var parsedBill = (PhoneBill) textParser.parse();
-                if (!parsedBill.getCustomer().equals(bill.getCustomer()))
+
+                if (parsedBill != null && !parsedBill.getCustomer().equals(bill.getCustomer())) {
                     throw new Exception(String.format(bill.getCustomer(), parsedBill.getCustomer()));
+                }
             }
 
             bill.addPhoneCall(call);

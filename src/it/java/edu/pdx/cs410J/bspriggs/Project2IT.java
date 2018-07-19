@@ -177,7 +177,7 @@ public class Project2IT extends InvokeMainTestCase {
         MainMethodResult result = invokeMain("-textFile bspriggs/bspriggs.txt -print Project2 123-456-7890 234-567-9081 01/07/2018 07:00 01/17/2018 17:00".split(" "));
 
         assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(0));
-        assertThat(result.getTextWrittenToStandardError(), is(" "));
-        assertThat(result.getTextWrittenToStandardError(), containsString("Project2"));
+        assertThat(result.getTextWrittenToStandardError(), is(""));
+        assertThat(result.getTextWrittenToStandardOut(), containsString("Project2"));
     }
 }
