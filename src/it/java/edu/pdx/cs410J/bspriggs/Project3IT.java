@@ -41,11 +41,11 @@ public class Project3IT extends Project2IT {
     @Test
     public void testPrettyPrintsContentsOfFile() throws IOException, ParserException {
         // create a new destination
-        var textFile = folder.newFile();
+        var bill = TextDumperTest.getPopulatedPhoneBill();
+        var textFile = generateExistingPhoneBill(bill);
         var prettyFile = folder.newFile();
 
         var printer = new PrettyPrinter();
-        var bill = TextDumperTest.getPopulatedPhoneBill();
         var start = generateDate();
         var end = generateDateAfter(start);
         var startFormatted = PhoneCall.formatDate(start).split(" ");
@@ -67,7 +67,7 @@ public class Project3IT extends Project2IT {
         assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(0));
         assertThat(result.getTextWrittenToStandardOut(), is(""));
 
-        var fileContent = String.join(TextDumper.NEWLINE, Files.readAllLines(textFile.toPath()));
+        var fileContent = String.join(TextDumper.NEWLINE, Files.readAllLines(prettyFile.toPath()));
         assertThat(fileContent, is(new String(expectedBuffer.toByteArray(), "utf-8")));
     }
 
@@ -94,8 +94,8 @@ public class Project3IT extends Project2IT {
 
     @Test
     public void testInvalidStartAndEndTimes() {
-        var start = generateDate();
-        var end = generateDateAfter(start);
+        var end = generateDate();
+        var start = generateDateAfter(end);
         var startFormatted = PhoneCall.formatDate(start).split(" ");
         var endFormatted = PhoneCall.formatDate(end).split(" ");
 
@@ -108,10 +108,8 @@ public class Project3IT extends Project2IT {
 
     @Test
     public void testUsageHasProject3Text() {
-        MainMethodResult result = invokeMain("-README");
+        MainMethodResult result = invokeMain(new String[]{}, new String[]{}, "-README");
 
         assertThat(result.getTextWrittenToStandardOut(), containsString("Project3"));
-        assertThat(result.getTextWrittenToStandardOut(), not(containsString("Project2")));
-        assertThat(result.getTextWrittenToStandardOut(), not(containsString("Project1")));
     }
 }
