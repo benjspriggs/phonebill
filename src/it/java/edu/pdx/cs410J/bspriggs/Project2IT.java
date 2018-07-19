@@ -176,11 +176,16 @@ public class Project2IT extends Project1IT {
      */
     @Test
     public void testMaformedStartTime() {
-        MainMethodResult result = invokeMain("-textFile bspriggs/bspriggs-x.txt Test4 123-456-7890 234-567-8901 03/03/2018 12:XX 03/03/2018 16:00".split(" "));
+        var start = "01/08/2018/1 1:00 AM";
+        var end = "01/08/2018 10:00 AM";
+        MainMethodResult result = invokeMain(
+                start.split(" "),
+                end.split(" "),
+                "-textFile bspriggs/bspriggs-x.txt Test4 123-456-7890 234-567-8901".split(" "));
 
         assertThat(result.getExitCode(), equalTo(1));
         assertThat(result.getTextWrittenToStandardError(), is(not("")));
-        assertThat(result.getTextWrittenToStandardError(), containsString("date"));
+        assertThat(result.getTextWrittenToStandardError(), containsString("parsed"));
     }
 
     /**
@@ -190,11 +195,16 @@ public class Project2IT extends Project1IT {
      */
     @Test
     public void testMalformedEndTime() {
-        MainMethodResult result = invokeMain("-textFile bspriggs/bspriggs-x.txt Test5 123-456-7890 234-567-8901 03/03/2018 12:00 01/04/20/1 16:00".split(" "));
+        var start = "01/08/2018 1:00 AM";
+        var end = "01/08/2018/1 10:00 AM";
+        MainMethodResult result = invokeMain(
+                start.split(" "),
+                end.split(" "),
+                "-textFile bspriggs/bspriggs-x.txt Test5 123-456-7890 234-567-8901".split(" "));
 
         assertThat(result.getExitCode(), equalTo(1));
         assertThat(result.getTextWrittenToStandardError(), is(not("")));
-        assertThat(result.getTextWrittenToStandardError(), containsString("date"));
+        assertThat(result.getTextWrittenToStandardError(), containsString("parsed"));
     }
 
     /**
@@ -204,6 +214,8 @@ public class Project2IT extends Project1IT {
      */
     @Test
     public void testStartNewFile() throws IOException {
+        var start = "01/08/2018 1:00 AM";
+        var end = "01/08/2018 11:00 AM";
         var bspriggsDir = Paths.get("./bspriggs");
 
         if (!bspriggsDir.toFile().exists())
@@ -212,7 +224,10 @@ public class Project2IT extends Project1IT {
         var bspriggs = new File("bspriggs/bspriggs.txt");
         bspriggs.deleteOnExit();
 
-        MainMethodResult result = invokeMain("-textFile bspriggs/bspriggs.txt -print Project2 123-456-7890 234-567-9081 01/07/2018 07:00 01/17/2018 17:00".split(" "));
+        MainMethodResult result = invokeMain(
+                start.split(" "),
+                end.split(" "),
+                "-textFile bspriggs/bspriggs.txt -print Project2 123-456-7890 234-567-9081".split(" "));
 
         assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(0));
         assertThat(result.getTextWrittenToStandardError(), is(""));
@@ -226,13 +241,17 @@ public class Project2IT extends Project1IT {
      */
     @Test
     public void testExistingFile() throws IOException {
+        var start = "01/08/2018 1:00 AM";
+        var end = "01/08/2018 9:00 AM";
         var bill = getPopulatedPhoneBill();
         var bspriggs = new File("bspriggs/bspriggs-x.txt");
 
         bspriggs.deleteOnExit();
 
         new TextDumper(bspriggs.toPath()).dump(bill);
-        MainMethodResult result = invokeMain("-textFile bspriggs/bspriggs.txt -print Project2 123-456-7890 456-789-0123 01/08/2018 08:00 01/08/2018 18:00".split(" "));
+        MainMethodResult result = invokeMain(start.split(" "),
+                end.split(" "),
+                "-textFile bspriggs/bspriggs.txt -print Project2 123-456-7890 456-789-0123".split(" "));
 
         assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(0));
         assertThat(result.getTextWrittenToStandardError(), is(""));
@@ -241,7 +260,7 @@ public class Project2IT extends Project1IT {
 
     @Test
     public void testUsageHasProject2Text() {
-        MainMethodResult result = invokeMain("-README");
+        MainMethodResult result = invokeMain(new String[]{}, new String[]{}, "-README");
 
         assertThat(result.getTextWrittenToStandardOut(), containsString("Project2"));
         assertThat(result.getTextWrittenToStandardOut(), not(containsString("Project1")));
