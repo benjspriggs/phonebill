@@ -152,4 +152,13 @@ public class Project2IT extends InvokeMainTestCase {
         assertThat(result.getTextWrittenToStandardError(), is(not("")));
         assertThat(result.getTextWrittenToStandardError(), containsString("date"));
     }
+
+    @Test
+    public void testMalformedEndTime() {
+        MainMethodResult result = invokeMain("-textFile bspriggs/bspriggs-x.txt Test5 123-456-7890 234-567-8901 03/03/2018 12:00 01/04/20/1 16:00".split(" "));
+
+        assertThat(result.getExitCode(), equalTo(1));
+        assertThat(result.getTextWrittenToStandardError(), is(not("")));
+        assertThat(result.getTextWrittenToStandardError(), containsString("date"));
+    }
 }
