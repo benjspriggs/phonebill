@@ -22,10 +22,6 @@ public class Project2IT extends Project1IT {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
-    protected MainMethodResult invokeMain(String... args) {
-        return this.invokeMain(new String[]{}, new String[]{}, args);
-    }
-
     @Before
     public void setUp() throws IOException {
         var bspriggsDir = Paths.get("./bspriggs");
