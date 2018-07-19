@@ -1,5 +1,6 @@
 package edu.pdx.cs410J.bspriggs;
 
+import edu.pdx.cs410J.ParserException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -18,30 +19,26 @@ public class PhoneCallTest {
   public ExpectedException thrown = ExpectedException.none();
 
   private final String validPhoneNumber = "503-333-3333";
-    private final String validTime = "1/15/2031 2:33 am";
+  private final String validTime = "1/15/2031 2:33 AM";
 
-  private PhoneCall getPhoneCall() {
-    try {
-      return new PhoneCall(validPhoneNumber, validPhoneNumber, validTime, validTime);
-    } catch (Exception e) {
-      return null;
-    }
+  private PhoneCall getPhoneCall() throws ParserException {
+    return new PhoneCall(validPhoneNumber, validPhoneNumber, validTime, validTime);
   }
 
   @Test
-  public void getStartTimeStringNeedsToBeImplemented() {
+  public void getStartTimeStringNeedsToBeImplemented() throws ParserException {
     PhoneCall call = getPhoneCall();
     assertThat(call.getStartTimeString(), not(nullValue()));
   }
 
   @Test
-  public void getCallerNeedsToBeImplemented() {
+  public void getCallerNeedsToBeImplemented() throws ParserException {
     PhoneCall call = getPhoneCall();
     assertThat(call.getCaller(), not(nullValue()));
   }
 
   @Test
-  public void getCalleeNeedsToBeImplemented() {
+  public void getCalleeNeedsToBeImplemented() throws ParserException {
     PhoneCall call = getPhoneCall();
     assertThat(call.getCallee(), not(nullValue()));
   }
@@ -58,11 +55,11 @@ public class PhoneCallTest {
     new PhoneCall(validPhoneNumber, validPhoneNumber, "cat", "dog");
   }
 
-    @Test
-    public void testStartingAfterEnding() throws Exception {
-        thrown.expect(Exception.class);
-        var end = new Date(10000L);
-        var start = new Date(end.getTime() + 100000);
-      new PhoneCall(validPhoneNumber, validPhoneNumber, PhoneCall.formatDate(start), PhoneCall.formatDate(end));
-    }
+  @Test
+  public void testStartingAfterEnding() throws Exception {
+    thrown.expect(Exception.class);
+    var end = new Date(10000L);
+    var start = new Date(end.getTime() + 100000);
+    new PhoneCall(validPhoneNumber, validPhoneNumber, PhoneCall.formatDate(start), PhoneCall.formatDate(end));
+  }
 }
