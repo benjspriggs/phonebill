@@ -52,7 +52,9 @@ public class TextDumper implements edu.pdx.cs410J.PhoneBillDumper {
         var file = this.path.toFile();
 
         if (file.length() != 0) {
-            throw new IOException("File not empty: " + file.getAbsolutePath());
+            if (!(file.delete() && file.createNewFile())) {
+                throw new IOException("Unable to create new file: " + file.getAbsolutePath());
+            }
         }
 
         FileOutputStream fileOutputStream = new FileOutputStream(file);

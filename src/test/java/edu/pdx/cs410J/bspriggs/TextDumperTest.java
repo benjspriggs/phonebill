@@ -117,7 +117,7 @@ public class TextDumperTest {
     }
 
     /**
-     * Tests that if a file already exists {@link TextDumper} throws an exception.
+     * Tests that if a file already exists {@link TextDumper} doesn't throw an exception.
      */
     @Test
     public void testDumpExistingFile() throws IOException {
@@ -128,8 +128,6 @@ public class TextDumperTest {
         var dumper = new TextDumper(emptyFile.toPath());
 
         dumper.dump(bill);
-
-        thrown.expect(IOException.class);
 
         dumper.dump(bill);
     }

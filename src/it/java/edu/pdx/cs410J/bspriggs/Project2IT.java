@@ -180,4 +180,19 @@ public class Project2IT extends InvokeMainTestCase {
         assertThat(result.getTextWrittenToStandardError(), is(""));
         assertThat(result.getTextWrittenToStandardOut(), containsString("Project2"));
     }
+
+    @Test
+    public void testExistingFile() throws IOException {
+        var bill = TextDumperTest.getPopulatedPhoneBill();
+        var bspriggs = new File("bspriggs/bspriggs-x.txt");
+
+        bspriggs.deleteOnExit();
+
+        new TextDumper(bspriggs.toPath()).dump(bill);
+        MainMethodResult result = invokeMain("-textFile bspriggs/bspriggs.txt -print Project2 123-456-7890 456-789-0123 01/08/2018 08:00 01/08/2018 18:00".split(" "));
+
+        assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(0));
+        assertThat(result.getTextWrittenToStandardError(), is(""));
+        assertThat(result.getTextWrittenToStandardOut(), containsString("Project2"));
+    }
 }
