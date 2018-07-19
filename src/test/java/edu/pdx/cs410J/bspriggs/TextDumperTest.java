@@ -60,9 +60,9 @@ public class TextDumperTest {
         var bill = new PhoneBill(String.valueOf(r.nextInt()));
 
         try {
-            bill.addPhoneCall(generatePhoneCall());
-            bill.addPhoneCall(generatePhoneCall());
-            bill.addPhoneCall(generatePhoneCall());
+            for (var i = 0; i < 50; i++) {
+                bill.addPhoneCall(generatePhoneCall());
+            }
         } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());

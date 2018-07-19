@@ -45,7 +45,7 @@ public class Project1 {
                 "Date and time should be in the format: " + PhoneCall.DATE_FORMAT_STRING;
     }
 
-    public static PhoneCall parsePhoneCallFromArguments(String[] args) throws ParserException {
+    private static PhoneCall parsePhoneCallFromArguments(String[] args) throws ParserException {
         int ptr = 0;
 
         return new PhoneCall(args[ptr++], args[ptr++],
@@ -53,9 +53,14 @@ public class Project1 {
                 String.format("%s %s %s", args[ptr++], args[ptr++], args[ptr]));
     }
 
-    public static String[] sliceArgumentsForPhoneCallParsing(String[] args, int ptr) {
+    private static String[] sliceArgumentsForPhoneCallParsing(String[] args, int ptr) {
         return Arrays.copyOfRange(args, ptr, args.length);
     }
+
+    protected static PhoneCall getPhoneCall(String[] args, int ptr) throws ParserException {
+        return parsePhoneCallFromArguments(sliceArgumentsForPhoneCallParsing(args, ptr));
+    }
+
 
     public static void validateArguments(List<Map.Entry<String, String>> arguments, String[] args, int ptr) {
         if (args.length - ptr != arguments.size() + 3) {
@@ -81,6 +86,31 @@ public class Project1 {
         }
     }
 
+    protected static PhoneBill doMain(int ptr, boolean print, String[] args) {
+        try {
+            PhoneBill bill = new PhoneBill(args[ptr++]);
+
+            validateArguments(ARGUMENTS, args, ptr);
+
+            PhoneCall call = getPhoneCall(args, ptr);
+
+            bill.addPhoneCall(call);
+
+            if (print) {
+                System.out.println(bill.toString());
+                System.out.println(call.toString());
+            }
+
+            return bill;
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            System.err.println(usage());
+            System.exit(1);
+        }
+
+        return null;
+    }
+
     public static void main(String[] args) {
         validateEmptyArguments(args);
 
@@ -89,7 +119,7 @@ public class Project1 {
 
         // parse options
         // (this is probably better done with the apache commons-cli)
-        for (; args[ptr].equals("-print") || args[ptr].equals("-README"); ++ptr) {
+        for (; (ptr < args.length) && (args[ptr].equals("-print") || args[ptr].equals("-README")); ++ptr) {
             if (args[ptr].equals("-print"))
                 print = true;
             else {
@@ -99,24 +129,7 @@ public class Project1 {
             }
         }
 
-        try {
-            PhoneBill bill = new PhoneBill(args[ptr++]);
-
-            validateArguments(ARGUMENTS, args, ptr);
-
-            PhoneCall call = parsePhoneCallFromArguments(sliceArgumentsForPhoneCallParsing(args, ptr));
-
-            bill.addPhoneCall(call);
-
-            if (print) {
-                System.out.println(bill.toString());
-                System.out.println(call.toString());
-            }
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-            System.err.println(usage());
-            System.exit(1);
-        }
+        doMain(ptr, print, args);
     }
 
 }

@@ -26,6 +26,50 @@ public class Project2 extends Project1 {
                 "Date and time should be in the format: mm/dd/yyyy hh:mm";
     }
 
+    protected static PhoneBill doMain(int ptr, boolean print, String filename, String[] args) {
+        try {
+            PhoneBill bill = doMain(ptr, print, args);
+
+            if (bill == null) {
+                throw new Exception("Failed to parse/ add phone call to bill");
+            }
+
+            // open the file
+            if (filename != null && filename.length() > 0) {
+                TextParser textParser = new TextParser(Paths.get(filename));
+                var parsedBill = (PhoneBill) textParser.parse();
+
+                if (parsedBill != null && !parsedBill.getCustomer().equals(bill.getCustomer())) {
+                    throw new Exception(String.format(bill.getCustomer(), parsedBill.getCustomer()));
+                }
+            }
+
+            // dump the file
+            if (filename != null && filename.length() > 0) {
+                Path path = Paths.get(filename);
+
+                File file = path.toFile();
+
+                if (file.exists()) {
+                    if (!file.delete()) {
+                        throw new IOException("Unable to remove existing file " + filename);
+                    }
+                }
+
+                TextDumper textDumper = new TextDumper(path);
+                textDumper.dump(bill);
+            }
+
+            return bill;
+        } catch (Exception e) {
+            System.err.println(e);
+            System.err.println(usage());
+            System.exit(1);
+        }
+
+        return null;
+    }
+
     public static void main(String[] args) {
         validateEmptyArguments(args);
 
@@ -35,7 +79,7 @@ public class Project2 extends Project1 {
 
         // parse options
         // (this is probably better done with the apache commons-cli)
-        for (; args[ptr].equals("-print") || args[ptr].equals("-README") || args[ptr].equals("-textFile"); ++ptr) {
+        for (; (ptr < args.length) && (args[ptr].equals("-print") || args[ptr].equals("-README") || args[ptr].equals("-textFile")); ++ptr) {
             switch (args[ptr]) {
                 case "-print":
                     print = true;
@@ -56,54 +100,7 @@ public class Project2 extends Project1 {
             }
         }
 
-        try {
-            PhoneBill bill = new PhoneBill(args[ptr++]);
-
-            validateArguments(ARGUMENTS, args, ptr);
-
-            var parseableArgs = sliceArgumentsForPhoneCallParsing(args, ptr);
-            PhoneCall call = parsePhoneCallFromArguments(parseableArgs);
-
-            // open the file
-            if (filename != null && filename.length() > 0) {
-                TextParser textParser = new TextParser(Paths.get(filename));
-                var parsedBill = (PhoneBill) textParser.parse();
-
-                if (parsedBill != null && !parsedBill.getCustomer().equals(bill.getCustomer())) {
-                    throw new Exception(String.format(bill.getCustomer(), parsedBill.getCustomer()));
-                }
-            }
-
-            bill.addPhoneCall(call);
-
-            // print the stuff
-            if (print) {
-                System.out.println(bill.toString());
-                System.out.println(call.toString());
-            }
-
-            // dump the file
-            if (filename != null && filename.length() > 0) {
-                Path path = Paths.get(filename);
-
-                File file = path.toFile();
-
-                if (file.exists()) {
-                    if (!file.delete()) {
-                        throw new IOException("Unable to remove existing file " + filename);
-                    }
-                }
-
-                TextDumper textDumper = new TextDumper(path);
-                textDumper.dump(bill);
-            }
-
-        } catch (Exception e) {
-            System.err.println(e);
-            System.err.println(usage());
-            System.exit(1);
-        }
-
+        doMain(ptr, print, filename, args);
         System.exit(0);
     }
 }

@@ -40,9 +40,11 @@ public class Project3IT extends Project2IT {
 
     @Test
     public void testPrettyPrintsContentsOfFile() throws IOException, ParserException {
+        // create a new destination
+        var textFile = folder.newFile();
         var prettyFile = folder.newFile();
 
-        var printer = new PrettyPrinter(prettyFile.toPath());
+        var printer = new PrettyPrinter();
         var bill = TextDumperTest.getPopulatedPhoneBill();
         var start = generateDate();
         var end = generateDateAfter(start);
@@ -53,6 +55,7 @@ public class Project3IT extends Project2IT {
                 PhoneCall.formatDate(start), PhoneCall.formatDate(end));
 
         var result = invokeMain(startFormatted, endFormatted,
+                "-textFile", textFile.getAbsolutePath(),
                 "-pretty", prettyFile.getAbsolutePath(),
                 bill.getCustomer(), generatePhoneNumber(), generatePhoneNumber());
 
@@ -64,7 +67,7 @@ public class Project3IT extends Project2IT {
         assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(0));
         assertThat(result.getTextWrittenToStandardOut(), is(""));
 
-        var fileContent = String.join(TextDumper.NEWLINE, Files.readAllLines(prettyFile.toPath()));
+        var fileContent = String.join(TextDumper.NEWLINE, Files.readAllLines(textFile.toPath()));
         assertThat(fileContent, is(new String(expectedBuffer.toByteArray(), "utf-8")));
     }
 
