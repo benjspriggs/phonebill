@@ -23,7 +23,7 @@ public class Project2IT extends Project1IT {
     public TemporaryFolder folder = new TemporaryFolder();
 
     protected MainMethodResult invokeMain(String... args) {
-        return invokeMain(new String[]{}, new String[]{}, args);
+        return this.invokeMain(new String[]{}, new String[]{}, args);
     }
 
     @Before

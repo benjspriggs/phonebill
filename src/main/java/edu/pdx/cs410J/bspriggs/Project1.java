@@ -42,7 +42,7 @@ public class Project1 {
                 build(ARGUMENTS) +
                 "options are (options may appear in any order):\n" +
                 build(OPTIONS) +
-                "Date and time should be in the format: " + PhoneCall.DATE_FORMAT.toString();
+                "Date and time should be in the format: " + PhoneCall.DATE_FORMAT_STRING;
     }
 
     public static PhoneCall parsePhoneCallFromArguments(String[] args) throws ParserException {

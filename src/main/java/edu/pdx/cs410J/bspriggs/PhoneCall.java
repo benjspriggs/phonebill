@@ -18,7 +18,8 @@ public class PhoneCall extends AbstractPhoneCall {
     private final LocalDateTime startTime;
     private final LocalDateTime endTime;
     public static final Pattern PHONE_NUMBER_PATTERN = Pattern.compile("\\d{3}-\\d{3}-\\d{4}");
-    public static DateTimeFormatter DATE_FORMAT = ofPattern("M/D/yyyy h:m a");
+    public static final String DATE_FORMAT_STRING = "M/D/yyyy h:m a";
+    public static final DateTimeFormatter DATE_FORMAT = ofPattern(DATE_FORMAT_STRING);
 
     public static String formatDate(Date d) {
         return DATE_FORMAT.format(ofInstant(d.toInstant(), ZoneOffset.UTC));

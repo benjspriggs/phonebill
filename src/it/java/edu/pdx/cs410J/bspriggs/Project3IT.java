@@ -13,6 +13,10 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
 public class Project3IT extends Project2IT {
+    protected MainMethodResult invokeMain(String... args) {
+        return this.invokeMain(new String[]{}, new String[]{}, args);
+    }
+
     /**
      * Invokes the main method of {@link Project3} with the given arguments.
      */
