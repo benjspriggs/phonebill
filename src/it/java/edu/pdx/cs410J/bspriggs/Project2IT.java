@@ -143,4 +143,13 @@ public class Project2IT extends InvokeMainTestCase {
         assertThat(result.getTextWrittenToStandardError(), is(not("")));
         assertThat(result.getTextWrittenToStandardError(), containsString("Invalid phone number"));
     }
+
+    @Test
+    public void testMaformedStartTime() {
+        MainMethodResult result = invokeMain("-textFile bspriggs/bspriggs-x.txt Test4 123-456-7890 234-567-8901 03/03/2018 12:XX 03/03/2018 16:00".split(" "));
+
+        assertThat(result.getExitCode(), equalTo(1));
+        assertThat(result.getTextWrittenToStandardError(), is(not("")));
+        assertThat(result.getTextWrittenToStandardError(), containsString("date"));
+    }
 }
