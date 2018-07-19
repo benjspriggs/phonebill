@@ -1,10 +1,10 @@
 package edu.pdx.cs410J.bspriggs;
 
-import edu.pdx.cs410J.AbstractPhoneCall;
+import edu.pdx.cs410J.ParserException;
 import org.junit.Test;
 
+import static edu.pdx.cs410J.bspriggs.TextDumperTest.generatePhoneCall;
 import static junit.framework.TestCase.assertTrue;
-import static junit.framework.TestCase.fail;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -27,20 +27,11 @@ public class PhoneBillTest {
      * Adding a call to the phone bill works.
      */
     @Test
-    public void addPhoneCall() {
+    public void addPhoneCall() throws ParserException {
         var name = "name";
         PhoneBill b = new PhoneBill(name);
 
-        b.addPhoneCall(getPhoneCall());
-    }
-
-    private AbstractPhoneCall getPhoneCall() {
-        try {
-            return new PhoneCall("555-555-5555", "555-555-5555", "1/1/1 0:00", "1/1/1 0:00");
-        } catch (Exception e) {
-            fail(e.getMessage());
-            return null;
-        }
+        b.addPhoneCall(generatePhoneCall());
     }
 
     /**
@@ -60,10 +51,10 @@ public class PhoneBillTest {
      * Adding a call to the PhoneBill works, and that call appears in the list.
      */
     @Test
-    public void addedPhoneCallAppearsInPhoneBill() {
+    public void addedPhoneCallAppearsInPhoneBill() throws ParserException {
         var name = "name";
         PhoneBill b = new PhoneBill(name);
-        var call = getPhoneCall();
+        var call = generatePhoneCall();
 
         b.addPhoneCall(call);
 

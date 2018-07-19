@@ -1,9 +1,10 @@
 package edu.pdx.cs410J.bspriggs;
 
+import edu.pdx.cs410J.ParserException;
+
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,7 @@ public class Project3 extends Project2 {
             entry("-pretty file", "Pretty print the phone bill to a text file or standard out (file -).")
     );
 
-    public static PhoneCall parsePhoneCallFromArguments(String[] args) throws ParseException {
+    public static PhoneCall parsePhoneCallFromArguments(String[] args) throws ParserException {
         int ptr = 0;
 
         return new PhoneCall(args[ptr++], args[ptr++],
