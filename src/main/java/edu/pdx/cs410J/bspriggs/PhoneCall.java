@@ -42,7 +42,7 @@ public class PhoneCall extends AbstractPhoneCall {
         this.endTime = LocalDateTime.parse(endDateAndTime, DATE_FORMAT);
 
         if (startTime.toInstant(ZoneOffset.UTC).isAfter(endTime.toInstant(ZoneOffset.UTC))) {
-            throw new ParserException("End time must be after start time");
+            throw new ParserException(String.format("End time must be after start time. Start: %s, End: %s", startTime, endTime));
         }
     }
 
