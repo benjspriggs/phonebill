@@ -49,8 +49,8 @@ public class Project1 {
         int ptr = 0;
 
         return new PhoneCall(args[ptr++], args[ptr++],
-                String.format("%s %s %s", args[ptr++], args[ptr++], args[ptr++]),
-                String.format("%s %s %s", args[ptr++], args[ptr++], args[ptr]));
+                String.format("%s %s %s", args[ptr++], args[ptr++], args[ptr++].toUpperCase()),
+                String.format("%s %s %s", args[ptr++], args[ptr++], args[ptr].toUpperCase()));
     }
 
     private static String[] sliceArgumentsForPhoneCallParsing(String[] args, int ptr) {
