@@ -1,7 +1,5 @@
 package edu.pdx.cs410J.bspriggs;
 
-import edu.pdx.cs410J.ParserException;
-
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
@@ -16,14 +14,6 @@ public class Project3 extends Project2 {
             entry("-textFile file", "Where to read/write the phone bill"),
             entry("-pretty file", "Pretty print the phone bill to a text file or standard out (file -).")
     );
-
-    public static PhoneCall parsePhoneCallFromArguments(String[] args) throws ParserException {
-        int ptr = 0;
-
-        return new PhoneCall(args[ptr++], args[ptr++],
-                String.format("%s %s %s", args[ptr++], args[ptr++], args[ptr++]),
-                String.format("%s %s %s", args[ptr++], args[ptr++], args[ptr]));
-    }
 
     protected static String usage() {
         return "usage: java edu.pdx.cs410J.bspriggs.Project3 [options] <args>\n" +
