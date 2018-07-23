@@ -16,6 +16,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.Date;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
@@ -27,15 +28,15 @@ public class TextDumperTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-    protected final String newline = System.getProperty("line.separator");
+    final String newline = System.getProperty("line.separator");
 
-    protected static Random r = new Random();
+    private static Random r = new Random();
 
-    public static Date generateDate() {
+    static Date generateDate() {
         return new Date(r.nextInt());
     }
 
-    public static String generatePhoneNumber() {
+    static String generatePhoneNumber() {
         return String.format("%03d-%03d-%04d",
                 1 + r.nextInt(998),
                 1 + r.nextInt(998),
@@ -43,7 +44,7 @@ public class TextDumperTest {
         );
     }
 
-    public static AbstractPhoneCall generatePhoneCall() throws ParserException {
+    static AbstractPhoneCall generatePhoneCall() throws ParserException {
         var start = generateDate();
         var end = generateDateAfter(start);
         return new PhoneCall(generatePhoneNumber(), generatePhoneNumber(),
@@ -51,16 +52,16 @@ public class TextDumperTest {
                 PhoneCall.formatDate(end));
     }
 
-    public static Date generateDateAfter(Date date) {
-        return new Date(date.getTime() + 1 + r.nextInt(10000));
+    static Date generateDateAfter(Date date) {
+        return new Date(date.getTime() + TimeUnit.DAYS.toMillis(1) + TimeUnit.SECONDS.toMillis(r.nextInt(100)));
     }
 
 
-    public static AbstractPhoneBill<AbstractPhoneCall> getPopulatedPhoneBill() {
+    static AbstractPhoneBill<AbstractPhoneCall> getPopulatedPhoneBill() {
         var bill = new PhoneBill(String.valueOf(r.nextInt()));
 
         try {
-            for (var i = 0; i < 50; i++) {
+            for (var i = 0; i < 10; i++) {
                 bill.addPhoneCall(generatePhoneCall());
             }
         } catch (Exception e) {
