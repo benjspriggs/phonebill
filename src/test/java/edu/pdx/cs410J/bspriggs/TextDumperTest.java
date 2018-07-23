@@ -52,7 +52,7 @@ public class TextDumperTest {
     }
 
     public static Date generateDateAfter(Date date) {
-        return new Date(date.getTime() + r.nextInt(10));
+        return new Date(date.getTime() + 1 + r.nextInt(10000));
     }
 
 
