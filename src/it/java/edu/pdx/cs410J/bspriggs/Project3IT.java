@@ -112,4 +112,21 @@ public class Project3IT extends Project2IT {
 
         assertThat(result.getTextWrittenToStandardOut(), containsString("Project3"));
     }
+
+    @Test
+    public void testCaseInsensitiveStartTime() {
+        var bill = TextDumperTest.getPopulatedPhoneBill();
+
+        var start = generateDate();
+        var end = generateDateAfter(start);
+        var startFormatted = PhoneCall.formatDate(start).split(" ");
+        var endFormatted = PhoneCall.formatDate(end).split(" ");
+
+        startFormatted[2] = startFormatted[2].toLowerCase();
+
+        var result = invokeMain(startFormatted, endFormatted,
+                bill.getCustomer(), generatePhoneNumber(), generatePhoneNumber());
+
+        assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(0));
+    }
 }
