@@ -1,5 +1,7 @@
 package edu.pdx.cs410J.bspriggs;
 
+import edu.pdx.cs410J.AbstractPhoneCall;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -39,8 +41,14 @@ public class Project2 extends Project1 {
                 TextParser textParser = new TextParser(Paths.get(filename));
                 var parsedBill = (PhoneBill) textParser.parse();
 
-                if (parsedBill != null && !parsedBill.getCustomer().equals(bill.getCustomer())) {
-                    throw new Exception(String.format(bill.getCustomer(), parsedBill.getCustomer()));
+                if (parsedBill != null) {
+                    if (!parsedBill.getCustomer().equals(bill.getCustomer())) {
+                        throw new Exception(String.format(bill.getCustomer(), parsedBill.getCustomer()));
+                    }
+
+                    for (var call : parsedBill.getPhoneCalls()) {
+                        bill.addPhoneCall((AbstractPhoneCall) call);
+                    }
                 }
             }
 
