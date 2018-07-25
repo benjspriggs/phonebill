@@ -27,11 +27,9 @@ public abstract class MainClassSkeleton<T> {
 
             @Override
             public List<String> consume(List<String> args, Map<String, Object> context) {
-                var l = new ArrayList<>();
-                for (var i = 0; i < n; ++i)
-                    l.add(args.remove(0));
+                var l = args.subList(0, n);
                 context.put(name(), l);
-                return args;
+                return args.subList(n, args.size());
             }
         };
     }
@@ -50,14 +48,14 @@ public abstract class MainClassSkeleton<T> {
 
             @Override
             public List<String> consume(List<String> args, Map<String, Object> context) {
-                context.put(name(), args.remove(0));
-                return args;
+                context.put(name(), args.get(0));
+                return args.subList(1, args.size());
             }
         };
     }
 
     static Option popOpt(String name, String description) {
-        var isFlag = name.split(" ").length == 0;
+        var isFlag = name.split(" ").length != 0;
 
         return new Option() {
             @Override
@@ -78,11 +76,13 @@ public abstract class MainClassSkeleton<T> {
             @Override
             public List<String> consume(List<String> args, Map<String, Object> context) {
                 if (!isFlag()) {
-                    args.remove(0);
+                    args = args.subList(1, args.size());
+                    context.put(name(), args.get(0));
+                } else {
+                    context.put(name(), true);
                 }
 
-                context.put(name(), args.remove(0));
-                return args;
+                return args.subList(1, args.size());
             }
         };
     }
@@ -165,6 +165,8 @@ public abstract class MainClassSkeleton<T> {
             System.err.println(s.usage(e.toString()));
             System.exit(1);
         }
+
+        System.exit(0);
     }
 
 }

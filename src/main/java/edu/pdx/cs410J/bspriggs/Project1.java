@@ -142,8 +142,8 @@ public class Project1 extends MainClassSkeleton<PhoneBill> {
         PhoneCall call = new PhoneCall(
                 (String) context.get("callerNumber"),
                 (String) context.get("calleeNumber"),
-                String.join(" ", (String) context.get("startTime")),
-                String.join(" ", (String) context.get("endTime")));
+                String.join(" ", (List<String>) context.get("startTime")),
+                String.join(" ", (List<String>) context.get("endTime")));
 
         bill.addPhoneCall(call);
 

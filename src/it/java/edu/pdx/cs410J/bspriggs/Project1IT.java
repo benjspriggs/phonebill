@@ -1,6 +1,7 @@
 package edu.pdx.cs410J.bspriggs;
 
 import edu.pdx.cs410J.InvokeMainTestCase;
+import edu.pdx.cs410J.ParserException;
 import org.junit.Test;
 
 import static edu.pdx.cs410J.bspriggs.TextDumperTest.*;
@@ -38,17 +39,25 @@ public class Project1IT extends InvokeMainTestCase {
     }
 
     @Test
-    public void testPrintWorks() {
+    public void testPrintWorks() throws ParserException {
         var start = generateDate();
         var end = generateDateAfter(start);
         var startFormatted = PhoneCall.formatDate(start).split(" ");
         var endFormatted = PhoneCall.formatDate(end).split(" ");
 
-        MainMethodResult result = invokeMain("-print", generatePhoneNumber(), generatePhoneNumber(),
+        var bill = new PhoneBill("customer");
+        var call = new PhoneCall(generatePhoneNumber(), generatePhoneNumber(), PhoneCall.formatDate(start), PhoneCall.formatDate(end));
+
+        bill.addPhoneCall(call);
+
+        MainMethodResult result = invokeMain("-print",
+                bill.getCustomer(),
+                call.getCaller(), call.getCallee(),
                 startFormatted[0], startFormatted[1], startFormatted[2],
                 endFormatted[0], endFormatted[1], endFormatted[2]);
 
         assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(0));
-        assertThat(result.getTextWrittenToStandardError(), containsString("Missing command line arguments"));
+        assertThat(result.getTextWrittenToStandardOut(), containsString(bill.toString()));
+        assertThat(result.getTextWrittenToStandardOut(), containsString(call.toString()));
     }
 }
