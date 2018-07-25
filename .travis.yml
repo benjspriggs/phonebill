@@ -1,2 +1,2 @@
 language: java
-script: mvn verify
+script: mvn -s .travis.settings.xml verify
