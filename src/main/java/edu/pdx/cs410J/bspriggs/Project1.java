@@ -3,6 +3,7 @@ package edu.pdx.cs410J.bspriggs;
 import edu.pdx.cs410J.ParserException;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +12,7 @@ import static java.util.Map.entry;
 /**
  * The main class for the CS410J Phone Bill Project
  */
-public class Project1 {
+public class Project1 extends MainClassSkeleton<PhoneBill> {
     public static final List<Map.Entry<String, String>> ARGUMENTS = Arrays.asList(
             entry("customer", "Person whose phone bill we’re modeling"),
             entry("callerNumber", "Phone number of caller"),
@@ -109,6 +110,54 @@ public class Project1 {
         }
 
         return null;
+    }
+
+    @Override
+    List<Argument> getArguments() {
+        return Arrays.asList(
+                pop("customer", "Person whose phone bill we’re modeling"),
+                pop("callerNumber", "Phone number of caller"),
+                pop("calleeNumber", "Phone number of person who was called"),
+                popN("startTime", "Date and time call began (24-hour time)", 3),
+                popN("endTime", "Date and time call ended (24-hour time)", 3)
+        );
+    }
+
+    @Override
+    List<Option> getOptions() {
+        return Arrays.asList(
+                popOpt("-print", "Prints a description of the new phone call")
+        );
+    }
+
+    @Override
+    String usage(String reason) {
+        return "Does stuff with a Phone Bill";
+    }
+
+    @Override
+    String Readme() {
+        return "More readme text";
+    }
+
+    @Override
+    PhoneBill doWork(HashMap<String, Object> context) throws Exception {
+        PhoneBill bill = new PhoneBill((String) context.get("customer"));
+
+        PhoneCall call = new PhoneCall(
+                (String) context.get("callerNumber"),
+                (String) context.get("calleeNumber"),
+                String.join(" ", (String) context.get("startTime")),
+                String.join(" ", (String) context.get("endTime")));
+
+        bill.addPhoneCall(call);
+
+        if ((boolean) context.get("-print")) {
+            System.out.println(bill.toString());
+            System.out.println(call.toString());
+        }
+
+        return bill;
     }
 
     public static void main(String[] args) {
