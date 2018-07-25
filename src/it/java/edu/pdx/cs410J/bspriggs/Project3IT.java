@@ -57,7 +57,7 @@ public class Project3IT extends Project2IT {
         var result = invokeMain(startFormatted, endFormatted,
                 "-textFile", textFile.getAbsolutePath(),
                 "-pretty", prettyFile.getAbsolutePath(),
-                bill.getCustomer(), generatePhoneNumber(), generatePhoneNumber());
+                bill.getCustomer(), newPhoneCall.getCaller(), newPhoneCall.getCallee());
 
         bill.addPhoneCall(newPhoneCall);
 
@@ -67,8 +67,8 @@ public class Project3IT extends Project2IT {
         assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(0));
         assertThat(result.getTextWrittenToStandardOut(), is(""));
 
-        var fileContent = String.join(TextDumper.NEWLINE, Files.readAllLines(prettyFile.toPath()));
-        assertThat(fileContent, is(new String(expectedBuffer.toByteArray(), "utf-8")));
+        var fileContent = String.join(TextDumper.NEWLINE, Files.readAllLines(prettyFile.toPath())) + TextDumper.NEWLINE;
+        assertThat(fileContent, is(equalTo(new String(expectedBuffer.toByteArray(), "utf-8"))));
     }
 
     @Test
@@ -128,5 +128,36 @@ public class Project3IT extends Project2IT {
                 bill.getCustomer(), generatePhoneNumber(), generatePhoneNumber());
 
         assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(0));
+    }
+
+    @Test
+    public void testPrettyPrintToStandardOut() throws ParserException, IOException {
+        // create a new destination
+        var bill = TextDumperTest.getPopulatedPhoneBill();
+        var textFile = generateExistingPhoneBill(bill);
+
+        var printer = new PrettyPrinter();
+        var start = generateDate();
+        var end = generateDateAfter(start);
+        var startFormatted = PhoneCall.formatDate(start).split(" ");
+        var endFormatted = PhoneCall.formatDate(end).split(" ");
+
+        var newPhoneCall = new PhoneCall(generatePhoneNumber(), generatePhoneNumber(),
+                PhoneCall.formatDate(start), PhoneCall.formatDate(end));
+
+        var result = invokeMain(startFormatted, endFormatted,
+                "-textFile", textFile.getAbsolutePath(),
+                "-pretty", "-",
+                bill.getCustomer(), newPhoneCall.getCaller(), newPhoneCall.getCallee());
+
+        bill.addPhoneCall(newPhoneCall);
+
+        var expectedBuffer = new ByteArrayOutputStream();
+        printer.dumpTo(bill, expectedBuffer);
+
+        assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(0));
+
+        assertThat(result.getTextWrittenToStandardOut(),
+                is(equalTo(new String(expectedBuffer.toByteArray(), "utf-8"))));
     }
 }
