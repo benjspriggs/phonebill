@@ -1,7 +1,6 @@
 package edu.pdx.cs410J.bspriggs;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public abstract class MainClassSkeleton<T> {
     public interface Argument {
@@ -14,7 +13,7 @@ public abstract class MainClassSkeleton<T> {
         boolean isFlag();
     }
 
-    public static Argument popN(String name, String description, int n) {
+    static Argument popN(String name, String description, int n) {
         return new Argument() {
             @Override
             public String name() {
@@ -37,7 +36,7 @@ public abstract class MainClassSkeleton<T> {
         };
     }
 
-    public static Argument pop(String name, String description) {
+    static Argument pop(String name, String description) {
         return new Argument() {
             @Override
             public String name() {
@@ -57,7 +56,7 @@ public abstract class MainClassSkeleton<T> {
         };
     }
 
-    public static Option popOpt(String name, String description) {
+    static Option popOpt(String name, String description) {
         var isFlag = name.split(" ").length == 0;
 
         return new Option() {
@@ -91,50 +90,79 @@ public abstract class MainClassSkeleton<T> {
     abstract List<Argument> getArguments();
     abstract List<Option> getOptions();
 
-    abstract String usage(String reason);
+    private String usage(String reason) {
+        var b = new StringBuilder();
+
+        if (reason != null) {
+            b.append(reason);
+            b.append(System.lineSeparator());
+        }
+
+        return b.toString() +
+                "usage: " + getClass().getCanonicalName() + " [options] <args>\n" +
+                "args are (in this order):\n" +
+                build(getArguments()) +
+                "options are (options may appear in any order):\n" +
+                build(new ArrayList<>(getOptions())) +
+                "Date and time should be in the format: " + PhoneCall.DATE_FORMAT_STRING;
+    }
+
+    private String build(List<Argument> arguments) {
+        final var b = new StringBuilder();
+
+        for (var a : arguments) {
+            b.append(String.format("  %-10s\t%s", a.name(), a.description()));
+            b.append(System.lineSeparator());
+        }
+
+        return b.toString();
+    }
+
     abstract String Readme();
 
     abstract T doWork(HashMap<String, Object> context) throws Exception;
 
-
-    public void wrapMain(String[] args) {
+    public static void wrapMain(MainClassSkeleton s, String[] args) {
         var context = new HashMap<String, Object>();
 
         var arguments = Arrays.asList(args);
 
+        if (arguments.size() < s.getArguments().size()) {
+            System.err.println(s.usage("Missing command line arguments"));
+            System.exit(1);
+        }
+
         if (arguments.size() == 0) {
-            System.err.println(usage(null));
+            System.err.println(s.usage(null));
             System.exit(1);
         }
 
         if (arguments.contains("-README")) {
-            System.out.println(usage(Readme()));
+            System.out.println(s.usage(s.Readme()));
             System.exit(0);
         }
 
         try {
-            if (arguments.size() < getArguments().size()) {
-                System.err.println(usage("Missing command line arguments"));
-                System.exit(1);
-            }
+            List<Option> options = s.getOptions();
+            List<Argument> argumentList = s.getArguments();
 
-            for (var opt : getOptions()) {
+            for (var opt : options) {
                 arguments = opt.consume(arguments, context);
             }
 
-            for (var arg : getArguments()) {
+            for (var arg : argumentList) {
                 arguments = arg.consume(arguments, context);
             }
 
 
             if (arguments.size() != 0) {
-                System.err.println(usage("Extra command line arguments"));
+                System.err.println(s.usage("Extra command line arguments"));
                 System.exit(1);
             }
 
-            doWork(context);
+            s.doWork(context);
         } catch (final Exception e) {
-            System.err.println(usage(e.toString()));
+            System.err.println(s.usage(e.toString()));
             System.exit(1);
         }
     }
