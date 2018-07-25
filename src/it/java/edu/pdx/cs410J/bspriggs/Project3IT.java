@@ -107,13 +107,6 @@ public class Project3IT extends Project2IT {
     }
 
     @Test
-    public void testUsageHasProject3Text() {
-        MainMethodResult result = invokeMain(new String[]{}, new String[]{}, "-README");
-
-        assertThat(result.getTextWrittenToStandardOut(), containsString("Project3"));
-    }
-
-    @Test
     public void testCaseInsensitiveStartTime() {
         var bill = TextDumperTest.getPopulatedPhoneBill();
 
