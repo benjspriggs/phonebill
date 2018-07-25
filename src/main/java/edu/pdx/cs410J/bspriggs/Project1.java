@@ -157,25 +157,6 @@ public class Project1 extends MainClassSkeleton<PhoneBill> {
 
     public static void main(String[] args) {
         wrapMain(new Project1(), args);
-
-//        validateEmptyArguments(args);
-//
-//        int ptr = 0;
-//        boolean print = false;
-//
-//        // parse options
-//        // (this is probably better done with the apache commons-cli)
-//        for (; (ptr < args.length) && (args[ptr].equals("-print") || args[ptr].equals("-README")); ++ptr) {
-//            if (args[ptr].equals("-print"))
-//                print = true;
-//            else {
-//                System.out.println("Models a customer's phone bill at the command line.\n" +
-//                        usage());
-//                System.exit(0);
-//            }
-//        }
-//
-//        doMain(ptr, print, args);
     }
 
 }
