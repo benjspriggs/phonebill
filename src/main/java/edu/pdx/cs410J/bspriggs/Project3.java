@@ -43,6 +43,8 @@ public class Project3 extends Project2 {
 
                 printer.dump(bill);
             }
+
+            return bill;
         } catch (Exception e) {
             System.err.println(e.getMessage());
             System.err.println(usage());
