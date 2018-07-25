@@ -2,6 +2,4 @@ language: java
 script: mvn -s .travis.settings.xml verify
 jdk: 
   - oraclejdk10
-  - oraclejdk11
   - openjdk10
-  - openjdk11
