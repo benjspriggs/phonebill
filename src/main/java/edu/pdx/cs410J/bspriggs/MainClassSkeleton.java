@@ -29,7 +29,7 @@ public abstract class MainClassSkeleton<T> {
             public List<String> consume(List<String> args, Map<String, Object> context) {
                 var l = args.subList(0, n);
                 context.put(name(), l);
-                return args.subList(n + 1, args.size());
+                return args.subList(n, args.size());
             }
         };
     }
@@ -55,7 +55,9 @@ public abstract class MainClassSkeleton<T> {
     }
 
     static Option popOpt(String name, String description) {
-        var isFlag = name.split(" ").length != 0;
+        final var pair = name.split(" ");
+        var isFlag = pair.length <= 1;
+        var actualName = isFlag ? name : pair[0];
 
         return new Option() {
             @Override
@@ -65,7 +67,7 @@ public abstract class MainClassSkeleton<T> {
 
             @Override
             public String name() {
-                return name;
+                return actualName;
             }
 
             @Override
@@ -81,12 +83,12 @@ public abstract class MainClassSkeleton<T> {
                 var pos = args.indexOf(name());
                 var copy = new ArrayList<>(args);
 
-                if (!isFlag()) {
-                    context.put(name(), copy.get(pos));
-                    copy.remove(pos);
+                if (isFlag()) {
+                    context.put(name(), true);
                     copy.remove(pos);
                 } else {
-                    context.put(name(), true);
+                    copy.remove(pos);
+                    context.put(name(), copy.get(pos));
                     copy.remove(pos);
                 }
 
@@ -153,18 +155,21 @@ public abstract class MainClassSkeleton<T> {
         List<Option> options = getOptions();
         List<Argument> argumentList = getArguments();
 
-        for (var opt : options) {
-            arguments = opt.consume(arguments, context);
+        if (options != null) {
+            for (var opt : options) {
+                arguments = opt.consume(arguments, context);
+            }
         }
 
-        for (var arg : argumentList) {
-            arguments = arg.consume(arguments, context);
-        }
+        if (argumentList != null) {
+            for (var arg : argumentList) {
+                arguments = arg.consume(arguments, context);
+            }
 
-
-        if (arguments.size() != 0) {
-            System.err.println(usage("Extra command line arguments"));
-            System.exit(1);
+            if (arguments.size() != 0) {
+                System.err.println(usage("Extra command line arguments"));
+                System.exit(1);
+            }
         }
 
         return doWork(context);
