@@ -108,13 +108,33 @@ public abstract class MainClassSkeleton<T> {
             b.append(System.lineSeparator());
         }
 
-        return b.toString() +
-                "usage: " + getClass().getCanonicalName() + " [options] <args>\n" +
-                "args are (in this order):\n" +
-                build(getArguments()) +
-                "options are (options may appear in any order):\n" +
-                build(new ArrayList<>(getOptions())) +
-                "Date and time should be in the format: " + PhoneCall.DATE_FORMAT_STRING;
+        b.append("usage: ");
+        b.append(getClass().getCanonicalName());
+        b.append(" [options] <args>");
+        b.append(System.lineSeparator());
+        b.append("args are (in this order):");
+        b.append(System.lineSeparator());
+
+        for (var a : getArguments()) {
+            b.append(String.format("  %-10s\t%s", a.name(), a.description()));
+            b.append(System.lineSeparator());
+        }
+
+        b.append("options are (options may appear in any order):");
+        b.append(System.lineSeparator());
+
+        for (var a : getOptions()) {
+            b.append(String.format("  %-10s\t%s", a.name(), a.description()));
+            b.append(System.lineSeparator());
+        }
+
+        b.append(String.format("  %-10s\t%s", "-README", "Displays README text"));
+        b.append(System.lineSeparator());
+
+        b.append("Date and time should be in the format: ");
+        b.append(PhoneCall.DATE_FORMAT_STRING);
+
+        return b.toString();
     }
 
     private String build(List<Argument> arguments) {
@@ -132,10 +152,15 @@ public abstract class MainClassSkeleton<T> {
 
     abstract T doWork(HashMap<String, Object> context) throws Exception;
 
-    public T wrapWork(String[] args) throws Exception {
+    public T wrapWork(String[] args) {
         var context = new HashMap<String, Object>();
 
         var arguments = Arrays.asList(args);
+
+        if (arguments.contains("-README")) {
+            System.out.println(usage(Readme()));
+            System.exit(0);
+        }
 
         if (arguments.size() < getArguments().size()) {
             System.err.println(usage("Missing command line arguments"));
@@ -145,11 +170,6 @@ public abstract class MainClassSkeleton<T> {
         if (arguments.size() == 0) {
             System.err.println(usage(null));
             System.exit(1);
-        }
-
-        if (arguments.contains("-README")) {
-            System.out.println(usage(Readme()));
-            System.exit(0);
         }
 
         List<Option> options = getOptions();
@@ -172,17 +192,18 @@ public abstract class MainClassSkeleton<T> {
             }
         }
 
-        return doWork(context);
-    }
-
-    public static void wrapMain(MainClassSkeleton s, String[] args) {
         try {
-            s.wrapWork(args);
+            return doWork(context);
         } catch (final Exception e) {
-            System.err.println(s.usage(e.toString()));
+            System.err.println(usage(e.toString()));
             System.exit(1);
         }
 
+        return null;
+    }
+
+    public static void wrapMain(MainClassSkeleton s, String[] args) {
+        s.wrapWork(args);
         System.exit(0);
     }
 
