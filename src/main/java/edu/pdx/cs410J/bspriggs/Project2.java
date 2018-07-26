@@ -73,11 +73,6 @@ public class Project2 extends Project1 {
     }
 
     @Override
-    List<Argument> getArguments() {
-        return super.getArguments();
-    }
-
-    @Override
     List<Option> getOptions() {
         var all = new ArrayList<>(super.getOptions());
         all.add(
