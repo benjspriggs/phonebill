@@ -6,9 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.Map.entry;
 
@@ -22,53 +20,15 @@ public class Project2 extends Project1 {
     protected static String usage() {
         return "usage: java edu.pdx.cs410J.bspriggs.Project2 [options] <args>\n" +
                 "args are (in this order):\n" +
-                build(ARGUMENTS) +
+                Project1.build(ARGUMENTS) +
                 "options are (options may appear in any order):\n" +
-                build(OPTIONS) +
+                Project1.build(OPTIONS) +
                 "Date and time should be in the format: mm/dd/yyyy hh:mm";
     }
 
     protected static PhoneBill doMain(int ptr, boolean print, String filename, String[] args) {
         try {
-            PhoneBill bill = doMain(ptr, print, args);
-
-            if (bill == null) {
-                throw new Exception("Failed to parse/ add phone call to bill");
-            }
-
-            // open the file
-            if (filename != null && filename.length() > 0) {
-                TextParser textParser = new TextParser(Paths.get(filename));
-                var parsedBill = (PhoneBill) textParser.parse();
-
-                if (parsedBill != null) {
-                    if (!parsedBill.getCustomer().equals(bill.getCustomer())) {
-                        throw new Exception(String.format(bill.getCustomer(), parsedBill.getCustomer()));
-                    }
-
-                    for (var call : parsedBill.getPhoneCalls()) {
-                        bill.addPhoneCall((AbstractPhoneCall) call);
-                    }
-                }
-            }
-
-            // dump the file
-            if (filename != null && filename.length() > 0) {
-                Path path = Paths.get(filename);
-
-                File file = path.toFile();
-
-                if (file.exists()) {
-                    if (!file.delete()) {
-                        throw new IOException("Unable to remove existing file " + filename);
-                    }
-                }
-
-                TextDumper textDumper = new TextDumper(path);
-                textDumper.dump(bill);
-            }
-
-            return bill;
+            return new Project2().wrapWork(args);
         } catch (Exception e) {
             System.err.println(e);
             System.err.println(usage());
@@ -110,5 +70,68 @@ public class Project2 extends Project1 {
 
         doMain(ptr, print, filename, args);
         System.exit(0);
+    }
+
+    @Override
+    List<Argument> getArguments() {
+        return super.getArguments();
+    }
+
+    @Override
+    List<Option> getOptions() {
+        var all = new ArrayList<>(super.getOptions());
+        all.add(
+                popOpt("-textFile file", "Where to read/write the phone bill")
+        );
+        return Collections.unmodifiableList(all);
+    }
+
+    @Override
+    String Readme() {
+        return "Optionally reads a PhoneBill " +
+                "from a text file, " +
+                "creates a new PhoneCall as specified on the command line, " +
+                "adds the PhoneCall to the PhoneBill, " +
+                "and then optionally writes the PhoneBill back to the text file.";
+    }
+
+    @Override
+    PhoneBill doWork(HashMap<String, Object> context) throws Exception {
+        PhoneBill bill = super.doWork(context);
+        String filename = (String) context.get("-textFile");
+
+        // open the file
+        if (filename != null && filename.length() > 0) {
+            TextParser textParser = new TextParser(Paths.get(filename));
+            var parsedBill = (PhoneBill) textParser.parse();
+
+            if (parsedBill != null) {
+                if (!parsedBill.getCustomer().equals(bill.getCustomer())) {
+                    throw new Exception(String.format(bill.getCustomer(), parsedBill.getCustomer()));
+                }
+
+                for (var call : parsedBill.getPhoneCalls()) {
+                    bill.addPhoneCall((AbstractPhoneCall) call);
+                }
+            }
+        }
+
+        // dump the file
+        if (filename != null && filename.length() > 0) {
+            Path path = Paths.get(filename);
+
+            File file = path.toFile();
+
+            if (file.exists()) {
+                if (!file.delete()) {
+                    throw new IOException("Unable to remove existing file " + filename);
+                }
+            }
+
+            TextDumper textDumper = new TextDumper(path);
+            textDumper.dump(bill);
+        }
+
+        return bill;
     }
 }
