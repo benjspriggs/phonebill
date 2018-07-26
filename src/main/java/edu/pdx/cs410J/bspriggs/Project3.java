@@ -1,9 +1,7 @@
 package edu.pdx.cs410J.bspriggs;
 
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.Map.entry;
 
@@ -26,25 +24,7 @@ public class Project3 extends Project2 {
 
     public static PhoneBill doMain(int ptr, boolean print, String filename, String prettyFilename, String[] args) {
         try {
-            PhoneBill bill = doMain(ptr, print, filename, args);
-
-            if (bill == null) {
-                throw new Exception("Unable to parse phone bill/ customer");
-            }
-
-            if (prettyFilename != null) {
-                PrettyPrinter printer;
-
-                if (prettyFilename.compareTo("-") == 0) {
-                    printer = new PrettyPrinter(System.out);
-                } else {
-                    printer = new PrettyPrinter(Paths.get(prettyFilename));
-                }
-
-                printer.dump(bill);
-            }
-
-            return bill;
+            return new Project3().wrapWork(args);
         } catch (Exception e) {
             System.err.println(e.getMessage());
             System.err.println(usage());
@@ -88,5 +68,49 @@ public class Project3 extends Project2 {
 
         doMain(ptr, print, filename, prettyFilename, args);
         System.exit(0);
+    }
+
+    @Override
+    List<Option> getOptions() {
+        var all = new ArrayList<>(super.getOptions());
+        all.add(
+                popOpt("-pretty file", "Pretty print the phone bill to a text file or standard out (file -).")
+        );
+        return Collections.unmodifiableList(all);
+    }
+
+    @Override
+    String Readme() {
+        return "Pretty prints a phone bill" +
+                "from a text file, " +
+                "creates a new PhoneCall as specified on the command line, " +
+                "adds the PhoneCall to the PhoneBill, " +
+                "and then optionally writes the PhoneBill back to the text file.";
+    }
+
+    @Override
+    PhoneBill doWork(HashMap<String, Object> context) throws Exception {
+        PhoneBill bill = super.doWork(context);
+
+        if (bill == null) {
+            throw new Exception("Unable to parse phone bill/ customer");
+        }
+
+        var pretty = context.get("-pretty");
+
+        if (pretty != null) {
+            String prettyFilename = (String) pretty;
+            PrettyPrinter printer;
+
+            if (prettyFilename.compareTo("-") == 0) {
+                printer = new PrettyPrinter(System.out);
+            } else {
+                printer = new PrettyPrinter(Paths.get(prettyFilename));
+            }
+
+            printer.dump(bill);
+        }
+
+        return bill;
     }
 }
