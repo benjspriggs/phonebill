@@ -19,6 +19,13 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
 public class Project2IT extends Project1IT {
+    /**
+     * Invokes the main method of {@link Project2} with the given arguments.
+     */
+    protected MainMethodResult invokeMain(String... args) {
+        return invokeMain(Project2.class, args);
+    }
+
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
@@ -81,7 +88,7 @@ public class Project2IT extends Project1IT {
     @Test
     public void testREADME() {
         MainMethodResult result = invokeMain("-README");
-        assertThat(result.getExitCode(), equalTo(0));
+        assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(0));
         assertThat(result.getTextWrittenToStandardOut(), containsString("usage"));
     }
 
@@ -162,7 +169,7 @@ public class Project2IT extends Project1IT {
 
         new TextDumper(bspriggs.toPath()).dump(bill);
 
-        MainMethodResult result = invokeMain("-textFile bspriggs/bspriggs-x.txt Test3 ABC-123-4567 123-456-7890 03/03/2018 12:00 03/03/2018 16:00".split(" "));
+        MainMethodResult result = invokeMain("-textFile bspriggs/bspriggs-x.txt Test3 ABC-123-4567 123-456-7890 03/03/2018 12:00 AM 03/03/2018 16:00 PM".split(" "));
 
         assertThat(result.getExitCode(), equalTo(1));
         assertThat(result.getTextWrittenToStandardError(), is(not("")));
