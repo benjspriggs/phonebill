@@ -19,6 +19,13 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
 public class Project2IT extends Project1IT {
+    /**
+     * Invokes the main method of {@link Project2} with the given arguments.
+     */
+    protected MainMethodResult invokeMain(String... args) {
+        return invokeMain(Project2.class, args);
+    }
+
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
