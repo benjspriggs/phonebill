@@ -29,7 +29,7 @@ public abstract class MainClassSkeleton<T> {
             public List<String> consume(List<String> args, Map<String, Object> context) {
                 var l = args.subList(0, n);
                 context.put(name(), l);
-                return args.subList(n, args.size());
+                return args.subList(n + 1, args.size());
             }
         };
     }
@@ -75,14 +75,22 @@ public abstract class MainClassSkeleton<T> {
 
             @Override
             public List<String> consume(List<String> args, Map<String, Object> context) {
+                if (!args.contains(name()))
+                    return args;
+
+                var pos = args.indexOf(name());
+                var copy = new ArrayList<>(args);
+
                 if (!isFlag()) {
-                    args = args.subList(1, args.size());
-                    context.put(name(), args.get(0));
+                    context.put(name(), copy.get(pos));
+                    copy.remove(pos);
+                    copy.remove(pos);
                 } else {
                     context.put(name(), true);
+                    copy.remove(pos);
                 }
 
-                return args.subList(1, args.size());
+                return Collections.unmodifiableList(copy);
             }
         };
     }
@@ -122,45 +130,49 @@ public abstract class MainClassSkeleton<T> {
 
     abstract T doWork(HashMap<String, Object> context) throws Exception;
 
-    public static void wrapMain(MainClassSkeleton s, String[] args) {
+    public T wrapWork(String[] args) throws Exception {
         var context = new HashMap<String, Object>();
 
         var arguments = Arrays.asList(args);
 
-        if (arguments.size() < s.getArguments().size()) {
-            System.err.println(s.usage("Missing command line arguments"));
+        if (arguments.size() < getArguments().size()) {
+            System.err.println(usage("Missing command line arguments"));
             System.exit(1);
         }
 
         if (arguments.size() == 0) {
-            System.err.println(s.usage(null));
+            System.err.println(usage(null));
             System.exit(1);
         }
 
         if (arguments.contains("-README")) {
-            System.out.println(s.usage(s.Readme()));
+            System.out.println(usage(Readme()));
             System.exit(0);
         }
 
+        List<Option> options = getOptions();
+        List<Argument> argumentList = getArguments();
+
+        for (var opt : options) {
+            arguments = opt.consume(arguments, context);
+        }
+
+        for (var arg : argumentList) {
+            arguments = arg.consume(arguments, context);
+        }
+
+
+        if (arguments.size() != 0) {
+            System.err.println(usage("Extra command line arguments"));
+            System.exit(1);
+        }
+
+        return doWork(context);
+    }
+
+    public static void wrapMain(MainClassSkeleton s, String[] args) {
         try {
-            List<Option> options = s.getOptions();
-            List<Argument> argumentList = s.getArguments();
-
-            for (var opt : options) {
-                arguments = opt.consume(arguments, context);
-            }
-
-            for (var arg : argumentList) {
-                arguments = arg.consume(arguments, context);
-            }
-
-
-            if (arguments.size() != 0) {
-                System.err.println(s.usage("Extra command line arguments"));
-                System.exit(1);
-            }
-
-            s.doWork(context);
+            s.wrapWork(args);
         } catch (final Exception e) {
             System.err.println(s.usage(e.toString()));
             System.exit(1);
