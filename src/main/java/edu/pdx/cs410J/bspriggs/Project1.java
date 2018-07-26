@@ -1,7 +1,5 @@
 package edu.pdx.cs410J.bspriggs;
 
-import edu.pdx.cs410J.ParserException;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -46,39 +44,6 @@ public class Project1 extends MainClassSkeleton<PhoneBill> {
                 "Date and time should be in the format: " + PhoneCall.DATE_FORMAT_STRING;
     }
 
-    private static PhoneCall parsePhoneCallFromArguments(String[] args) throws ParserException {
-        int ptr = 0;
-
-        return new PhoneCall(args[ptr++], args[ptr++],
-                String.format("%s %s %s", args[ptr++], args[ptr++], args[ptr++].toUpperCase()),
-                String.format("%s %s %s", args[ptr++], args[ptr++], args[ptr].toUpperCase()));
-    }
-
-    private static String[] sliceArgumentsForPhoneCallParsing(String[] args, int ptr) {
-        return Arrays.copyOfRange(args, ptr, args.length);
-    }
-
-    protected static PhoneCall getPhoneCall(String[] args, int ptr) throws ParserException {
-        return parsePhoneCallFromArguments(sliceArgumentsForPhoneCallParsing(args, ptr));
-    }
-
-
-    public static void validateArguments(List<Map.Entry<String, String>> arguments, String[] args, int ptr) {
-        if (args.length - ptr != arguments.size() + 3) {
-            if (args.length - ptr < arguments.size() + 3)
-                System.err.println("Missing command line arguments");
-            else
-                System.err.println("Extra command line arguments");
-
-            for (String arg : args) {
-                System.out.println(arg);
-            }
-
-            System.err.println(usage());
-            System.exit(1);
-        }
-    }
-
     public static void validateEmptyArguments(String[] args) {
         if (args == null || args.length == 0) {
             System.err.println("Missing command line arguments");
@@ -89,20 +54,7 @@ public class Project1 extends MainClassSkeleton<PhoneBill> {
 
     protected static PhoneBill doMain(int ptr, boolean print, String[] args) {
         try {
-            PhoneBill bill = new PhoneBill(args[ptr++]);
-
-            validateArguments(ARGUMENTS, args, ptr);
-
-            PhoneCall call = getPhoneCall(args, ptr);
-
-            bill.addPhoneCall(call);
-
-            if (print) {
-                System.out.println(bill.toString());
-                System.out.println(call.toString());
-            }
-
-            return bill;
+            return new Project1().wrapWork(args);
         } catch (Exception e) {
             System.err.println(e.getMessage());
             System.err.println(usage());
@@ -147,7 +99,9 @@ public class Project1 extends MainClassSkeleton<PhoneBill> {
 
         bill.addPhoneCall(call);
 
-        if ((boolean) context.get("-print")) {
+        var print = context.get("-print");
+
+        if (print != null && (boolean) print) {
             System.out.println(bill.toString());
             System.out.println(call.toString());
         }
@@ -158,5 +112,4 @@ public class Project1 extends MainClassSkeleton<PhoneBill> {
     public static void main(String[] args) {
         wrapMain(new Project1(), args);
     }
-
 }
