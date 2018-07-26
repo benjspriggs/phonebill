@@ -18,9 +18,9 @@ public class Project3 extends Project2 {
     protected static String usage() {
         return "usage: java edu.pdx.cs410J.bspriggs.Project3 [options] <args>\n" +
                 "args are (in this order):\n" +
-                build(ARGUMENTS) +
+                Project1.build(Project1.ARGUMENTS) +
                 "options are (options may appear in any order):\n" +
-                build(OPTIONS) +
+                Project1.build(OPTIONS) +
                 "Date and time should be in the format: mm/dd/yyyy hh:mm";
     }
 
@@ -55,7 +55,7 @@ public class Project3 extends Project2 {
     }
 
     public static void main(String[] args) {
-        validateEmptyArguments(args);
+        Project1.validateEmptyArguments(args);
 
         int ptr = 0;
         boolean print = false;
