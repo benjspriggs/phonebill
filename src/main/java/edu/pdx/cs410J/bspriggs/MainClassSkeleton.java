@@ -3,16 +3,32 @@ package edu.pdx.cs410J.bspriggs;
 import java.util.*;
 
 public abstract class MainClassSkeleton<T> {
+    /**
+     * Represents a mandatory command line argument.
+     */
     public interface Argument {
         String name();
+
         String description();
+
         List<String> consume(List<String> args, Map<String, Object> context);
     }
 
+    /**
+     * Represents an option that can appear in any order.
+     */
     public interface Option extends Argument {
         boolean isFlag();
     }
 
+    /**
+     * Pops the first n arguments and stores it in an {@link ArrayList}.
+     *
+     * @param name
+     * @param description
+     * @param n
+     * @return A formatted argument that will consume n items.
+     */
     static Argument popN(String name, String description, int n) {
         return new Argument() {
             @Override
@@ -34,6 +50,12 @@ public abstract class MainClassSkeleton<T> {
         };
     }
 
+    /**
+     * A mandatory positional argument generator.
+     * @param name
+     * @param description
+     * @return An {@link Argument} that consumes a single arg from an argument list.
+     */
     static Argument pop(String name, String description) {
         return new Argument() {
             @Override
@@ -54,6 +76,12 @@ public abstract class MainClassSkeleton<T> {
         };
     }
 
+    /**
+     * Similar for {@link MainClassSkeleton#pop(String, String)}.
+     * @param name
+     * @param description
+     * @return An {@link Option} that consumes an optional flag or non-flag option.
+     */
     static Option popOpt(String name, String description) {
         final var pair = name.split(" ");
         var isFlag = pair.length <= 1;
@@ -100,6 +128,15 @@ public abstract class MainClassSkeleton<T> {
     abstract List<Argument> getArguments();
     abstract List<Option> getOptions();
 
+    abstract String Readme();
+
+    abstract T doWork(HashMap<String, Object> context) throws Exception;
+
+    /**
+     * Builds a usage string.
+     * @param reason
+     * @return
+     */
     private String usage(String reason) {
         var b = new StringBuilder();
 
@@ -137,21 +174,11 @@ public abstract class MainClassSkeleton<T> {
         return b.toString();
     }
 
-    private String build(List<Argument> arguments) {
-        final var b = new StringBuilder();
-
-        for (var a : arguments) {
-            b.append(String.format("  %-10s\t%s", a.name(), a.description()));
-            b.append(System.lineSeparator());
-        }
-
-        return b.toString();
-    }
-
-    abstract String Readme();
-
-    abstract T doWork(HashMap<String, Object> context) throws Exception;
-
+    /**
+     * Wraps the {@link MainClassSkeleton#doWork(HashMap)} with proper exception handling.
+     * @param args
+     * @return
+     */
     public T wrapWork(String[] args) {
         var context = new HashMap<String, Object>();
 
@@ -202,6 +229,11 @@ public abstract class MainClassSkeleton<T> {
         return null;
     }
 
+    /**
+     * Use this method in place of the psvm.
+     * @param s
+     * @param args
+     */
     public static void wrapMain(MainClassSkeleton s, String[] args) {
         s.wrapWork(args);
         System.exit(0);
