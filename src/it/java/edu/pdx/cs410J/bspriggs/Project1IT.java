@@ -60,4 +60,11 @@ public class Project1IT extends InvokeMainTestCase {
         assertThat(result.getTextWrittenToStandardOut(), containsString(bill.toString()));
         assertThat(result.getTextWrittenToStandardOut(), containsString(call.toString()));
     }
+
+    @Test
+    public void testREADME() {
+        MainMethodResult result = invokeMain("-README");
+        assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(0));
+        assertThat(result.getTextWrittenToStandardOut(), containsString("usage"));
+    }
 }

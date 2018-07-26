@@ -88,7 +88,7 @@ public class Project2IT extends Project1IT {
     @Test
     public void testREADME() {
         MainMethodResult result = invokeMain("-README");
-        assertThat(result.getExitCode(), equalTo(0));
+        assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(0));
         assertThat(result.getTextWrittenToStandardOut(), containsString("usage"));
     }
 
