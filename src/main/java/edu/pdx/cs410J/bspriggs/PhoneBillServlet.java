@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -79,7 +80,7 @@ public class PhoneBillServlet extends HttpServlet
      * @return
      */
     private List<AbstractPhoneCall> getPhoneCallsInPeriod(String customer, String startTime, String endTime) {
-        return null;
+        return new ArrayList<>();
     }
 
     /**
@@ -122,6 +123,10 @@ public class PhoneBillServlet extends HttpServlet
         }
 
         PhoneBill bill = getPhoneBill(customer);
+
+        if (bill == null) {
+            bill = new PhoneBill(customer);
+        }
 
         try {
             bill.addPhoneCall(new PhoneCall(caller, callee, startTime, endTime));
@@ -169,7 +174,7 @@ public class PhoneBillServlet extends HttpServlet
 
     @VisibleForTesting
     PhoneBill getPhoneBill(String customer) {
-        return null;
+        return phoneBills.get(customer);
     }
 
     @VisibleForTesting
