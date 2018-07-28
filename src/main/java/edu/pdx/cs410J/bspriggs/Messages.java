@@ -1,13 +1,17 @@
 package edu.pdx.cs410J.bspriggs;
 
+import edu.pdx.cs410J.AbstractPhoneBill;
 import edu.pdx.cs410J.AbstractPhoneCall;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Class for formatting messages on the server side.  This is mainly to enable
@@ -15,6 +19,8 @@ import java.util.regex.Pattern;
  */
 public class Messages
 {
+    public static final PrettyPrinter prettyPrinter = new PrettyPrinter();
+
     public static String formatWordCount(int count )
     {
         return String.format( "Dictionary on server contains %d words", count );
@@ -94,15 +100,21 @@ public class Messages
         return "Phone bills on server: " + expectedPhoneBillCount;
     }
 
-    public static String formatPhoneBill(PhoneBill bill) {
-        return null;
+    public static String formatPhoneBill(PhoneBill bill) throws IOException {
+        var out = new ByteArrayOutputStream();
+        prettyPrinter.dumpTo(bill, out);
+        return out.toString();
     }
 
     public static String formatPhoneCalls(List<AbstractPhoneCall> callsInSearchRange) {
-        return null;
+        return callsInSearchRange.stream()
+                .map(AbstractPhoneCall::toString)
+                .collect(Collectors.joining("\n"));
     }
 
     public static String formatPhoneBills(HashMap<String, PhoneBill> phoneBills) {
-        return null;
+        return phoneBills.values().stream()
+                .map(AbstractPhoneBill::toString)
+                .collect(Collectors.joining("\n"));
     }
 }
