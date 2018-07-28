@@ -117,4 +117,12 @@ public class Messages
                 .map(AbstractPhoneBill::toString)
                 .collect(Collectors.joining("\n"));
     }
+
+    public static PhoneBill parsePhoneBill(String content) {
+        return null;
+    }
+
+    public static List<PhoneCall> parsePhoneCalls(String content) {
+        return null;
+    }
 }

@@ -1,11 +1,11 @@
 package edu.pdx.cs410J.bspriggs;
 
-import com.google.common.annotations.VisibleForTesting;
 import edu.pdx.cs410J.web.HttpRequestHelper;
 
 import java.io.IOException;
-import java.util.Map;
+import java.util.List;
 
+import static edu.pdx.cs410J.bspriggs.PhoneBillServlet.*;
 import static java.net.HttpURLConnection.HTTP_OK;
 
 /**
@@ -31,37 +31,29 @@ public class PhoneBillRestClient extends HttpRequestHelper
         this.url = String.format( "http://%s:%d/%s/%s", hostName, port, WEB_APP, SERVLET );
     }
 
-    /**
-     * Returns all dictionary entries from the server
-     */
-    public Map<String, String> getAllDictionaryEntries() throws IOException {
-      Response response = get(this.url);
-      return Messages.parseDictionary(response.getContent());
+    public String getPhoneBill(String customer) throws IOException {
+        Response response = get(this.url, CUSTOMER_PARAMETER, customer);
+        return response.getContent();
     }
 
-    /**
-     * Returns the definition for the given word
-     */
-    public String getDefinition(String word) throws IOException {
-      Response response = get(this.url, "word", word);
-      throwExceptionIfNotOkayHttpStatus(response);
-      String content = response.getContent();
-      return Messages.parseDictionaryEntry(content).getValue();
+    public PhoneBill postNewCall(String customer, String callerNumber, String calleeNumber, String startTimeAndDate, String endTimeAndDate) throws IOException {
+        Response response = post(this.url,
+                CUSTOMER_PARAMETER, customer,
+                PHONE_CALLER_PARAMETER, callerNumber,
+                PHONE_CALLEE_PARAMETER, calleeNumber,
+                START_TIME_PARAMETER, startTimeAndDate,
+                END_TIME_PARAMETER, endTimeAndDate);
+        throwExceptionIfNotOkayHttpStatus(response);
+        return Messages.parsePhoneBill(response.getContent());
     }
 
-    public void addDictionaryEntry(String word, String definition) throws IOException {
-      Response response = postToMyURL("word", word, "definition", definition);
-      throwExceptionIfNotOkayHttpStatus(response);
-    }
-
-    @VisibleForTesting
-    Response postToMyURL(String... dictionaryEntries) throws IOException {
-      return post(this.url, dictionaryEntries);
-    }
-
-    public void removeAllDictionaryEntries() throws IOException {
-      Response response = delete(this.url);
-      throwExceptionIfNotOkayHttpStatus(response);
+    public List<PhoneCall> searchPhoneCalls(String customer, String startTimeAndDate, String endTimeAndDate) throws IOException {
+        Response response = get(this.url,
+                CUSTOMER_PARAMETER, customer,
+                START_TIME_PARAMETER, startTimeAndDate,
+                END_TIME_PARAMETER, endTimeAndDate);
+        throwExceptionIfNotOkayHttpStatus(response);
+        return Messages.parsePhoneCalls(response.getContent());
     }
 
     private Response throwExceptionIfNotOkayHttpStatus(Response response) {
