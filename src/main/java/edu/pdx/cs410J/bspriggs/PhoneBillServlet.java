@@ -11,9 +11,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * This servlet ultimately provides a REST API for working with an
@@ -50,9 +55,17 @@ public class PhoneBillServlet extends HttpServlet
         String startTime = getParameter(START_TIME_PARAMETER, request);
         String endTime = getParameter(END_TIME_PARAMETER, request);
 
+        PhoneBill bill = getPhoneBill(customer);
+
         if (startTime == null && endTime == null) {
-            pw.println(Messages.formatPhoneBills(this.phoneBills));
-            pw.flush();
+            if (bill == null) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            } else {
+                pw.println(Messages.formatPhoneBill(bill));
+                pw.flush();
+                response.setStatus(HttpServletResponse.SC_OK);
+            }
+            return;
         }
 
         if (startTime == null || endTime == null) {
@@ -64,6 +77,11 @@ public class PhoneBillServlet extends HttpServlet
         }
 
         List<AbstractPhoneCall> matches = getPhoneCallsInPeriod(customer, startTime, endTime);
+
+        if (matches == null) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
 
         pw.println(Messages.formatPhoneCalls(matches));
         pw.flush();
@@ -80,7 +98,23 @@ public class PhoneBillServlet extends HttpServlet
      * @return
      */
     private List<AbstractPhoneCall> getPhoneCallsInPeriod(String customer, String startTime, String endTime) {
-        return new ArrayList<>();
+        PhoneBill bill = getPhoneBill(customer);
+
+        if (bill == null)
+            return null;
+
+        Function<String, Date> makeItDate = s -> new Date(LocalDateTime.parse(s, PhoneCall.DATE_FORMAT).toInstant(ZoneOffset.UTC).toEpochMilli());
+
+        var start = makeItDate.apply(startTime);
+        var end = makeItDate.apply(endTime);
+
+        Collection<AbstractPhoneCall> calls = bill.getPhoneCalls();
+        return calls
+                .stream()
+                .map(AbstractPhoneCall.class::cast)
+                .filter(call -> call.getStartTime().compareTo(start) >= 0)
+                .filter(call -> call.getEndTime().compareTo(end) <= 0)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -178,7 +212,7 @@ public class PhoneBillServlet extends HttpServlet
     }
 
     @VisibleForTesting
-    void addPhoneBill(AbstractPhoneBill<AbstractPhoneCall> bill) {
-
+    void addPhoneBill(PhoneBill bill) {
+        phoneBills.put(bill.getCustomer(), bill);
     }
 }
