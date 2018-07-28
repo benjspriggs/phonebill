@@ -100,7 +100,7 @@ public class Messages
         return "Phone bills on server: " + expectedPhoneBillCount;
     }
 
-    public static String formatPhoneBill(PhoneBill bill) throws IOException {
+    public static String formatPhoneBill(AbstractPhoneBill bill) throws IOException {
         var out = new ByteArrayOutputStream();
         prettyPrinter.dumpTo(bill, out);
         return out.toString();
