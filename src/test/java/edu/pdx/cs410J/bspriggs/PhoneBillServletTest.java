@@ -168,6 +168,7 @@ public class PhoneBillServletTest {
 
         HttpServletResponse response = mock(HttpServletResponse.class);
         PrintWriter pw = mock(PrintWriter.class);
+        when(response.getWriter()).thenReturn(pw);
 
         // and we get the phone bill
         servlet.doGet(request, response);
@@ -187,6 +188,9 @@ public class PhoneBillServletTest {
         when(request.getParameter("customer")).thenReturn("asdfasflk");
 
         HttpServletResponse response = mock(HttpServletResponse.class);
+        PrintWriter pw = mock(PrintWriter.class);
+        when(response.getWriter()).thenReturn(pw);
+
 
         // and we get the phone bill
         this.servletWithPhoneBill.doGet(request, response);
@@ -262,6 +266,8 @@ public class PhoneBillServletTest {
         when(request.getParameter("endTime")).thenReturn(PhoneCall.formatDate(endDate));
 
         HttpServletResponse response = mock(HttpServletResponse.class);
+        PrintWriter pw = mock(PrintWriter.class);
+        when(response.getWriter()).thenReturn(pw);
 
         // and we get the phone bill
         servlet.doGet(request, response);
