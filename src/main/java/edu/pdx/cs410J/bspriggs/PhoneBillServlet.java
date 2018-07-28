@@ -3,14 +3,16 @@ package edu.pdx.cs410J.bspriggs;
 import com.google.common.annotations.VisibleForTesting;
 import edu.pdx.cs410J.AbstractPhoneBill;
 import edu.pdx.cs410J.AbstractPhoneCall;
+import edu.pdx.cs410J.ParserException;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 /**
  * This servlet ultimately provides a REST API for working with an
@@ -20,79 +22,121 @@ import java.util.Map;
  */
 public class PhoneBillServlet extends HttpServlet
 {
-    static final String WORD_PARAMETER = "word";
-    static final String DEFINITION_PARAMETER = "definition";
+    public static final String CUSTOMER_PARAMETER = "customer";
+    public static final String PHONE_CALLER_PARAMETER = "callerNumber";
+    public static final String PHONE_CALLEE_PARAMETER = "calleeNumber";
+    public static final String START_TIME_PARAMETER = "startTime";
+    public static final String END_TIME_PARAMETER = "endTime";
 
-    private final Map<String, String> dictionary = new HashMap<>();
+    private HashMap<String, PhoneBill> phoneBills = new HashMap<>();
 
     /**
-     * Handles an HTTP GET request from a client by writing the definition of the
-     * word specified in the "word" HTTP parameter to the HTTP response.  If the
-     * "word" parameter is not specified, all of the entries in the dictionary
-     * are written to the HTTP response.
+     * Handles an HTTP GET request from a client by writing
+     * all of the phone bills, formatted by {@link PrettyPrinter#dumpTo(AbstractPhoneBill, OutputStream)}.
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException
-    {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType( "text/plain" );
 
-        String word = getParameter( WORD_PARAMETER, request );
-        if (word != null) {
-            writeDefinition(word, response);
+        String customer = getParameter(CUSTOMER_PARAMETER, request);
 
-        } else {
-            writeAllDictionaryEntries(response);
+        if (customer == null) {
+            missingRequiredParameter(response, CUSTOMER_PARAMETER);
+            return;
         }
+
+        PrintWriter pw = response.getWriter();
+        String startTime = getParameter(START_TIME_PARAMETER, request);
+        String endTime = getParameter(END_TIME_PARAMETER, request);
+
+        if (startTime == null && endTime == null) {
+            pw.println(Messages.formatPhoneBills(this.phoneBills));
+            pw.flush();
+        }
+
+        if (startTime == null || endTime == null) {
+            if (startTime == null)
+                missingRequiredParameter(response, START_TIME_PARAMETER);
+            else
+                missingRequiredParameter(response, END_TIME_PARAMETER);
+            return;
+        }
+
+        List<AbstractPhoneCall> matches = getPhoneCallsInPeriod(customer, startTime, endTime);
+
+        pw.println(Messages.formatPhoneCalls(matches));
+        pw.flush();
+
+        response.setStatus(HttpServletResponse.SC_OK);
     }
 
     /**
-     * Handles an HTTP POST request by storing the dictionary entry for the
-     * "word" and "definition" request parameters.  It writes the dictionary
-     * entry to the HTTP response.
+     * Returns all of the calls for a customer that happened in a time range.
+     *
+     * @param customer
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    private List<AbstractPhoneCall> getPhoneCallsInPeriod(String customer, String startTime, String endTime) {
+        return null;
+    }
+
+    /**
+     * Handles an HTTP POST request by storing the phone bill/ phone call.
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException
     {
-        response.setContentType( "text/plain" );
+        response.setContentType( "text/plain");
 
-        String word = getParameter(WORD_PARAMETER, request );
-        if (word == null) {
-            missingRequiredParameter(response, WORD_PARAMETER);
+        String customer = getParameter(CUSTOMER_PARAMETER, request);
+        String caller = getParameter(PHONE_CALLER_PARAMETER, request);
+        String callee = getParameter(PHONE_CALLEE_PARAMETER, request);
+        String startTime = getParameter(START_TIME_PARAMETER, request);
+        String endTime = getParameter(END_TIME_PARAMETER, request);
+
+        if (customer == null) {
+            missingRequiredParameter(response, CUSTOMER_PARAMETER);
             return;
         }
 
-        String definition = getParameter(DEFINITION_PARAMETER, request );
-        if ( definition == null) {
-            missingRequiredParameter( response, DEFINITION_PARAMETER );
+        if (caller == null) {
+            missingRequiredParameter(response, PHONE_CALLER_PARAMETER);
             return;
         }
 
-        this.dictionary.put(word, definition);
+        if (callee == null) {
+            missingRequiredParameter(response, PHONE_CALLEE_PARAMETER);
+            return;
+        }
+
+        if (startTime == null) {
+            missingRequiredParameter(response, START_TIME_PARAMETER);
+            return;
+        }
+
+        if (endTime == null) {
+            missingRequiredParameter(response, END_TIME_PARAMETER);
+            return;
+        }
+
+        PhoneBill bill = getPhoneBill(customer);
+
+        try {
+            bill.addPhoneCall(new PhoneCall(caller, callee, startTime, endTime));
+        } catch (ParserException e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return;
+        }
+
+        addPhoneBill(bill);
 
         PrintWriter pw = response.getWriter();
-        pw.println(Messages.definedWordAs(word, definition));
+        pw.println(Messages.formatPhoneBill(bill));
         pw.flush();
 
         response.setStatus( HttpServletResponse.SC_OK);
-    }
-
-    /**
-     * Handles an HTTP DELETE request by removing all dictionary entries.  This
-     * behavior is exposed for testing purposes only.  It's probably not
-     * something that you'd want a real application to expose.
-     */
-    @Override
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentType("text/plain");
-
-        this.dictionary.clear();
-
-        PrintWriter pw = response.getWriter();
-        pw.println(Messages.allDictionaryEntriesDeleted());
-        pw.flush();
-
-        response.setStatus(HttpServletResponse.SC_OK);
-
     }
 
     /**
@@ -105,40 +149,6 @@ public class PhoneBillServlet extends HttpServlet
     {
         String message = Messages.missingRequiredParameter(parameterName);
         response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED, message);
-    }
-
-    /**
-     * Writes the definition of the given word to the HTTP response.
-     *
-     * The text of the message is formatted with
-     * {@link Messages#formatDictionaryEntry(String, String)}
-     */
-    private void writeDefinition(String word, HttpServletResponse response ) throws IOException
-    {
-        String definition = this.dictionary.get(word);
-
-        PrintWriter pw = response.getWriter();
-        pw.println(Messages.formatDictionaryEntry(word, definition));
-
-        pw.flush();
-
-        response.setStatus( HttpServletResponse.SC_OK );
-    }
-
-    /**
-     * Writes all of the dictionary entries to the HTTP response.
-     *
-     * The text of the message is formatted with
-     * {@link Messages#formatDictionaryEntry(String, String)}
-     */
-    private void writeAllDictionaryEntries(HttpServletResponse response ) throws IOException
-    {
-        PrintWriter pw = response.getWriter();
-        Messages.formatDictionaryEntries(pw, dictionary);
-
-        pw.flush();
-
-        response.setStatus( HttpServletResponse.SC_OK );
     }
 
     /**
@@ -158,15 +168,12 @@ public class PhoneBillServlet extends HttpServlet
     }
 
     @VisibleForTesting
-    String getDefinition(String word) {
-        return this.dictionary.get(word);
-    }
-
-    public PhoneBill getPhoneBill(String customer) {
+    PhoneBill getPhoneBill(String customer) {
         return null;
     }
 
-    public void addPhoneBill(AbstractPhoneBill<AbstractPhoneCall> bill) {
+    @VisibleForTesting
+    void addPhoneBill(AbstractPhoneBill<AbstractPhoneCall> bill) {
 
     }
 }

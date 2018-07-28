@@ -101,4 +101,8 @@ public class Messages
     public static String formatPhoneCalls(List<AbstractPhoneCall> callsInSearchRange) {
         return null;
     }
+
+    public static String formatPhoneBills(HashMap<String, PhoneBill> phoneBills) {
+        return null;
+    }
 }

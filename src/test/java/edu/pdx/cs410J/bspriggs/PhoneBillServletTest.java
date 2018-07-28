@@ -57,11 +57,11 @@ public class PhoneBillServletTest {
     }
 
     private void addCallToRequest(PhoneBill bill, PhoneCall call, HttpServletRequest request) {
-        when(request.getParameter("customer")).thenReturn(bill.getCustomer());
-        when(request.getParameter("callerNumber")).thenReturn(call.getCaller());
-        when(request.getParameter("calleeNumber")).thenReturn(call.getCallee());
-        when(request.getParameter("startTime")).thenReturn(call.getStartTimeString());
-        when(request.getParameter("endTime")).thenReturn(call.getEndTimeString());
+        when(request.getParameter(PhoneBillServlet.CUSTOMER_PARAMETER)).thenReturn(bill.getCustomer());
+        when(request.getParameter(PhoneBillServlet.PHONE_CALLER_PARAMETER)).thenReturn(call.getCaller());
+        when(request.getParameter(PhoneBillServlet.PHONE_CALLEE_PARAMETER)).thenReturn(call.getCallee());
+        when(request.getParameter(PhoneBillServlet.START_TIME_PARAMETER)).thenReturn(call.getStartTimeString());
+        when(request.getParameter(PhoneBillServlet.END_TIME_PARAMETER)).thenReturn(call.getEndTimeString());
     }
 
     @Test
@@ -113,6 +113,7 @@ public class PhoneBillServletTest {
 
         servlet.doPost(request, response);
         // verify(pw).println(Messages.formatPhoneBill(bill));
+        verify(pw).println(Messages.formatPhoneBill(bill));
         verify(response).setStatus(HttpServletResponse.SC_OK);
 
         assertThat(servlet.getPhoneBill(customer), equalTo(bill));
@@ -226,7 +227,7 @@ public class PhoneBillServletTest {
         // and we get the phone bill
         this.servletWithPhoneBill.doGet(request, response);
 
-        verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        verify(response).setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
     }
 
     /**
@@ -243,7 +244,7 @@ public class PhoneBillServletTest {
         // and we get the phone bill
         this.servletWithPhoneBill.doPost(request, response);
 
-        verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        verify(response).setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
     }
 
     /**
