@@ -87,4 +87,11 @@ public class Messages
         return map;
     }
 
+    public static String formatPhoneBillCount(int expectedPhoneBillCount) {
+        return "Phone bills on server: " + expectedPhoneBillCount;
+    }
+
+    public static String formatPhoneBill(PhoneBill bill) {
+        return null;
+    }
 }

@@ -2,7 +2,6 @@ package edu.pdx.cs410J.bspriggs;
 
 import com.google.common.annotations.VisibleForTesting;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,7 +30,7 @@ public class PhoneBillServlet extends HttpServlet
      * are written to the HTTP response.
      */
     @Override
-    protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException
     {
         response.setContentType( "text/plain" );
 
@@ -50,7 +49,7 @@ public class PhoneBillServlet extends HttpServlet
      * entry to the HTTP response.
      */
     @Override
-    protected void doPost( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException
     {
         response.setContentType( "text/plain" );
 
@@ -81,7 +80,7 @@ public class PhoneBillServlet extends HttpServlet
      * something that you'd want a real application to expose.
      */
     @Override
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/plain");
 
         this.dictionary.clear();
@@ -161,4 +160,7 @@ public class PhoneBillServlet extends HttpServlet
         return this.dictionary.get(word);
     }
 
+    public PhoneBill getPhoneBill(String customer) {
+        return null;
+    }
 }
