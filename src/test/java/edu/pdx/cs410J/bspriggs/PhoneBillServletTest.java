@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static edu.pdx.cs410J.bspriggs.PhoneBillServlet.CUSTOMER_PARAMETER;
 import static edu.pdx.cs410J.bspriggs.TextDumperTest.generatePhoneCall;
 import static edu.pdx.cs410J.bspriggs.TextDumperTest.getPopulatedPhoneBill;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -56,8 +57,8 @@ public class PhoneBillServletTest {
                 .collect(Collectors.toList());
     }
 
-    private void addCallToRequest(PhoneBill bill, PhoneCall call, HttpServletRequest request) {
-        when(request.getParameter(PhoneBillServlet.CUSTOMER_PARAMETER)).thenReturn(bill.getCustomer());
+    private void addCallToRequest(AbstractPhoneBill bill, AbstractPhoneCall call, HttpServletRequest request) {
+        when(request.getParameter(CUSTOMER_PARAMETER)).thenReturn(bill.getCustomer());
         when(request.getParameter(PhoneBillServlet.PHONE_CALLER_PARAMETER)).thenReturn(call.getCaller());
         when(request.getParameter(PhoneBillServlet.PHONE_CALLEE_PARAMETER)).thenReturn(call.getCallee());
         when(request.getParameter(PhoneBillServlet.START_TIME_PARAMETER)).thenReturn(call.getStartTimeString());
@@ -206,15 +207,16 @@ public class PhoneBillServletTest {
     @Test
     public void testPostBadParams() throws IOException {
         HttpServletRequest request = mock(HttpServletRequest.class);
-        when(request.getParameter("customer")).thenReturn("asdfasflk");
         when(request.getParameter("extra")).thenReturn(bill.getCustomer());
 
         HttpServletResponse response = mock(HttpServletResponse.class);
+        PrintWriter pw = mock(PrintWriter.class);
+        when(response.getWriter()).thenReturn(pw);
 
         // and we get the phone bill
         this.servletWithPhoneBill.doPost(request, response);
 
-        verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        verify(response, never()).setStatus(HttpServletResponse.SC_OK);
     }
 
     /**
@@ -231,7 +233,7 @@ public class PhoneBillServletTest {
         // and we get the phone bill
         this.servletWithPhoneBill.doGet(request, response);
 
-        verify(response).setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
+        verifyMissingErrorWithParam(response, CUSTOMER_PARAMETER);
     }
 
     /**
@@ -248,7 +250,11 @@ public class PhoneBillServletTest {
         // and we get the phone bill
         this.servletWithPhoneBill.doPost(request, response);
 
-        verify(response).setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
+        verifyMissingErrorWithParam(response, CUSTOMER_PARAMETER);
+    }
+
+    private void verifyMissingErrorWithParam(HttpServletResponse response, String param) throws IOException {
+        verify(response).sendError(HttpServletResponse.SC_PRECONDITION_FAILED, Messages.missingRequiredParameter(param));
     }
 
     /**
