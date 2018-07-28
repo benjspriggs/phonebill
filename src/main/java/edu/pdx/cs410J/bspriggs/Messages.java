@@ -2,6 +2,7 @@ package edu.pdx.cs410J.bspriggs;
 
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -92,6 +93,10 @@ public class Messages
     }
 
     public static String formatPhoneBill(PhoneBill bill) {
+        return null;
+    }
+
+    public static String formatPhoneCalls(List<PhoneCall> callsInSearchRange) {
         return null;
     }
 }
