@@ -1,5 +1,7 @@
 package edu.pdx.cs410J.bspriggs;
 
+import edu.pdx.cs410J.AbstractPhoneCall;
+
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
@@ -96,7 +98,7 @@ public class Messages
         return null;
     }
 
-    public static String formatPhoneCalls(List<PhoneCall> callsInSearchRange) {
+    public static String formatPhoneCalls(List<AbstractPhoneCall> callsInSearchRange) {
         return null;
     }
 }

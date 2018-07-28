@@ -1,6 +1,8 @@
 package edu.pdx.cs410J.bspriggs;
 
 import com.google.common.annotations.VisibleForTesting;
+import edu.pdx.cs410J.AbstractPhoneBill;
+import edu.pdx.cs410J.AbstractPhoneCall;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -162,5 +164,9 @@ public class PhoneBillServlet extends HttpServlet
 
     public PhoneBill getPhoneBill(String customer) {
         return null;
+    }
+
+    public void addPhoneBill(AbstractPhoneBill<AbstractPhoneCall> bill) {
+
     }
 }

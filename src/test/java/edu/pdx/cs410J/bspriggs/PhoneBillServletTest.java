@@ -27,15 +27,16 @@ import static org.mockito.Mockito.*;
  */
 public class PhoneBillServletTest {
     private AbstractPhoneBill<AbstractPhoneCall> bill;
-    private PhoneBillServlet servletWithPhoneBills;
+    private PhoneBillServlet servletWithPhoneBill;
     private Date startDate;
     private Date endDate;
-    private List<PhoneCall> callsInSearchRange;
+    private List<AbstractPhoneCall> callsInSearchRange;
 
     @Before
-    public void setUp() throws IOException {
+    public void setUp() {
         this.bill = getPopulatedPhoneBill();
-        this.servletWithPhoneBills = new PhoneBillServlet();
+        this.servletWithPhoneBill = new PhoneBillServlet();
+        servletWithPhoneBill.addPhoneBill(bill);
 
         var pair = this.bill.getPhoneCalls().stream()
                 .collect(Collectors.collectingAndThen(Collectors.toList(), collected -> {
@@ -48,22 +49,19 @@ public class PhoneBillServletTest {
         this.startDate = pair.get(0).getStartTime();
         this.endDate = pair.get(1).getEndTime();
 
-        for (var call : bill.getPhoneCalls()) {
-            HttpServletRequest request = mock(HttpServletRequest.class);
+        this.callsInSearchRange = this.bill.getPhoneCalls()
+                .stream()
+                .filter(call -> call.getStartTime().compareTo(startDate) >= 0
+                        && call.getEndTime().compareTo(endDate) <= 0)
+                .collect(Collectors.toList());
+    }
 
-            when(request.getParameter("name")).thenReturn(bill.getCustomer());
-            when(request.getParameter("callerNumber")).thenReturn(call.getCaller());
-            when(request.getParameter("calleeNumber")).thenReturn(call.getCallee());
-            when(request.getParameter("startTime")).thenReturn(call.getStartTimeString());
-            when(request.getParameter("endTime")).thenReturn(call.getEndTimeString());
-
-            HttpServletResponse response = mock(HttpServletResponse.class);
-            PrintWriter pw = mock(PrintWriter.class);
-
-            when(response.getWriter()).thenReturn(pw);
-
-            servletWithPhoneBills.doPost(request, response);
-        }
+    private void addCallToRequest(PhoneBill bill, PhoneCall call, HttpServletRequest request) {
+        when(request.getParameter("customer")).thenReturn(bill.getCustomer());
+        when(request.getParameter("callerNumber")).thenReturn(call.getCaller());
+        when(request.getParameter("calleeNumber")).thenReturn(call.getCallee());
+        when(request.getParameter("startTime")).thenReturn(call.getStartTimeString());
+        when(request.getParameter("endTime")).thenReturn(call.getEndTimeString());
     }
 
     @Test
@@ -106,11 +104,7 @@ public class PhoneBillServletTest {
         bill.addPhoneCall(call);
 
         HttpServletRequest request = mock(HttpServletRequest.class);
-        when(request.getParameter("customer")).thenReturn(bill.getCustomer());
-        when(request.getParameter("callerNumber")).thenReturn(call.getCaller());
-        when(request.getParameter("calleeNumber")).thenReturn(call.getCallee());
-        when(request.getParameter("startTime")).thenReturn(call.getStartTimeString());
-        when(request.getParameter("endTime")).thenReturn(call.getEndTimeString());
+        addCallToRequest(bill, call, request);
 
         HttpServletResponse response = mock(HttpServletResponse.class);
         PrintWriter pw = mock(PrintWriter.class);
@@ -141,11 +135,7 @@ public class PhoneBillServletTest {
         bill.addPhoneCall(call);
 
         HttpServletRequest postRequest = mock(HttpServletRequest.class);
-        when(postRequest.getParameter("customer")).thenReturn(bill.getCustomer());
-        when(postRequest.getParameter("callerNumber")).thenReturn(call.getCaller());
-        when(postRequest.getParameter("calleeNumber")).thenReturn(call.getCallee());
-        when(postRequest.getParameter("startTime")).thenReturn(call.getStartTimeString());
-        when(postRequest.getParameter("endTime")).thenReturn(call.getEndTimeString());
+        addCallToRequest(bill, call, postRequest);
 
         HttpServletResponse postResponse = mock(HttpServletResponse.class);
         PrintWriter pw = mock(PrintWriter.class);
@@ -167,19 +157,13 @@ public class PhoneBillServletTest {
     }
 
     @Test
-    public void testSearchPhoneCallsReturnsNoneWhenCallEmpty() throws ParserException, IOException {
+    public void testSearchPhoneCallsReturnsCallsInRange() throws IOException {
         PhoneBillServlet servlet = new PhoneBillServlet();
-
-        String customer = "customer";
-        PhoneBill bill = new PhoneBill(customer);
-        PhoneCall call = (PhoneCall) generatePhoneCall();
-
-        bill.addPhoneCall(call);
 
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getParameter("customer")).thenReturn(bill.getCustomer());
-        when(request.getParameter("startTime")).thenReturn(call.getStartTimeString());
-        when(request.getParameter("endTime")).thenReturn(call.getEndTimeString());
+        when(request.getParameter("startTime")).thenReturn(PhoneCall.formatDate(startDate));
+        when(request.getParameter("endTime")).thenReturn(PhoneCall.formatDate(endDate));
 
         HttpServletResponse response = mock(HttpServletResponse.class);
         PrintWriter pw = mock(PrintWriter.class);
@@ -191,10 +175,96 @@ public class PhoneBillServletTest {
         verify(response).setStatus(HttpServletResponse.SC_OK);
     }
 
-    // now we test the bad stuff
-    // get on a customer that doesn't exist doesn't return anything
-    // post on a customer with bad params give a bad status code
-    // get with missing params fails
-    // post with missing params fails
-    // search on multiple phone bills returns the right calls
+    /**
+     * Get on a customer that doesn't exist doesn't return anything.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testGetCustomerReturnsInvalid() throws IOException {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getParameter("customer")).thenReturn("asdfasflk");
+
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        // and we get the phone bill
+        this.servletWithPhoneBill.doGet(request, response);
+
+        verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
+    }
+
+    /**
+     * Post on a customer with bad params give a bad status code.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testPostBadParams() throws IOException {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getParameter("customer")).thenReturn("asdfasflk");
+        when(request.getParameter("extra")).thenReturn(bill.getCustomer());
+
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        // and we get the phone bill
+        this.servletWithPhoneBill.doPost(request, response);
+
+        verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    }
+
+    /**
+     * Get with missing params fails.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testGetMissingParams() throws IOException {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        // and we get the phone bill
+        this.servletWithPhoneBill.doGet(request, response);
+
+        verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    }
+
+    /**
+     * Post with missing params fails.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testPostMissingParams() throws IOException {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        // and we get the phone bill
+        this.servletWithPhoneBill.doPost(request, response);
+
+        verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    }
+
+    /**
+     * Search on nonexistent bill returns not found.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testSearchMissingPhoneBill() throws IOException {
+        PhoneBillServlet servlet = new PhoneBillServlet();
+
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getParameter("customer")).thenReturn("NONEXISTENT_CUSTOMER");
+        when(request.getParameter("startTime")).thenReturn(PhoneCall.formatDate(startDate));
+        when(request.getParameter("endTime")).thenReturn(PhoneCall.formatDate(endDate));
+
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        // and we get the phone bill
+        servlet.doGet(request, response);
+
+        verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
+    }
 }
