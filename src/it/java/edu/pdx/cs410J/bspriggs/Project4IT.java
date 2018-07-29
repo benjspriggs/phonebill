@@ -8,7 +8,9 @@ import org.junit.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.stream.Stream;
 
 import static edu.pdx.cs410J.bspriggs.TextDumperTest.*;
 import static org.hamcrest.CoreMatchers.is;
@@ -24,16 +26,22 @@ public class Project4IT extends InvokeMainTestCase {
     private static final String HOSTNAME = "localhost";
     private static final String PORT = System.getProperty("http.port", "8080");
 
+    private MainMethodResult invokeMain(String... args) {
+        var connectionArgs = Arrays.asList("-host", HOSTNAME, "-port", PORT);
+        var newArgs = Stream.concat(Arrays.asList(args).stream(), connectionArgs.stream());
+        return invokeMain(Project4.class, newArgs.toArray(String[]::new));
+    }
+
     @Test
     public void testNoCommandLineArguments() {
-        MainMethodResult result = invokeMain( Project4.class );
+        MainMethodResult result = invokeMain();
         assertThat(result.getExitCode(), equalTo(1));
         assertThat(result.getTextWrittenToStandardError(), containsString(Project4.MISSING_ARGS));
     }
 
     @Test
     public void testREADME() {
-        MainMethodResult result = invokeMain(Project4.class, "-README");
+        MainMethodResult result = invokeMain("-README");
         assertThat(result.getExitCode(), equalTo(0));
         assertThat(result.getTextWrittenToStandardError(), equalTo(""));
     }
@@ -49,7 +57,7 @@ public class Project4IT extends InvokeMainTestCase {
         prettyPrinter.dumpTo(bill, out);
 
         bill.addPhoneCall(phoneCall);
-        MainMethodResult result = invokeMain(Project4.class,
+        MainMethodResult result = invokeMain(
                 bill.getCustomer(), phoneCall.getCaller(), phoneCall.getCallee(),
                 phoneCall.getStartTimeString(), phoneCall.getEndTimeString());
 
@@ -70,7 +78,7 @@ public class Project4IT extends InvokeMainTestCase {
 
         bill.addPhoneCall(phoneCall);
         // add the first call
-        MainMethodResult result = invokeMain(Project4.class,
+        MainMethodResult result = invokeMain(
                 bill.getCustomer(), phoneCall.getCaller(), phoneCall.getCallee(),
                 phoneCall.getStartTimeString(), phoneCall.getEndTimeString());
 
@@ -83,7 +91,7 @@ public class Project4IT extends InvokeMainTestCase {
         out = new ByteArrayOutputStream();
 
         // and the second call
-        result = invokeMain(Project4.class,
+        result = invokeMain(
                 bill.getCustomer(), phoneCall.getCaller(), phoneCall.getCallee(),
                 phoneCall.getStartTimeString(), phoneCall.getEndTimeString());
 
@@ -97,7 +105,7 @@ public class Project4IT extends InvokeMainTestCase {
         var start = generateDate();
         var startTime = PhoneCall.formatDate(generateDate());
         var endTime = PhoneCall.formatDate(generateDateAfter(start));
-        MainMethodResult result = invokeMain(Project4.class,
+        MainMethodResult result = invokeMain(
                 RandomString.make(), startTime, endTime);
 
         assertThat(result.getExitCode(), equalTo(0));
@@ -115,7 +123,7 @@ public class Project4IT extends InvokeMainTestCase {
         prettyPrinter.dumpTo(bill, out);
 
         bill.addPhoneCall(phoneCall);
-        MainMethodResult result = invokeMain(Project4.class,
+        MainMethodResult result = invokeMain(
                 bill.getCustomer(), phoneCall.getCaller(), phoneCall.getCallee(),
                 phoneCall.getStartTimeString(), phoneCall.getEndTimeString());
 
@@ -123,7 +131,7 @@ public class Project4IT extends InvokeMainTestCase {
         assertThat(result.getTextWrittenToStandardError(), equalTo(""));
         assertThat(result.getTextWrittenToStandardOut(), containsString(out.toString()));
 
-        result = invokeMain(Project4.class,
+        result = invokeMain(
                 bill.getCustomer(), phoneCall.getStartTimeString(), phoneCall.getEndTimeString());
 
         assertThat(result.getExitCode(), equalTo(0));
