@@ -1,16 +1,17 @@
 package edu.pdx.cs410J.bspriggs;
 
-import edu.pdx.cs410J.web.HttpRequestHelper;
+import edu.pdx.cs410J.ParserException;
+import net.bytebuddy.utility.RandomString;
 import org.junit.FixMethodOrder;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runners.MethodSorters;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.util.Map;
 
+import static edu.pdx.cs410J.bspriggs.TextDumperTest.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 
 /**
@@ -18,6 +19,9 @@ import static org.hamcrest.Matchers.equalTo;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PhoneBillRestClientIT {
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
   private static final String HOSTNAME = "localhost";
   private static final String PORT = System.getProperty("http.port", "8080");
 
@@ -27,35 +31,36 @@ public class PhoneBillRestClientIT {
   }
 
   @Test
-  public void test0RemoveAllDictionaryEntries() throws IOException {
+  public void test0GetEmptyPhoneBillsThrowsException() throws IOException {
     PhoneBillRestClient client = newPhoneBillRestClient();
-    client.removeAllDictionaryEntries();
+      thrown.expect(Exception.class);
+      client.getPhoneBill(RandomString.make());
   }
 
   @Test
-  public void test1EmptyServerContainsNoDictionaryEntries() throws IOException {
+  public void test1SearchWithNoPhoneBillsThrowsException() throws IOException {
     PhoneBillRestClient client = newPhoneBillRestClient();
-    Map<String, String> dictionary = client.getAllDictionaryEntries();
-    assertThat(dictionary.size(), equalTo(0));
+      var start = generateDate();
+      var startTime = PhoneCall.formatDate(start);
+      var endTime = PhoneCall.formatDate(generateDateAfter(start));
+
+      thrown.expect(Exception.class);
+      client.searchPhoneCalls(RandomString.make(), startTime, endTime);
   }
 
   @Test
-  public void test2DefineOneWord() throws IOException {
+  public void test2AddCallCreatesBill() throws IOException, ParserException {
     PhoneBillRestClient client = newPhoneBillRestClient();
-    String testWord = "TEST WORD";
-    String testDefinition = "TEST DEFINITION";
-    client.addDictionaryEntry(testWord, testDefinition);
 
-    String definition = client.getDefinition(testWord);
-    assertThat(definition, equalTo(testDefinition));
+      var bill = new PhoneBill(RandomString.make());
+      var call = generatePhoneCall();
+
+      var actual = client.postNewCall(bill.getCustomer(),
+              call.getCaller(),
+              call.getCallee(),
+              call.getStartTimeString(),
+              call.getEndTimeString());
+
+      assertThat(bill, equalTo(actual));
   }
-
-  @Test
-  public void test4MissingRequiredParameterReturnsPreconditionFailed() throws IOException {
-    PhoneBillRestClient client = newPhoneBillRestClient();
-    HttpRequestHelper.Response response = client.postToMyURL();
-    assertThat(response.getContent(), containsString(Messages.missingRequiredParameter("word")));
-    assertThat(response.getCode(), equalTo(HttpURLConnection.HTTP_PRECON_FAILED));
-  }
-
 }
