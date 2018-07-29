@@ -8,22 +8,26 @@ import java.util.List;
  * The main class for the CS410J Phone Bill Project
  */
 public class Project1 extends MainClassSkeleton<PhoneBill> {
+    public static final List<Argument> ARGUMENTS = Arrays.asList(
+            pop("customer", "Person whose phone bill we’re modeling"),
+            pop("callerNumber", "Phone number of caller"),
+            pop("calleeNumber", "Phone number of person who was called"),
+            popN("startTime", "Date and time call began (24-hour time)", 3),
+            popN("endTime", "Date and time call ended (24-hour time)", 3)
+    );
+
+    public static final List<Option> OPTIONS = Arrays.asList(
+            popOpt("-print", "Prints a description of the new phone call")
+    );
+
     @Override
     List<Argument> getArguments() {
-        return Arrays.asList(
-                pop("customer", "Person whose phone bill we’re modeling"),
-                pop("callerNumber", "Phone number of caller"),
-                pop("calleeNumber", "Phone number of person who was called"),
-                popN("startTime", "Date and time call began (24-hour time)", 3),
-                popN("endTime", "Date and time call ended (24-hour time)", 3)
-        );
+        return ARGUMENTS;
     }
 
     @Override
     List<Option> getOptions() {
-        return Arrays.asList(
-                popOpt("-print", "Prints a description of the new phone call")
-        );
+        return OPTIONS;
     }
 
     @Override
