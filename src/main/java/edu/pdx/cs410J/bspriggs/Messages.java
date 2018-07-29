@@ -122,7 +122,7 @@ public class Messages
         return null;
     }
 
-    public static List<PhoneCall> parsePhoneCalls(String content) {
+    public static List<AbstractPhoneCall> parsePhoneCalls(String content) {
         return null;
     }
 }
