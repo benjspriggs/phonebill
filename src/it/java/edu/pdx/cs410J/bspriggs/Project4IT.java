@@ -41,14 +41,18 @@ public class Project4IT extends InvokeMainTestCase {
     @Test
     public void testNoCommandLineArguments() {
         MainMethodResult result = invokeMain();
-        assertThat(result.getExitCode(), equalTo(1));
+        assertThatResultCodeIs(result, 1);
         assertThat(result.getTextWrittenToStandardError(), containsString(Project4.MISSING_ARGS));
+    }
+
+    private void assertThatResultCodeIs(MainMethodResult result, int i) {
+        assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(i));
     }
 
     @Test
     public void testREADME() {
         MainMethodResult result = invokeMain("-README");
-        assertThat(result.getExitCode(), equalTo(0));
+        assertThatResultCodeIs(result, 0);
         assertThat(result.getTextWrittenToStandardError(), equalTo(""));
     }
 
@@ -66,7 +70,7 @@ public class Project4IT extends InvokeMainTestCase {
         MainMethodResult result = invokeMain(phoneCall.getStartTimeString().split(" "), phoneCall.getEndTimeString().split(" "),
                 bill.getCustomer(), phoneCall.getCaller(), phoneCall.getCallee());
 
-        assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(0));
+        assertThatResultCodeIs(result, 0);
         assertThat(result.getTextWrittenToStandardError(), equalTo(""));
         assertThat(result.getTextWrittenToStandardOut(), containsString(out.toString()));
     }
@@ -86,7 +90,7 @@ public class Project4IT extends InvokeMainTestCase {
         MainMethodResult result = invokeMain(phoneCall.getStartTimeString().split(" "), phoneCall.getEndTimeString().split(" "),
                 bill.getCustomer(), phoneCall.getCaller(), phoneCall.getCallee());
 
-        assertThat(result.getExitCode(), equalTo(0));
+        assertThatResultCodeIs(result, 0);
         assertThat(result.getTextWrittenToStandardError(), equalTo(""));
         assertThat(result.getTextWrittenToStandardOut(), containsString(out.toString()));
 
@@ -100,7 +104,7 @@ public class Project4IT extends InvokeMainTestCase {
                 phoneCall.getStartTimeString(), phoneCall.getEndTimeString());
 
         prettyPrinter.dumpTo(bill, out);
-        assertThat(result.getExitCode(), equalTo(0));
+        assertThatResultCodeIs(result, 0);
         assertThat(result.getTextWrittenToStandardOut(), containsString(out.toString()));
     }
 
@@ -112,7 +116,7 @@ public class Project4IT extends InvokeMainTestCase {
         MainMethodResult result = invokeMain(startTime.split(" "), endTime.split(" "),
                 RandomString.make(), startTime, endTime);
 
-        assertThat(result.getExitCode(), equalTo(0));
+        assertThatResultCodeIs(result, 0);
         assertThat(result.getTextWrittenToStandardError(), is(not("")));
     }
 
@@ -130,7 +134,7 @@ public class Project4IT extends InvokeMainTestCase {
         MainMethodResult result = invokeMain(phoneCall.getStartTimeString().split(" "), phoneCall.getEndTimeString().split(" "),
                 bill.getCustomer(), phoneCall.getCaller(), phoneCall.getCallee());
 
-        assertThat(result.getExitCode(), equalTo(0));
+        assertThatResultCodeIs(result, 0);
         assertThat(result.getTextWrittenToStandardError(), equalTo(""));
         assertThat(result.getTextWrittenToStandardOut(), containsString(out.toString()));
 
