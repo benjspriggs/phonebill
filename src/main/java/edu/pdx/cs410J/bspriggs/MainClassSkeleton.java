@@ -168,7 +168,7 @@ public abstract class MainClassSkeleton<T> {
         b.append(getClass().getCanonicalName());
         b.append(" [options] <args>");
         b.append(System.lineSeparator());
-        b.append("args are (in this order):");
+        b.append("args are (in the order provided):");
         b.append(System.lineSeparator());
 
         for (var argset : getArguments()) {
