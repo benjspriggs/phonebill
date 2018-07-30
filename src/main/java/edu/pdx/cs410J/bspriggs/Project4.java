@@ -49,8 +49,14 @@ public class Project4 extends Project1 {
     }
 
     @Override
-    List<Argument> getArguments() {
-        return ARGUMENTS;
+    List<List<Argument>> getArguments() {
+        return Arrays.asList(
+                ARGUMENTS,
+                Arrays.asList(
+                        pop("customer", "Person whose phone bill we’re modeling"),
+                        pop("callerNumber", "Phone number of caller"),
+                        pop("calleeNumber", "Phone number of person who was called"))
+        );
     }
 
     @Override

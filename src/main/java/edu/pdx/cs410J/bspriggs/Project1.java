@@ -1,6 +1,7 @@
 package edu.pdx.cs410J.bspriggs;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -21,8 +22,8 @@ public class Project1 extends MainClassSkeleton<PhoneBill> {
     );
 
     @Override
-    List<Argument> getArguments() {
-        return ARGUMENTS;
+    List<List<Argument>> getArguments() {
+        return Collections.singletonList(ARGUMENTS);
     }
 
     @Override
