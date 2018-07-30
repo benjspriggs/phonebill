@@ -113,9 +113,9 @@ public class Project4IT extends InvokeMainTestCase {
         var startTime = PhoneCall.formatDate(generateDate());
         var endTime = PhoneCall.formatDate(generateDateAfter(start));
         MainMethodResult result = invokeMainWithDate(startTime, endTime,
-                RandomString.make(), startTime, endTime);
+                "-search", RandomString.make(), startTime, endTime);
 
-        assertThatResultCodeIs(result, 0);
+        assertThatResultCodeIs(result, 1);
         assertThat(result.getTextWrittenToStandardError(), is(not("")));
     }
 
@@ -138,7 +138,7 @@ public class Project4IT extends InvokeMainTestCase {
         assertThat(result.getTextWrittenToStandardOut(), containsString(out.toString()));
 
         result = invokeMainWithDate(phoneCall.getStartTimeString(), phoneCall.getEndTimeString(),
-                bill.getCustomer());
+                "-search", bill.getCustomer());
 
         assertThatResultCodeIs(result, 0);
         assertThat(result.getTextWrittenToStandardOut(),
