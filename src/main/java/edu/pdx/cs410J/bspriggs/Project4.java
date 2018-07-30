@@ -54,8 +54,8 @@ public class Project4 extends Project1 {
                 ARGUMENTS,
                 Arrays.asList(
                         pop("customer", "Person whose phone bill we’re modeling"),
-                        pop("callerNumber", "Phone number of caller"),
-                        pop("calleeNumber", "Phone number of person who was called"))
+                        popN("startTime", "Date and time call began (24-hour time)", 3),
+                        popN("endTime", "Date and time call ended (24-hour time)", 3))
         );
     }
 
