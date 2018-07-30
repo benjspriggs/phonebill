@@ -12,6 +12,8 @@ public abstract class MainClassSkeleton<T> {
         String description();
 
         List<String> consume(List<String> args, Map<String, Object> context);
+
+        int length();
     }
 
     /**
@@ -47,6 +49,11 @@ public abstract class MainClassSkeleton<T> {
                 context.put(name(), l);
                 return args.subList(n, args.size());
             }
+
+            @Override
+            public int length() {
+                return n;
+            }
         };
     }
 
@@ -72,6 +79,11 @@ public abstract class MainClassSkeleton<T> {
             public List<String> consume(List<String> args, Map<String, Object> context) {
                 context.put(name(), args.get(0));
                 return args.subList(1, args.size());
+            }
+
+            @Override
+            public int length() {
+                return 1;
             }
         };
     }
@@ -122,10 +134,15 @@ public abstract class MainClassSkeleton<T> {
 
                 return Collections.unmodifiableList(copy);
             }
+
+            @Override
+            public int length() {
+                return isFlag ? 1 : 2;
+            }
         };
     }
 
-    abstract List<Argument> getArguments();
+    abstract List<List<Argument>> getArguments();
     abstract List<Option> getOptions();
 
     abstract String Readme();
@@ -152,8 +169,11 @@ public abstract class MainClassSkeleton<T> {
         b.append("args are (in this order):");
         b.append(System.lineSeparator());
 
-        for (var a : getArguments()) {
-            b.append(String.format("  %-10s\t%s", a.name(), a.description()));
+        for (var argset : getArguments()) {
+            for (var a : argset) {
+                b.append(String.format("  %-10s\t%s", a.name(), a.description()));
+                b.append(System.lineSeparator());
+            }
             b.append(System.lineSeparator());
         }
 
@@ -200,7 +220,6 @@ public abstract class MainClassSkeleton<T> {
         }
 
         List<Option> options = getOptions();
-        List<Argument> argumentList = getArguments();
 
         if (options != null) {
             for (var opt : options) {
@@ -208,15 +227,24 @@ public abstract class MainClassSkeleton<T> {
             }
         }
 
-        if (argumentList != null) {
-            for (var arg : argumentList) {
-                arguments = arg.consume(arguments, context);
-            }
+        List<String> finalArguments = arguments;
 
-            if (arguments.size() != 0) {
-                System.err.println(usage("Extra command line arguments"));
-                System.exit(1);
-            }
+        var possibleArgumentList = getArguments().stream().filter(argset -> minimumRequiredArguments(argset) == finalArguments.size()).findFirst();
+
+        if (!possibleArgumentList.isPresent()) {
+            System.err.println("Missing required arguments");
+            System.exit(1);
+        }
+
+        List<Argument> argumentList = possibleArgumentList.get();
+
+        for (var arg : argumentList) {
+            arguments = arg.consume(arguments, context);
+        }
+
+        if (arguments.size() != 0) {
+            System.err.println(usage("Extra command line arguments"));
+            System.exit(1);
         }
 
         try {
@@ -227,6 +255,10 @@ public abstract class MainClassSkeleton<T> {
         }
 
         return null;
+    }
+
+    private int minimumRequiredArguments(List<Argument> argset) {
+        return argset.stream().mapToInt(Argument::length).sum();
     }
 
     /**
