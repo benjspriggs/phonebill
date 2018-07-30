@@ -99,9 +99,8 @@ public class Project4IT extends InvokeMainTestCase {
         out = new ByteArrayOutputStream();
 
         // and the second call
-        result = invokeMain(
-                bill.getCustomer(), phoneCall.getCaller(), phoneCall.getCallee(),
-                phoneCall.getStartTimeString(), phoneCall.getEndTimeString());
+        result = invokeMain(phoneCall.getStartTimeString().split(" "), phoneCall.getEndTimeString().split(" "),
+                bill.getCustomer(), phoneCall.getCaller(), phoneCall.getCallee());
 
         prettyPrinter.dumpTo(bill, out);
         assertThatResultCodeIs(result, 0);
