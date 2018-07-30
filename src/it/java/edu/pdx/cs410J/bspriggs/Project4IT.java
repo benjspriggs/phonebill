@@ -66,7 +66,7 @@ public class Project4IT extends InvokeMainTestCase {
         MainMethodResult result = invokeMain(phoneCall.getStartTimeString().split(" "), phoneCall.getEndTimeString().split(" "),
                 bill.getCustomer(), phoneCall.getCaller(), phoneCall.getCallee());
 
-        assertThat(result.getExitCode(), equalTo(0));
+        assertThat(result.getTextWrittenToStandardError(), result.getExitCode(), equalTo(0));
         assertThat(result.getTextWrittenToStandardError(), equalTo(""));
         assertThat(result.getTextWrittenToStandardOut(), containsString(out.toString()));
     }

@@ -3,6 +3,8 @@ package edu.pdx.cs410J.bspriggs;
 import java.util.*;
 
 public abstract class MainClassSkeleton<T> {
+    public static final String MISSING_ARGS = "Missing command line arguments";
+    public static final String EXTRA_ARGS = "Extra command line arguments";
     /**
      * Represents a mandatory command line argument.
      */
@@ -210,7 +212,7 @@ public abstract class MainClassSkeleton<T> {
         }
 
         if (arguments.size() < getArguments().size()) {
-            System.err.println(usage("Missing command line arguments"));
+            System.err.println(usage(MISSING_ARGS));
             System.exit(1);
         }
 
@@ -232,7 +234,7 @@ public abstract class MainClassSkeleton<T> {
         var possibleArgumentList = getArguments().stream().filter(argset -> minimumRequiredArguments(argset) == finalArguments.size()).findFirst();
 
         if (!possibleArgumentList.isPresent()) {
-            System.err.println("Missing required arguments");
+            System.err.println(usage(MISSING_ARGS));
             System.exit(1);
         }
 
@@ -243,7 +245,7 @@ public abstract class MainClassSkeleton<T> {
         }
 
         if (arguments.size() != 0) {
-            System.err.println(usage("Extra command line arguments"));
+            System.err.println(usage(EXTRA_ARGS));
             System.exit(1);
         }
 

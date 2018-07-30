@@ -16,7 +16,6 @@ import java.util.stream.Stream;
  */
 public class Project4 extends Project1 {
 
-    public static final String MISSING_ARGS = "Missing command line arguments";
     public static final List<Option> OPTIONS = Arrays.asList(
             popOpt("-host hostname", "Host computer on which the server runs"),
             popOpt("-port port", "Port on which the server is listening"),
@@ -75,8 +74,8 @@ public class Project4 extends Project1 {
     PhoneBill doWork(HashMap context) throws Exception {
         var host = context.get("-host");
         var p = context.get("-port");
-        var c = context.get("customer");
         var s = context.get("-search");
+        var c = context.get("customer");
         var start = context.get("startTime");
         var end = context.get("endTime");
 
@@ -95,11 +94,10 @@ public class Project4 extends Project1 {
         String customer = (String) c;
         String hostname = (String) host;
         int port = Integer.parseInt((String) p);
-        boolean shouldSearch = (boolean) s;
 
         PhoneBillRestClient client = new PhoneBillRestClient(hostname, port);
 
-        if (shouldSearch) {
+        if (s != null && (boolean) s) {
             if (start == null) {
                 error(MISSING_ARGS);
             }
@@ -114,7 +112,7 @@ public class Project4 extends Project1 {
             System.out.println(Messages.formatPhoneCalls(calls));
             return null;
         } else {
-            // we're makign a  new one
+            // we're making a  new one
             PhoneBill bill = super.doWork(context);
             PhoneCall call = (PhoneCall) bill.getPhoneCalls().stream().findFirst().get();
             var returnedBill = client.postNewCall(bill.getCustomer(),
