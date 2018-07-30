@@ -118,7 +118,7 @@ public class Project4 extends Project1 {
             var returnedBill = client.postNewCall(bill.getCustomer(),
                     call.getCaller(), call.getCallee(), call.getStartTimeString(), call.getEndTimeString());
 
-            System.out.println(Messages.formatPhoneBill(returnedBill));
+            System.out.println(Messages.formatPhoneBillPretty(returnedBill));
             return returnedBill;
         }
     }
