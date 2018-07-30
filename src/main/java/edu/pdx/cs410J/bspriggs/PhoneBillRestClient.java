@@ -33,6 +33,7 @@ public class PhoneBillRestClient extends HttpRequestHelper
 
     public String getPhoneBill(String customer) throws IOException {
         Response response = get(this.url, CUSTOMER_PARAMETER, customer);
+        throwExceptionIfNotOkayHttpStatus(response);
         return response.getContent();
     }
 
