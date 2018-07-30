@@ -53,7 +53,8 @@ public class TextParser implements edu.pdx.cs410J.PhoneBillParser {
             throw new ParserException("Malformed PhoneBill, missing customer name");
         }
 
-        var customer = lines.remove(0);
+        var customer = lines.get(0);
+        lines = lines.subList(1, lines.size());
 
         phoneBill = new PhoneBill(customer);
 
