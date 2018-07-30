@@ -172,7 +172,7 @@ public class PhoneBillServlet extends HttpServlet
         addPhoneBill(bill);
 
         PrintWriter pw = response.getWriter();
-        pw.println(Messages.formatPhoneBillPretty(bill));
+        pw.println(Messages.formatPhoneBill(bill));
         pw.flush();
 
         response.setStatus( HttpServletResponse.SC_OK);
