@@ -63,6 +63,7 @@ public class PhoneBillRestClientIT {
               call.getStartTimeString(),
               call.getEndTimeString());
 
-      assertThat(bill, equalTo(actual));
+    assertThat(bill.getCustomer(), equalTo(actual.getCustomer()));
+    assertThat(bill.getPhoneCalls().toString(), equalTo(actual.getPhoneCalls().toString()));
   }
 }
