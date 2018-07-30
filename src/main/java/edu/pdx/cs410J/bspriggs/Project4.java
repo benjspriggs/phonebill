@@ -1,6 +1,5 @@
 package edu.pdx.cs410J.bspriggs;
 
-import edu.pdx.cs410J.AbstractPhoneCall;
 import edu.pdx.cs410J.web.HttpRequestHelper;
 
 import java.io.PrintStream;
@@ -108,8 +107,7 @@ public class Project4 extends Project1 {
 
             String startTime = String.join(" ", (List<String>) start);
             String endTime = String.join(" ", (List<String>) end);
-            List<AbstractPhoneCall> calls = client.searchPhoneCalls(customer, startTime, endTime);
-            System.out.println(Messages.formatPhoneCalls(calls));
+            System.out.println(client.searchPhoneCalls(customer, startTime, endTime));
             return null;
         } else {
             // we're making a  new one

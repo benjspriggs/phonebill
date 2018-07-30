@@ -1,11 +1,9 @@
 package edu.pdx.cs410J.bspriggs;
 
-import edu.pdx.cs410J.AbstractPhoneCall;
 import edu.pdx.cs410J.ParserException;
 import edu.pdx.cs410J.web.HttpRequestHelper;
 
 import java.io.IOException;
-import java.util.List;
 
 import static edu.pdx.cs410J.bspriggs.PhoneBillServlet.*;
 import static java.net.HttpURLConnection.HTTP_OK;
@@ -49,13 +47,13 @@ public class PhoneBillRestClient extends HttpRequestHelper
         return Messages.parsePhoneBill(response.getContent());
     }
 
-    public List<AbstractPhoneCall> searchPhoneCalls(String customer, String startTimeAndDate, String endTimeAndDate) throws IOException {
+    public String searchPhoneCalls(String customer, String startTimeAndDate, String endTimeAndDate) throws IOException {
         Response response = get(this.url,
                 CUSTOMER_PARAMETER, customer,
                 START_TIME_PARAMETER, startTimeAndDate,
                 END_TIME_PARAMETER, endTimeAndDate);
         throwExceptionIfNotOkayHttpStatus(response);
-        return Messages.parsePhoneCalls(response.getContent());
+        return response.getContent();
     }
 
     private Response throwExceptionIfNotOkayHttpStatus(Response response) {
