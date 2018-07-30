@@ -31,7 +31,7 @@ public class PhoneBillRestClientIT {
   }
 
   @Test
-  public void test0GetEmptyPhoneBillsThrowsException() throws IOException {
+  public void test0GetEmptyPhoneBills() throws IOException {
     PhoneBillRestClient client = newPhoneBillRestClient();
       thrown.expect(Exception.class);
       client.getPhoneBill(RandomString.make());
@@ -54,6 +54,8 @@ public class PhoneBillRestClientIT {
 
       var bill = new PhoneBill(RandomString.make());
       var call = generatePhoneCall();
+
+      bill.addPhoneCall(call);
 
       var actual = client.postNewCall(bill.getCustomer(),
               call.getCaller(),
