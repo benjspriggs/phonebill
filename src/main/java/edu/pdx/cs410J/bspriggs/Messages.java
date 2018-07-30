@@ -2,10 +2,12 @@ package edu.pdx.cs410J.bspriggs;
 
 import edu.pdx.cs410J.AbstractPhoneBill;
 import edu.pdx.cs410J.AbstractPhoneCall;
+import edu.pdx.cs410J.ParserException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +22,8 @@ import java.util.stream.Collectors;
 public class Messages
 {
     public static final PrettyPrinter prettyPrinter = new PrettyPrinter();
+    public static final TextDumper dumper = new TextDumper();
+    public static final TextParser parser = new TextParser();
 
     public static String formatWordCount(int count )
     {
@@ -34,15 +38,6 @@ public class Messages
     public static String missingRequiredParameter( String parameterName )
     {
         return String.format("The required parameter \"%s\" is missing", parameterName);
-    }
-
-    public static String definedWordAs(String word, String definition )
-    {
-        return String.format( "Defined %s as %s", word, definition );
-    }
-
-    public static String allDictionaryEntriesDeleted() {
-        return "All dictionary entries have been deleted";
     }
 
     public static Map.Entry<String, String> parseDictionaryEntry(String content) {
@@ -96,11 +91,7 @@ public class Messages
         return map;
     }
 
-    public static String formatPhoneBillCount(int expectedPhoneBillCount) {
-        return "Phone bills on server: " + expectedPhoneBillCount;
-    }
-
-    public static String formatPhoneBill(AbstractPhoneBill bill) throws IOException {
+    public static String formatPhoneBillPretty(AbstractPhoneBill bill) throws IOException {
         var out = new ByteArrayOutputStream();
         prettyPrinter.dumpTo(bill, out);
         return out.toString();
@@ -112,17 +103,17 @@ public class Messages
                 .collect(Collectors.joining("\n"));
     }
 
-    public static String formatPhoneBills(HashMap<String, PhoneBill> phoneBills) {
-        return phoneBills.values().stream()
-                .map(AbstractPhoneBill::toString)
-                .collect(Collectors.joining("\n"));
-    }
-
-    public static PhoneBill parsePhoneBill(String content) {
-        return null;
+    public static PhoneBill parsePhoneBill(String content) throws ParserException {
+        return (PhoneBill) parser.parse(Arrays.asList(content.split(System.lineSeparator())));
     }
 
     public static List<AbstractPhoneCall> parsePhoneCalls(String content) {
         return null;
+    }
+
+    public static String formatPhoneBill(AbstractPhoneBill bill) throws IOException {
+        var out = new ByteArrayOutputStream();
+        dumper.dumpTo(bill, out);
+        return out.toString();
     }
 }

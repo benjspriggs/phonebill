@@ -131,7 +131,7 @@ public class PhoneBillServletTest {
         // and we get the phone bill
         servletWithPhoneBill.doGet(request, response);
 
-        verify(pw).println(Messages.formatPhoneBill(bill));
+        verify(pw).println(Messages.formatPhoneBillPretty(bill));
         verify(response).setStatus(HttpServletResponse.SC_OK);
     }
 
