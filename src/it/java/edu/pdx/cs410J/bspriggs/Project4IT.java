@@ -32,8 +32,8 @@ public class Project4IT extends InvokeMainTestCase {
         return invokeMain(Project4.class, newArgs.toArray(String[]::new));
     }
 
-    private MainMethodResult invokeMain(String[] startDate, String[] endDate, String... args) {
-        var dateArgs = Stream.concat(asList(startDate).stream(), asList(endDate).stream());
+    private MainMethodResult invokeMainWithDate(String startDate, String endDate, String... args) {
+        var dateArgs = Stream.concat(asList(startDate.split(" ")).stream(), asList(endDate.split(" ")).stream());
         var newArgs = Stream.concat(asList(args).stream(), dateArgs);
         return invokeMain(newArgs.toArray(String[]::new));
     }
@@ -67,7 +67,7 @@ public class Project4IT extends InvokeMainTestCase {
         prettyPrinter.dumpTo(bill, out);
 
         bill.addPhoneCall(phoneCall);
-        MainMethodResult result = invokeMain(phoneCall.getStartTimeString().split(" "), phoneCall.getEndTimeString().split(" "),
+        MainMethodResult result = invokeMainWithDate(phoneCall.getStartTimeString(), phoneCall.getEndTimeString(),
                 bill.getCustomer(), phoneCall.getCaller(), phoneCall.getCallee());
 
         assertThatResultCodeIs(result, 0);
@@ -87,7 +87,7 @@ public class Project4IT extends InvokeMainTestCase {
 
         bill.addPhoneCall(phoneCall);
         // add the first call
-        MainMethodResult result = invokeMain(phoneCall.getStartTimeString().split(" "), phoneCall.getEndTimeString().split(" "),
+        MainMethodResult result = invokeMainWithDate(phoneCall.getStartTimeString(), phoneCall.getEndTimeString(),
                 bill.getCustomer(), phoneCall.getCaller(), phoneCall.getCallee());
 
         assertThatResultCodeIs(result, 0);
@@ -99,7 +99,7 @@ public class Project4IT extends InvokeMainTestCase {
         out = new ByteArrayOutputStream();
 
         // and the second call
-        result = invokeMain(phoneCall.getStartTimeString().split(" "), phoneCall.getEndTimeString().split(" "),
+        result = invokeMainWithDate(phoneCall.getStartTimeString(), phoneCall.getEndTimeString(),
                 bill.getCustomer(), phoneCall.getCaller(), phoneCall.getCallee());
 
         prettyPrinter.dumpTo(bill, out);
@@ -112,7 +112,7 @@ public class Project4IT extends InvokeMainTestCase {
         var start = generateDate();
         var startTime = PhoneCall.formatDate(generateDate());
         var endTime = PhoneCall.formatDate(generateDateAfter(start));
-        MainMethodResult result = invokeMain(startTime.split(" "), endTime.split(" "),
+        MainMethodResult result = invokeMainWithDate(startTime, endTime,
                 RandomString.make(), startTime, endTime);
 
         assertThatResultCodeIs(result, 0);
@@ -130,17 +130,17 @@ public class Project4IT extends InvokeMainTestCase {
         prettyPrinter.dumpTo(bill, out);
 
         bill.addPhoneCall(phoneCall);
-        MainMethodResult result = invokeMain(phoneCall.getStartTimeString().split(" "), phoneCall.getEndTimeString().split(" "),
+        MainMethodResult result = invokeMainWithDate(phoneCall.getStartTimeString(), phoneCall.getEndTimeString(),
                 bill.getCustomer(), phoneCall.getCaller(), phoneCall.getCallee());
 
         assertThatResultCodeIs(result, 0);
         assertThat(result.getTextWrittenToStandardError(), equalTo(""));
         assertThat(result.getTextWrittenToStandardOut(), containsString(out.toString()));
 
-        result = invokeMain(
-                bill.getCustomer(), phoneCall.getStartTimeString(), phoneCall.getEndTimeString());
+        result = invokeMainWithDate(phoneCall.getStartTimeString(), phoneCall.getEndTimeString(),
+                bill.getCustomer());
 
-        assertThat(result.getExitCode(), equalTo(0));
+        assertThatResultCodeIs(result, 0);
         assertThat(result.getTextWrittenToStandardOut(),
                 containsString(Messages.formatPhoneCalls(new ArrayList<>(Collections.singleton(phoneCall)))));
     }

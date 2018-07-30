@@ -1,71 +1,67 @@
 package edu.pdx.cs410J.bspriggs;
 
+import edu.pdx.cs410J.ParserException;
+import net.bytebuddy.utility.RandomString;
 import org.junit.Test;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 
+import static edu.pdx.cs410J.bspriggs.TextDumperTest.getPopulatedPhoneBill;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.nullValue;
 
 public class MessagesTest {
 
   @Test
-  public void malformedWordAndDefinitionReturnsNull() {
-    assertThat(Messages.parseDictionaryEntry("blah"), nullValue());
+  public void missingRequiredParameter() {
+      var anything = RandomString.make();
+      assertThat(Messages.missingRequiredParameter(anything), containsString(anything));
   }
 
   @Test
-  public void canParseFormattedDictionaryEntryPair() {
-    String word = "testWord";
-    String definition = "testDefinition";
-    String formatted = Messages.formatDictionaryEntry(word, definition);
-    Map.Entry<String, String> parsed = Messages.parseDictionaryEntry(formatted);
-    assertThat(parsed.getKey(), equalTo(word));
-    assertThat(parsed.getValue(), equalTo(definition));
+  public void formatPhoneBillPretty() throws IOException {
+      var bill = getPopulatedPhoneBill();
+
+      assertThat(Messages.formatPhoneBillPretty(bill), containsString(bill.getCustomer()));
   }
 
   @Test
-  public void canParseFormattedDictionaryEntryWithoutLeadingSpaces() {
-    String word = "testWord";
-    String definition = "testDefinition";
-    String formatted = Messages.formatDictionaryEntry(word, definition);
-    String trimmed = formatted.trim();
-    Map.Entry<String, String> parsed = Messages.parseDictionaryEntry(trimmed);
-    assertThat(parsed.getKey(), equalTo(word));
-    assertThat(parsed.getValue(), equalTo(definition));
-
+  public void formatPhoneCalls() {
+      var bill = getPopulatedPhoneBill();
+      var message = Messages.formatPhoneCalls(new ArrayList<>(bill.getPhoneCalls()));
+      for (var call : bill.getPhoneCalls()) {
+          assertThat(message, containsString(call.toString()));
+      }
   }
 
   @Test
-  public void nullDefinitionIsParsedAsNull() {
-    String word = "testWord";
-    String definition = null;
-    String formatted = Messages.formatDictionaryEntry(word, definition);
-    Map.Entry<String, String> parsed = Messages.parseDictionaryEntry(formatted);
-    assertThat(parsed.getKey(), equalTo(word));
-    assertThat(parsed.getValue(), equalTo(definition));
+  public void parsePhoneBill() throws ParserException, IOException {
+      var bill = getPopulatedPhoneBill();
+      var out = new ByteArrayOutputStream();
+      var dumper = new TextDumper();
+      dumper.dumpTo(bill, out);
+
+      var parsedBill = Messages.parsePhoneBill(out.toString());
+
+      assertThat(parsedBill.getCustomer(), equalTo(bill.getCustomer()));
+
+      for (var call : bill.getPhoneCalls()) {
+          assertThat("All calls must be successfully parsed", bill.getPhoneCalls().contains(call));
+      }
   }
 
-  @Test
-  public void canParseFormattedDictionary() {
-    Map<String, String> dictionary = new HashMap<>();
+    @Test
+    public void formatPhoneBill() throws IOException {
+        var bill = getPopulatedPhoneBill();
+        var message = Messages.formatPhoneBill(bill);
 
-    for (int i = 0; i < 5; i++) {
-      String word = String.valueOf(i);
-      String definition = "QQ" + word;
-      dictionary.put(word, definition);
-    }
+        assertThat(message, containsString(bill.getCustomer()));
 
-    StringWriter sw = new StringWriter();
-    Messages.formatDictionaryEntries(new PrintWriter(sw, true), dictionary);
-
-    String formatted = sw.toString();
-
-    Map<String, String> actual = Messages.parseDictionary(formatted);
-    assertThat(actual, equalTo(dictionary));
+        for (var call : bill.getPhoneCalls()) {
+            assertThat(message, containsString(TextDumper.serialize(call)));
+        }
   }
 }
